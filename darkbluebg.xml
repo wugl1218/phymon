@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<palette>
+ <active>
+  <colorrole role="Base">
+   <brush brushstyle="SolidPattern">
+    <color alpha="255">
+     <red>6</red>
+     <green>22</green>
+     <blue>40</blue>
+    </color>
+   </brush>
+  </colorrole>
+  <colorrole role="Window">
+   <brush brushstyle="SolidPattern">
+    <color alpha="255">
+     <red>6</red>
+     <green>22</green>
+     <blue>40</blue>
+    </color>
+   </brush>
+  </colorrole>
+ </active>
+ <inactive>
+  <colorrole role="Base">
+   <brush brushstyle="SolidPattern">
+    <color alpha="255">
+     <red>6</red>
+     <green>22</green>
+     <blue>40</blue>
+    </color>
+   </brush>
+  </colorrole>
+  <colorrole role="Window">
+   <brush brushstyle="SolidPattern">
+    <color alpha="255">
+     <red>6</red>
+     <green>22</green>
+     <blue>40</blue>
+    </color>
+   </brush>
+  </colorrole>
+ </inactive>
+ <disabled>
+  <colorrole role="Base">
+   <brush brushstyle="SolidPattern">
+    <color alpha="255">
+     <red>6</red>
+     <green>22</green>
+     <blue>40</blue>
+    </color>
+   </brush>
+  </colorrole>
+  <colorrole role="Window">
+   <brush brushstyle="SolidPattern">
+    <color alpha="255">
+     <red>6</red>
+     <green>22</green>
+     <blue>40</blue>
+    </color>
+   </brush>
+  </colorrole>
+ </disabled>
+</palette>

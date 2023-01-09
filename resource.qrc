@@ -1,0 +1,36 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>emptyPepole.png</file>
+        <file>check.png</file>
+        <file>backspace.png</file>
+        <file>female.png</file>
+        <file>male.png</file>
+        <file>releasebtn.png</file>
+        <file>minus.png</file>
+        <file>plus.png</file>
+        <file>down_arrow.png</file>
+        <file>up_arrow.png</file>
+        <file>blue.png</file>
+        <file>restore.png</file>
+        <file>restoreall.png</file>
+        <file>save.png</file>
+        <file>return.png</file>
+        <file>untick.png</file>
+        <file>tick.png</file>
+        <file>smallfemale.png</file>
+        <file>smallmale.png</file>
+        <file>redcircle.png</file>
+        <file>yellowcircle.png</file>
+        <file>rotate_return.png</file>
+        <file>X1.png</file>
+        <file>X2.png</file>
+        <file>bluecircle.png</file>
+        <file>Network_not.png</file>
+        <file>Network.png</file>
+        <file>big_down_arrow.png</file>
+        <file>big_up_arrow.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>wav/warning.wav</file>
+    </qresource>
+</RCC>

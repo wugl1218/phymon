@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Tab_Observations_Widget</class>
+ <widget class="QWidget" name="Tab_Observations_Widget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="font">
+   <font>
+    <family>Arial</family>
+    <pointsize>21</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>35</number>
+   </property>
+   <property name="topMargin">
+    <number>15</number>
+   </property>
+   <property name="rightMargin">
+    <number>9</number>
+   </property>
+   <property name="bottomMargin">
+    <number>9</number>
+   </property>
+   <item>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <widget class="Tab_Observations_mainPage_Widget" name="mainPage_widget"/>
+     <widget class="Tab_Observations_metricItemsDisplayConfigPage_Widget" name="metricItemsDisplayConfigPage_widget"/>
+     <widget class="Tab_Observations_historyPage_Widget" name="historyPage_widget"/>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Tab_Observations_historyPage_Widget</class>
+   <extends>QWidget</extends>
+   <header location="global">Tab_Observations_historyPage_Widget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Tab_Observations_mainPage_Widget</class>
+   <extends>QWidget</extends>
+   <header>Tab_Observations_mainPage_Widget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Tab_Observations_metricItemsDisplayConfigPage_Widget</class>
+   <extends>QWidget</extends>
+   <header>Tab_Observations_metricItemsDisplayConfigPage_Widget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

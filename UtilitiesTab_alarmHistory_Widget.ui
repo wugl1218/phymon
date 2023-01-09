@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UtilitiesTab_alarmHistory_Widget</class>
+ <widget class="QWidget" name="UtilitiesTab_alarmHistory_Widget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QGroupBox" name="groupBox_4">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>110</y>
+     <width>601</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Date Range</string>
+   </property>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>592</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Start:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDateTimeEdit" name="startDate_dateTimeEdit">
+       <property name="toolTip">
+        <string>Query start datetime</string>
+       </property>
+       <property name="displayFormat">
+        <string>yyyy/M/d hh:mm</string>
+       </property>
+       <property name="calendarPopup">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>End:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDateTimeEdit" name="endDate_dateTimeEdit">
+       <property name="toolTip">
+        <string>query end datetime</string>
+       </property>
+       <property name="displayFormat">
+        <string>yyyy/M/d hh:mm</string>
+       </property>
+       <property name="calendarPopup">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="orderType_comboBox">
+       <item>
+        <property name="text">
+         <string>Order By Alarm Datetime</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Order By Duration</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Order By Alarm Message</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>681</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Devices</string>
+   </property>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>30</y>
+      <width>611</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="devices_horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="deviceTemplate_pushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>80</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>80</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton:checked {
+	background-color: rgb(52, 101, 164);
+}</string>
+         </property>
+         <property name="text">
+          <string>Dreager
+Savina</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_5">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>200</y>
+     <width>701</width>
+     <height>391</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Query Result</string>
+   </property>
+   <widget class="QTableWidget" name="queryResult_tableWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>30</y>
+      <width>691</width>
+      <height>351</height>
+     </rect>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOn</enum>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::SingleSelection</enum>
+    </property>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectRows</enum>
+    </property>
+    <attribute name="verticalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <row>
+     <property name="text">
+      <string>新增列</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>新增列</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>新增列</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>新增列</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>新增列</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>新增列</string>
+     </property>
+    </row>
+    <column>
+     <property name="text">
+      <string>Alarm No.</string>
+     </property>
+     <property name="font">
+      <font>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Alarm Datetime</string>
+     </property>
+     <property name="font">
+      <font>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Alarm Phrases</string>
+     </property>
+     <property name="font">
+      <font>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Prioirty</string>
+     </property>
+     <property name="font">
+      <font>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <item row="0" column="0">
+     <property name="text">
+      <string>alarm-010</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="0" column="1">
+     <property name="text">
+      <string>2022-06-22 10:20:14</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="0" column="2">
+     <property name="text">
+      <string>Test Phrases10</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="0" column="3">
+     <property name="text">
+      <string>03</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="1" column="0">
+     <property name="text">
+      <string>alarm-009</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="1" column="1">
+     <property name="text">
+      <string>2022-06-22 10:10:10</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="1" column="2">
+     <property name="text">
+      <string>Test Phrases09</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="1" column="3">
+     <property name="text">
+      <string>01</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="2" column="0">
+     <property name="text">
+      <string>alarm-008</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="2" column="1">
+     <property name="text">
+      <string>2022-06-22 09:00:14</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="2" column="2">
+     <property name="text">
+      <string>Test Phrases08</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="2" column="3">
+     <property name="text">
+      <string>05</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="3" column="0">
+     <property name="text">
+      <string>alarm-007</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="3" column="1">
+     <property name="text">
+      <string>2022-06-22 07:20:14</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="3" column="2">
+     <property name="text">
+      <string>Test Phrases07</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="3" column="3">
+     <property name="text">
+      <string>30</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="4" column="0">
+     <property name="text">
+      <string>alarm-006</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="4" column="1">
+     <property name="text">
+      <string>2022-06-21 23:20:14</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="4" column="2">
+     <property name="text">
+      <string>Test Phrases06</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="4" column="3">
+     <property name="text">
+      <string>02</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="5" column="0">
+     <property name="text">
+      <string>alarm-005</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="5" column="1">
+     <property name="text">
+      <string>2022-06-21 10:20:14</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="5" column="2">
+     <property name="text">
+      <string>Test Phrases05</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="5" column="3">
+     <property name="text">
+      <string>10</string>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
+    </item>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="query_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>620</x>
+     <y>150</y>
+     <width>89</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Query</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

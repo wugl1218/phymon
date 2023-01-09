@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LoopSelectionDialog</class>
+ <widget class="QDialog" name="LoopSelectionDialog">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>582</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="palette">
+   <palette>
+    <active>
+     <colorrole role="Button">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>7</red>
+        <green>22</green>
+        <blue>40</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>7</red>
+        <green>22</green>
+        <blue>40</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>7</red>
+        <green>22</green>
+        <blue>40</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </active>
+    <inactive>
+     <colorrole role="Button">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>7</red>
+        <green>22</green>
+        <blue>40</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>7</red>
+        <green>22</green>
+        <blue>40</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>7</red>
+        <green>22</green>
+        <blue>40</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </inactive>
+    <disabled>
+     <colorrole role="Button">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>7</red>
+        <green>22</green>
+        <blue>40</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>7</red>
+        <green>22</green>
+        <blue>40</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>7</red>
+        <green>22</green>
+        <blue>40</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </disabled>
+   </palette>
+  </property>
+  <property name="font">
+   <font>
+    <family>Arial [Mono]</family>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(7, 22, 40);</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QPushButton" name="loop1btn1">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>10</y>
+     <width>251</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial [Mono]</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {   
+font-style:&quot;Arial&quot;;
+color:rgb(255, 255, 255);
+background-color: rgb(8, 98, 202);
+ border-style: solid;
+ border-width:1px;
+ border-radius:20px;
+ border-color:  rgb(11, 42, 78);
+border:2px groove gray;
+padding:14px 17px;
+ border: none;}
+QPushButton:checked{
+ background-color: rgb(11, 42, 78);
+ };</string>
+   </property>
+   <property name="text">
+    <string>Pressure / Volume</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="loop2btn1">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>10</y>
+     <width>251</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial [Mono]</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {   
+font-style:&quot;Arial&quot;;
+color:rgb(255, 255, 255);
+background-color: rgb(8, 98, 202);
+ border-style: solid;
+ border-width:1px;
+ border-radius:20px;
+ border-color:  rgb(11, 42, 78);
+border:2px groove gray;
+padding:14px 17px;
+ border: none;}
+QPushButton:checked{
+ background-color: rgb(11, 42, 78);
+ };</string>
+   </property>
+   <property name="text">
+    <string>Pressure / Volume</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="loop1btn2">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>110</y>
+     <width>251</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial [Mono]</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {   
+font-style:&quot;Arial&quot;;
+color:rgb(255, 255, 255);
+background-color: rgb(8, 98, 202);
+ border-style: solid;
+ border-width:1px;
+ border-radius:20px;
+ border-color:  rgb(11, 42, 78);
+border:2px groove gray;
+padding:14px 17px;
+ border: none;}
+QPushButton:checked{
+ background-color: rgb(11, 42, 78);
+ };</string>
+   </property>
+   <property name="text">
+    <string>Volume / Flow</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="loop2btn2">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>110</y>
+     <width>251</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial [Mono]</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {   
+font-style:&quot;Arial&quot;;
+color:rgb(255, 255, 255);
+background-color: rgb(8, 98, 202);
+ border-style: solid;
+ border-width:1px;
+ border-radius:20px;
+ border-color:  rgb(11, 42, 78);
+border:2px groove gray;
+padding:14px 17px;
+ border: none;}
+QPushButton:checked{
+ background-color: rgb(11, 42, 78);
+ };</string>
+   </property>
+   <property name="text">
+    <string>Volume / Flow</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="loop1btn3">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>210</y>
+     <width>251</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial [Mono]</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {   
+font-style:&quot;Arial&quot;;
+color:rgb(255, 255, 255);
+background-color: rgb(8, 98, 202);
+ border-style: solid;
+ border-width:1px;
+ border-radius:20px;
+ border-color:  rgb(11, 42, 78);
+border:2px groove gray;
+padding:14px 17px;
+ border: none;}
+QPushButton:checked{
+ background-color: rgb(11, 42, 78);
+ };</string>
+   </property>
+   <property name="text">
+    <string>Flow / Pressure</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="loop2btn3">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>210</y>
+     <width>251</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial [Mono]</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {   
+font-style:&quot;Arial&quot;;
+color:rgb(255, 255, 255);
+background-color: rgb(8, 98, 202);
+ border-style: solid;
+ border-width:1px;
+ border-radius:20px;
+ border-color:  rgb(11, 42, 78);
+border:2px groove gray;
+padding:14px 17px;
+ border: none;}
+QPushButton:checked{
+ background-color: rgb(11, 42, 78);
+ };</string>
+   </property>
+   <property name="text">
+    <string>Flow / Pressure</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="loop1btn4">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>310</y>
+     <width>251</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial [Mono]</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {   
+font-style:&quot;Arial&quot;;
+color:rgb(255, 255, 255);
+background-color: rgb(8, 98, 202);
+ border-style: solid;
+ border-width:1px;
+ border-radius:20px;
+ border-color:  rgb(11, 42, 78);
+border:2px groove gray;
+padding:14px 17px;
+ border: none;}
+QPushButton:checked{
+ background-color: rgb(11, 42, 78);
+ };</string>
+   </property>
+   <property name="text">
+    <string>Ptrach / Volume</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="loop1btn5">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>410</y>
+     <width>251</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial [Mono]</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {   
+font-style:&quot;Arial&quot;;
+color:rgb(255, 255, 255);
+background-color: rgb(8, 98, 202);
+ border-style: solid;
+ border-width:1px;
+ border-radius:20px;
+ border-color:  rgb(11, 42, 78);
+border:2px groove gray;
+padding:14px 17px;
+ border: none;}
+QPushButton:checked{
+ background-color: rgb(11, 42, 78);
+ };</string>
+   </property>
+   <property name="text">
+    <string>Flow / Ptrach</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="loop2btn4">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>310</y>
+     <width>251</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial [Mono]</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {   
+font-style:&quot;Arial&quot;;
+color:rgb(255, 255, 255);
+background-color: rgb(8, 98, 202);
+ border-style: solid;
+ border-width:1px;
+ border-radius:20px;
+ border-color:  rgb(11, 42, 78);
+border:2px groove gray;
+padding:14px 17px;
+ border: none;}
+QPushButton:checked{
+ background-color: rgb(11, 42, 78);
+ };</string>
+   </property>
+   <property name="text">
+    <string>Ptrach / Volume</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="loop2btn5">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>410</y>
+     <width>251</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial [Mono]</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {   
+font-style:&quot;Arial&quot;;
+color:rgb(255, 255, 255);
+background-color: rgb(8, 98, 202);
+ border-style: solid;
+ border-width:1px;
+ border-radius:20px;
+ border-color:  rgb(11, 42, 78);
+border:2px groove gray;
+padding:14px 17px;
+ border: none;}
+QPushButton:checked{
+ background-color: rgb(11, 42, 78);
+ };</string>
+   </property>
+   <property name="text">
+    <string>Flow / Ptrach</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
