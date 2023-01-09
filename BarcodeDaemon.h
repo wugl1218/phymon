@@ -1,7 +1,7 @@
 #ifndef BARCODEDAEMON_H
 #define BARCODEDAEMON_H
 
-#include <stdint.h>
+#include <stdint.h> 
 #include <dds/pub/ddspub.hpp>
 #include <dds/core/ddscore.hpp>
 
