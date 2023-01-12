@@ -131,12 +131,12 @@ INCLUDEPATH += $$PWD/rapidjson \
     /opt/rti_connext_dds-6.1.0/include/ndds \
     /opt/rti_connext_dds-6.1.0/include/ndds/hpp \
     /opt/couchbase-lite-C/build/output/include \
-    $$PWD/../Miot/CBLPlugin \
-    $$PWD/../Miot/DDSPlugin \
-    $$PWD/../Miot/FHIRPlugin \
-    $$PWD/../Miot/PluginInterface \
-    $$PWD/../Miot/PluginManager \
-    $$PWD/../Miot/UtilsPlugin
+    $$PWD/../miot/CBLPlugin \
+    $$PWD/../miot/DDSPlugin \
+    $$PWD/../miot/FHIRPlugin \
+    $$PWD/../miot/PluginInterface \
+    $$PWD/../miot/PluginManager \
+    $$PWD/../miot/UtilsPlugin
 
 
 LIBS += -L/opt/rti_connext_dds-6.1.0/lib/x64Linux4gcc7.3.0 -lnddscpp2 -lnddsc -lnddscore -ldl -lm -lpthread \
