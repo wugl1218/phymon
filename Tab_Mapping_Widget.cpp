@@ -12,7 +12,6 @@
 #include "ui_Tab_Utilities_alarmHistoryPage_Widget.h"
 #include "ui_Tab_Utilities_exporterPage_Widget.h"
 #include "ui_Tab_Utilities_Widget.h"
-#include "ui_Tab_Mapping_Widget.h"
 #include "ui_Dialog_forcerelease.h"
 
 
@@ -64,7 +63,7 @@ void Tab_Mapping_Widget::update_patients()
     int c = 0;
     for(auto it=common->md->pm.patients.begin();it!=common->md->pm.patients.end();it++)
     {
-        PatientCard* card = new PatientCard(ui->scrollAreaWidgetContents);
+        Card_Patient* card = new Card_Patient(ui->scrollAreaWidgetContents);
         card->setGeometry(CARD_SPACING+(CARD_WIDTH+CARD_SPACING)*c,
                           CARD_SPACING+(CARD_HEIGHT+CARD_SPACING)*r,
                           CARD_WIDTH, CARD_HEIGHT);
@@ -98,7 +97,7 @@ void Tab_Mapping_Widget::update_patients()
 
 /*    for(auto it=common->md->pm.patients.begin();it!=common->md->pm.patients.end();it++)
     {
-        PatientCard* card = new PatientCard(ui->scrollAreaWidgetContents);
+        Card_Patient* card = new Card_Patient(ui->scrollAreaWidgetContents);
         card->setGeometry(CARD_SPACING+(CARD_WIDTH+CARD_SPACING)*c,
                           CARD_SPACING+(CARD_HEIGHT+CARD_SPACING)*r,
                           CARD_WIDTH, CARD_HEIGHT);

@@ -4,17 +4,17 @@
 #include <QDialog>
 
 namespace Ui {
-class ReleaseDialog;
+class Dialog_release;
 }
 
-class ReleaseDialog : public QDialog
+class Dialog_release : public QDialog
 {
     Q_OBJECT
 
 public:
     uint8_t ok;
-    explicit ReleaseDialog(QWidget *parent = nullptr);
-    ~ReleaseDialog();
+    explicit Dialog_release(QWidget *parent = nullptr);
+    ~Dialog_release();
     std::string getText();
     void clearText();
 
@@ -23,7 +23,7 @@ private slots:
     void on_ok_btn_clicked();
 
 private:
-    Ui::ReleaseDialog *ui;
+    Ui::Dialog_release *ui;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

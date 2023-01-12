@@ -6,11 +6,11 @@
 #include <QLabel>
 #include <QMouseEvent>
 
-class MDSConnectivityCard : public QWidget
+class Card_MDSConnectivity : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MDSConnectivityCard(QWidget *parent = nullptr);
+    explicit Card_MDSConnectivity(QWidget *parent = nullptr);
     void set_is_male(uint8_t is_male);
     uint8_t is_male();
     void set_id (std::string id);

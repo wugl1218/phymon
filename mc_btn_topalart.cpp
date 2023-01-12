@@ -4,17 +4,15 @@
 #include <QMouseEvent>
 
 
-mc_btn_topalart::mc_btn_topalart(QWidget *parent): QLabel(parent)
+Topalartbtn::Topalartbtn(QWidget *parent): QLabel(parent)
 {
-
 }
 
-void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
+void Topalartbtn::mousePressEvent(QMouseEvent *event)
 {
-
 }
 
-void mc_btn_topalart::mouseReleaseEvent(QMouseEvent *event)
+void Topalartbtn::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
     if(event->button() == Qt::LeftButton)

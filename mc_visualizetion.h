@@ -11,10 +11,13 @@ public:
     explicit mc_visualizetion(QWidget *parent = nullptr);
     void set_modle_count(int count);
 private:
-protected:
-    void paintEvent(QPaintEvent *event) override;
     int modle_count=0;
 
+protected:
+    void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+signals:
+    void on_press();
 };
 
 #endif // MC_VISUALIZETION_H

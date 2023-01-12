@@ -1,7 +1,7 @@
 #include "Manager_Patient.h"
 #include "MainDialog.h"
 
-void PatientManager::init()
+void Manager_Patient::init()
 {
     running = 1;
     auto_rebind = 1;
@@ -23,15 +23,15 @@ void PatientManager::init()
 
 }
 
-void PatientManager::step()
+void Manager_Patient::step()
 {
 
     Common* common = Common::instance();
     uint32_t current_time = Common::get_time_ms();
     if(Common::get_elapsed_time(current_time, last_query_time) > (uint32_t)common->patients_query_interval*1000)
     {
-     qDebug()<<"PatientManager";
-        fflog_out(common->log,"PatientManager");
+     qDebug()<<"Manager_Patient";
+        fflog_out(common->log,"Manager_Patient");
         bound_patients.clear();
         dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> mds_samples = common->mds_reader.select().condition(*mds_cond).read();
         for(auto& sample : mds_samples)
@@ -191,7 +191,7 @@ void PatientManager::step()
     }
 }
 
-void PatientManager::force_release()
+void Manager_Patient::force_release()
 {
     Common* common = Common::instance();
     // we need to wait...

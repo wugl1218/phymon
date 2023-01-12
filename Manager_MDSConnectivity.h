@@ -27,7 +27,7 @@ public:
     uint64_t nanosec;
 };
 
-class MDSConnectivityManager
+class Manager_MDSConnectivity
 {
 public:
     dds::sub::cond::ReadCondition* cond;

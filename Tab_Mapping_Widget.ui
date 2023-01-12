@@ -868,7 +868,7 @@ QScrollBar::sub-line:horizontal{
                <string notr="true">color: rgb(255, 255, 255);
 background-color: rgb(7, 22, 40);</string>
               </property>
-              <widget class="PatientCard" name="template_patient" native="true">
+              <widget class="Card_Patient" name="template_patient" native="true">
                <property name="geometry">
                 <rect>
                  <x>10</x>
@@ -2536,7 +2536,7 @@ color: rgb(255, 255, 255);}
       </spacer>
      </item>
      <item>
-      <widget class="ClickableLabel" name="returnbtn">
+      <widget class="mc_btn_Clickable" name="returnbtn">
        <property name="text">
         <string/>
        </property>
@@ -2546,7 +2546,7 @@ color: rgb(255, 255, 255);}
       </widget>
      </item>
      <item>
-      <widget class="ClickableLabel" name="releasebtn">
+      <widget class="mc_btn_Clickable" name="releasebtn">
        <property name="text">
         <string/>
        </property>
@@ -2561,14 +2561,14 @@ color: rgb(255, 255, 255);}
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ClickableLabel</class>
+   <class>mc_btn_Clickable</class>
    <extends>QLabel</extends>
-   <header>ClickableLabel.h</header>
+   <header>mc_btn_Clickable.h</header>
   </customwidget>
   <customwidget>
-   <class>PatientCard</class>
+   <class>Card_Patient</class>
    <extends>QWidget</extends>
-   <header>PatientCard.h</header>
+   <header>Card_Patient.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

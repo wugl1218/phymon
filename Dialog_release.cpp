@@ -2,43 +2,43 @@
 #include "qevent.h"
 #include "ui_Dialog_release.h"
 
-ReleaseDialog::ReleaseDialog(QWidget *parent) :
+Dialog_release::Dialog_release(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ReleaseDialog)
+    ui(new Ui::Dialog_release)
 {
     ui->setupUi(this);
     setWindowFlags(Qt::Popup);
 }
 
-ReleaseDialog::~ReleaseDialog()
+Dialog_release::~Dialog_release()
 {
     delete ui;
 }
 
-void ReleaseDialog::mousePressEvent(QMouseEvent *event)
+void Dialog_release::mousePressEvent(QMouseEvent *event)
 {
 
 }
 
-std::string ReleaseDialog::getText()
+std::string Dialog_release::getText()
 {
     return ui->lineEdit->text().toStdString();
 }
 
-void ReleaseDialog::clearText()
+void Dialog_release::clearText()
 {
     ui->lineEdit->clear();
     ui->lineEdit->setFocus();
 }
 
-void ReleaseDialog::on_cancel_btn_clicked()
+void Dialog_release::on_cancel_btn_clicked()
 {
     ok = 0;
     close();
 }
 
 
-void ReleaseDialog::on_ok_btn_clicked()
+void Dialog_release::on_ok_btn_clicked()
 {
     if(ui->lineEdit->text().size() == 0)
         return;

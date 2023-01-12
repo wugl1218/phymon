@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QDate>
-#include "PatientCard.h"
+#include "Card_Patient.h"
 #include "Dialog_forcerelease.h"
 #include "qtimer.h"
 #include "Dialog_release.h"
@@ -30,7 +30,7 @@ public:
     void perform_release(std::string employeeID);
     void mapping_UI_reset();
     void hide_windows();
-    ForceReleaseDialog frd;
+    Dialog_forcerelease frd;
 
 
 private slots:
@@ -59,7 +59,7 @@ private:
     double friction;
     uint8_t press_is_stationary;
     QPointF press_pos;
-    std::vector<PatientCard*> cards;
+    std::vector<Card_Patient*> cards;
     int selected_patient;
     void on_itemSelectionChanged();
 };

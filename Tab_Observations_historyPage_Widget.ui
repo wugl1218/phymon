@@ -339,7 +339,7 @@ selection-background-color: rgb(49, 87, 120);   /* 整個下拉窗體被選中�
              <number>0</number>
             </property>
             <item>
-             <widget class="ClickableLabel" name="hour_up">
+             <widget class="mc_btn_Clickable" name="hour_up">
               <property name="maximumSize">
                <size>
                 <width>50</width>
@@ -378,7 +378,7 @@ color:rgb(255, 255, 255);</string>
              </widget>
             </item>
             <item>
-             <widget class="ClickableLabel" name="hour_down">
+             <widget class="mc_btn_Clickable" name="hour_down">
               <property name="maximumSize">
                <size>
                 <width>50</width>
@@ -430,7 +430,7 @@ color:rgb(255, 255, 255);</string>
              <number>0</number>
             </property>
             <item>
-             <widget class="ClickableLabel" name="min_up">
+             <widget class="mc_btn_Clickable" name="min_up">
               <property name="maximumSize">
                <size>
                 <width>50</width>
@@ -469,7 +469,7 @@ color:rgb(255, 255, 255);</string>
              </widget>
             </item>
             <item>
-             <widget class="ClickableLabel" name="min_down">
+             <widget class="mc_btn_Clickable" name="min_down">
               <property name="maximumSize">
                <size>
                 <width>50</width>
@@ -1956,7 +1956,7 @@ QScrollBar::sub-line:vertical{
       </spacer>
      </item>
      <item>
-      <widget class="ClickableLabel" name="returnbtn">
+      <widget class="mc_btn_Clickable" name="returnbtn">
        <property name="text">
         <string/>
        </property>
@@ -1971,9 +1971,9 @@ QScrollBar::sub-line:vertical{
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ClickableLabel</class>
+   <class>mc_btn_Clickable</class>
    <extends>QLabel</extends>
-   <header>ClickableLabel.h</header>
+   <header>mc_btn_Clickable.h</header>
   </customwidget>
   <customwidget>
    <class>mc_chart</class>

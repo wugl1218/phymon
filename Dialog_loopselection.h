@@ -10,16 +10,16 @@
 #define LOOP_FLOW_PTRACH        4
 
 namespace Ui {
-class LoopSelectionDialog;
+class Dialog_loopselection;
 }
 
-class LoopSelectionDialog : public QDialog
+class Dialog_loopselection : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit LoopSelectionDialog(QWidget *parent = nullptr);
-    ~LoopSelectionDialog();
+    explicit Dialog_loopselection(QWidget *parent = nullptr);
+    ~Dialog_loopselection();
     void set_current_loops(int loop1_type, int loop2_type);
     void get_current_loops(int* loop1_type, int* loop2_type);
 
@@ -45,7 +45,7 @@ private slots:
     void on_loop2btn5_clicked();
 
 private:
-    Ui::LoopSelectionDialog *ui;
+    Ui::Dialog_loopselection *ui;
     int loop1_type;
     int loop2_type;
     void set_checked(QWidget* w, uint8_t checked);

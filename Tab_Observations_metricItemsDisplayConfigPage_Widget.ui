@@ -5791,7 +5791,7 @@ color:rgb(255, 255, 255);</string>
         </spacer>
        </item>
        <item>
-        <widget class="ClickableLabel" name="restoreAllbtn">
+        <widget class="mc_btn_Clickable" name="restoreAllbtn">
          <property name="text">
           <string/>
          </property>
@@ -5801,7 +5801,7 @@ color:rgb(255, 255, 255);</string>
         </widget>
        </item>
        <item>
-        <widget class="ClickableLabel" name="restorebtn">
+        <widget class="mc_btn_Clickable" name="restorebtn">
          <property name="text">
           <string/>
          </property>
@@ -5811,7 +5811,7 @@ color:rgb(255, 255, 255);</string>
         </widget>
        </item>
        <item>
-        <widget class="ClickableLabel" name="savebtn">
+        <widget class="mc_btn_Clickable" name="savebtn">
          <property name="text">
           <string/>
          </property>
@@ -5828,9 +5828,9 @@ color:rgb(255, 255, 255);</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ClickableLabel</class>
+   <class>mc_btn_Clickable</class>
    <extends>QLabel</extends>
-   <header>ClickableLabel.h</header>
+   <header>mc_btn_Clickable.h</header>
   </customwidget>
  </customwidgets>
  <resources>

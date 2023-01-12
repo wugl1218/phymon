@@ -8,7 +8,10 @@ mc_visualizetion::mc_visualizetion(QWidget *parent)
     : QWidget(parent)
 {
 }
-
+void mc_visualizetion::mousePressEvent(QMouseEvent *event)
+{
+    emit on_press();
+}
 void mc_visualizetion::paintEvent(QPaintEvent *event)
 {
     int count = modle_count;

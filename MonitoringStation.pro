@@ -16,7 +16,7 @@ DEFINES += RTI_UNIX \
 SOURCES += \
     BarcodeDaemon.cpp \
     Card_MDSConnectivity.cpp \
-    ClickableLabel.cpp \
+    Card_Patient.cpp \
     Common.cpp \
     Dialog_forcerelease.cpp \
     Dialog_jsontext.cpp \
@@ -24,14 +24,14 @@ SOURCES += \
     Dialog_msg.cpp \
     Dialog_network.cpp \
     Dialog_release.cpp \
-    Dialog_visualizetionSelection.cpp \
+    Dialog_visualization_config.cpp \
+    Dialog_visualization_selection.cpp \
     MainDialog.cpp \
     Manager_Device.cpp \
     Manager_MDSConnectivity.cpp \
     Manager_Patient.cpp \
     Manager_Topalarm.cpp \
     NetworkManager.cpp \
-    PatientCard.cpp \
     Tab_Devices_Widget.cpp \
     Tab_Domaininput.cpp \
     Tab_Mapping_Widget.cpp \
@@ -47,19 +47,21 @@ SOURCES += \
     exporter.cpp \
     log.cpp \
     main.cpp \
+    mc_btn_Clickable.cpp \
     mc_btn_topalart.cpp \
     mc_chart.cpp \
     mc_legend.cpp \
     mc_loop.cpp \
     mc_navigation.cpp \
     mc_selection_entry.cpp \
-    mc_visualizetion.cpp
+    mc_visualizetion.cpp \
+    mc_visualizetion_setting.cpp
 
 HEADERS += \
     BarcodeDaemon.h \
     CSS_Infusion.h \
     Card_MDSConnectivity.h \
-    ClickableLabel.h \
+    Card_Patient.h \
     Common.h \
     Dialog_forcerelease.h \
     Dialog_jsontext.h \
@@ -67,14 +69,14 @@ HEADERS += \
     Dialog_msg.h \
     Dialog_network.h \
     Dialog_release.h \
-    Dialog_visualizetionSelection.h \
+    Dialog_visualization_config.h \
+    Dialog_visualization_selection.h \
     MainDialog.h \
     Manager_Device.h \
     Manager_MDSConnectivity.h \
     Manager_Patient.h \
     Manager_Topalarm.h \
     NetworkManager.h \
-    PatientCard.h \
     Tab_Devices_Widget.h \
     Tab_Domaininput.h \
     Tab_Mapping_Widget.h \
@@ -89,13 +91,15 @@ HEADERS += \
     Thread_network.h \
     exporter.h \
     log.h \
+    mc_btn_Clickable.h \
     mc_btn_topalart.h \
     mc_chart.h \
     mc_legend.h \
     mc_loop.h \
     mc_navigation.h \
     mc_selection_entry.h \
-    mc_visualizetion.h
+    mc_visualizetion.h \
+    mc_visualizetion_setting.h
 
 FORMS += \
     Dialog_forcerelease.ui \
@@ -104,7 +108,8 @@ FORMS += \
     Dialog_msg.ui \
     Dialog_network.ui \
     Dialog_release.ui \
-    Dialog_visualizetionSelection.ui \
+    Dialog_visualization_config.ui \
+    Dialog_visualization_selection.ui \
     MainDialog.ui \
     Tab_Devices_Widget.ui \
     Tab_Domaininput.ui \

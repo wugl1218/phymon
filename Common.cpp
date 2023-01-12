@@ -7,7 +7,7 @@
 #include "qpainter.h"
 
 Common* _common = NULL;
-
+//123
 
 
 Common::Common(MainDialog* m)
@@ -59,7 +59,10 @@ Common::Common(MainDialog* m)
     log_path = d["LogPath"].GetString();;
 
     rti::config::Verbosity verbosity = static_cast<rti::config::Verbosity::inner_enum>(0);
-    rti::config::Logger::instance().verbosity(verbosity);
+    // Starting RTI DDS...
+    // rti::config::Verbosity verbosity(rti::config::Verbosity::WARNING);
+    // NDDSConfigLogger::get_instance()->set_verbosity(verbosity);
+    //rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_LOCAL); //顯示dds訊息
     pluginManager = PluginManager::instance();
     pluginManager->loadAllPlugins(plugins_path.c_str());
 
@@ -99,7 +102,10 @@ Common::Common(MainDialog* m)
             printf("Unable to get vmd_id\n");
             exit(1);
         }
+        md->nd.is_server=0;
     }
+    else
+        md->nd.is_server=1;
     cbl::ResultSet dresults = cbl->queryDocuments(db, "SELECT domain_id FROM _ WHERE data_source='DOMAIN' ORDER BY source_timestamp DESC", dummy);
     domain_id = -1;
     for(auto& result: dresults)
@@ -138,7 +144,6 @@ Common::~Common()
 void Common::init_dds(int domain_id)
 {
 
-    rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_LOCAL); //顯示dds訊息
 
     participant = dds->getDomainParticipant(domain_id, qos_path, "VMD_Library::profile");
     publisher = dds->getPublisher();

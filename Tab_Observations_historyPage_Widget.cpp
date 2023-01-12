@@ -116,8 +116,6 @@ void Tab_Observations_historyPage_Widget::on_worker()
             sql.append(common->patient_id);
             sql.append("' AND channel_id='");
             sql.append(common->history_channel);
-            sql.append("' AND vmd_id='");
-            sql.append(common->vmd_id);
             sql.append("'");
             uint32_t query_start = Common::get_time_ms();
             cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);

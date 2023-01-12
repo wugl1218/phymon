@@ -32,10 +32,7 @@ void network_thread::init()
         msgBox.setText("Debug by Philo\nPlese check config.json.");
         msgBox.exec();
     }
-    if(common->is_server)
-        common->md->nd.is_server=1;
-    else
-        common->md->nd.is_server=0;
+
 }
 void network_thread::run()
 {

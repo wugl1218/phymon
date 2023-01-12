@@ -35,7 +35,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,1">
    <property name="spacing">
-    <number>10</number>
+    <number>0</number>
    </property>
    <property name="leftMargin">
     <number>0</number>
@@ -50,7 +50,7 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,13,7">
+    <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,13,0,0">
      <property name="spacing">
       <number>0</number>
      </property>
@@ -338,6 +338,29 @@ color:rgb(255, 255, 255);</string>
           </widget>
          </item>
         </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="mc_visualizetion" name="visualizetion" native="true"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>150</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>mc_visualizetionsetting</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -776,7 +799,7 @@ QPushButton:checked{
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>253</width>
+          <width>257</width>
           <height>696</height>
          </rect>
         </property>
@@ -907,7 +930,7 @@ QScrollBar::sub-line:vertical{
                <bool>false</bool>
               </attribute>
               <attribute name="verticalHeaderDefaultSectionSize">
-               <number>42</number>
+               <number>40</number>
               </attribute>
               <row>
                <property name="text">
@@ -1449,6 +1472,12 @@ QScrollBar::sub-line:vertical{
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>mc_visualizetion</class>
+   <extends>QWidget</extends>
+   <header>mc_visualizetion.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>mc_chart</class>
    <extends>QWidget</extends>

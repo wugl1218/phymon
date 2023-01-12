@@ -1,39 +1,39 @@
 #include "Dialog_forcerelease.h"
 #include "ui_Dialog_forcerelease.h"
 
-ForceReleaseDialog::ForceReleaseDialog(QWidget *parent) :
+Dialog_forcerelease::Dialog_forcerelease(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ForceReleaseDialog)
+    ui(new Ui::Dialog_forcerelease)
 {
     ui->setupUi(this);
     setWindowFlags(Qt::Dialog|Qt::WindowStaysOnTopHint|Qt::WindowTitleHint| Qt::CustomizeWindowHint);
     setWindowFlags(Qt::Popup);
 }
 
-ForceReleaseDialog::~ForceReleaseDialog()
+Dialog_forcerelease::~Dialog_forcerelease()
 {
     delete ui;
 }
 
-std::string ForceReleaseDialog::getText()
+std::string Dialog_forcerelease::getText()
 {
     return ui->lineEdit->text().toStdString();
 }
 
-void ForceReleaseDialog::clearText()
+void Dialog_forcerelease::clearText()
 {
     ui->lineEdit->clear();
     ui->lineEdit->setFocus();
 }
 
-void ForceReleaseDialog::on_pushButton_clicked()
+void Dialog_forcerelease::on_pushButton_clicked()
 {
     if(ui->lineEdit->text().size() == 0)
         return;
     close();
 }
 
-void ForceReleaseDialog::mousePressEvent(QMouseEvent *event)
+void Dialog_forcerelease::mousePressEvent(QMouseEvent *event)
 {
 
 }

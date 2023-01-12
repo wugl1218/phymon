@@ -112,8 +112,8 @@ public:
     DDSInterface *dds;
     CBLInterface *cbl;
     UtilsInterface *utils;
-    MsgDialog msg;
-    ReleaseDialog rd;
+    Dialog_msg msg;
+    Dialog_release rd;
     CSS css;
     int max_undo_history_entries;
     std::map<std::string, uint8_t> device_checkstate;

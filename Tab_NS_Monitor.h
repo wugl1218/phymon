@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QDate>
 #include <QFile>
-#include "PatientCard.h"
+#include "Card_Patient.h"
 #include "qtimer.h"
 #include "Dialog_release.h"
 #include <vector>
@@ -13,6 +13,10 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QJsonArray>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
+#include <QFile>
 
 
 namespace Ui {
@@ -32,18 +36,16 @@ public:
     QString Bed_size;
     QJsonArray Set_bed;
 
-
 private slots:
     void patient_clicked();
 
-
-    void on_spinBox_valueChanged(int arg1);
+    void on_pushButton_clicked();
 
 signals:
     void bindingChanged();
 private:
     Ui::Tab_NS_Monitor *ui;
-    std::vector<MDSConnectivityCard*> cards;
+    std::vector<Card_MDSConnectivity*> cards;
     void on_itemSelectionChanged();
 
 

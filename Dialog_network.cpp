@@ -2,9 +2,9 @@
 #include "ui_Dialog_network.h"
 #include <QCloseEvent>
 
-NetworkDialog::NetworkDialog(QWidget *parent) :
+Dialog_network::Dialog_network(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::NetworkDialog)
+    ui(new Ui::Dialog_network)
 {
     ui->setupUi(this);
     if(is_server)
@@ -17,16 +17,16 @@ NetworkDialog::NetworkDialog(QWidget *parent) :
         setWindowFlags(Qt::WindowStaysOnTopHint|Qt::WindowTitleHint| Qt::CustomizeWindowHint|Qt::Popup);
 }
 
-NetworkDialog::~NetworkDialog()
+Dialog_network::~Dialog_network()
 {
     delete ui;
 }
-void NetworkDialog::mousePressEvent(QMouseEvent *event)
+void Dialog_network::mousePressEvent(QMouseEvent *event)
 {
 
 }
 
-void NetworkDialog::on_ConfirmButton_clicked()
+void Dialog_network::on_ConfirmButton_clicked()
 {
 
     if(is_server)
@@ -37,7 +37,7 @@ void NetworkDialog::on_ConfirmButton_clicked()
         close();
 }
 
-void NetworkDialog::keyPressEvent(QKeyEvent *event)
+void Dialog_network::keyPressEvent(QKeyEvent *event)
 {
     //不處理ESC鍵盤事 件。
     switch (event->key())

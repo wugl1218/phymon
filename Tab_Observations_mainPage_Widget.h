@@ -9,7 +9,7 @@
 #include <QScrollArea>
 #include <QAbstractButton>
 #include "Dialog_loopselection.h"
-#include "Dialog_visualizetionSelection.h"
+#include "Dialog_visualization_config.h"
 
 class mc_loop_entry
 {
@@ -33,8 +33,8 @@ public:
     void clear_points();
     Ui::Tab_Observations_mainPage_Widget *ui;
     std::string CapturedIssues_channel_id;
-    LoopSelectionDialog lsd;
-    VisualizetionSelectionDialog vsd;
+    Dialog_loopselection lsd;
+    Dialog_visualization_config vsd;
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
@@ -91,7 +91,6 @@ private:
     void loop_check_and_shrink(int loopnum, float x, float y);
 
 private slots:
-    void loop_clicked();
     void update_triggered();
     void chart_update_triggered();
     void on_series_pressed(int);
@@ -103,6 +102,10 @@ private slots:
     void on_device3_tableWidget_cellClicked(int row, int column);
 
     void on_device4_tableWidget_cellClicked(int row, int column);
+
+    void visualizetion_clicked();
+
+    void loop_clicked();
 
     void on_ref_btn_toggled(bool checked);
 
