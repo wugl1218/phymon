@@ -4,16 +4,16 @@
 #include <QDialog>
 
 namespace Ui {
-class DomainInput;
+class Tab_Domaininput;
 }
 
-class DomainInput : public QDialog
+class Tab_Domaininput : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DomainInput(QWidget *parent = nullptr);
-    ~DomainInput();
+    explicit Tab_Domaininput(QWidget *parent = nullptr);
+    ~Tab_Domaininput();
     int domain_id;
 
 private slots:
@@ -42,7 +42,7 @@ private slots:
     void on_bok_clicked();
 
 private:
-    Ui::DomainInput *ui;
+    Ui::Tab_Domaininput *ui;
 };
 
 #endif // TAB_DOMAININPUT_H

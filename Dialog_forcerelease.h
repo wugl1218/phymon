@@ -4,19 +4,19 @@
 #include <QDialog>
 
 namespace Ui {
-class ForceReleaseDialog;
+class Dialog_forcerelease;
 }
 
-class ForceReleaseDialog : public QDialog
+class Dialog_forcerelease : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit ForceReleaseDialog(QWidget *parent = nullptr);
-    ~ForceReleaseDialog();
+    explicit Dialog_forcerelease(QWidget *parent = nullptr);
+    ~Dialog_forcerelease();
     std::string getText();
     void clearText();
-    Ui::ForceReleaseDialog *ui;
+    Ui::Dialog_forcerelease *ui;
 
 
 private slots:

@@ -1,9 +1,9 @@
 #include "Dialog_msg.h"
 #include "ui_Dialog_msg.h"
 
-MsgDialog::MsgDialog(QWidget *parent) :
+Dialog_msg::Dialog_msg(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::MsgDialog)
+    ui(new Ui::Dialog_msg)
 {
     ui->setupUi(this);
     setWindowFlags(Qt::Popup);
@@ -11,14 +11,14 @@ MsgDialog::MsgDialog(QWidget *parent) :
     ui->label->adjustSize();
 }
 
-MsgDialog::~MsgDialog()
+Dialog_msg::~Dialog_msg()
 {
     delete ui;
 }
 
 
 
-void MsgDialog::setText(QString qstr)
+void Dialog_msg::setText(QString qstr)
 {
     ui->label->setText(qstr);
     ui->label->setWordWrap(true);
@@ -29,7 +29,7 @@ void MsgDialog::setText(QString qstr)
     resize(530,135+nNewHeight);
 }
 
-void MsgDialog::on_ConfirmButton_clicked()
+void Dialog_msg::on_ConfirmButton_clicked()
 {
     close();
 }

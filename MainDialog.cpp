@@ -36,7 +36,6 @@ MainDialog::MainDialog(QWidget *parent)
     efx->setSource(QUrl::fromLocalFile(":/wav/warning.wav"));
     efx->setVolume(1.0);            // 0.0 ~ 1.0
     efx->setLoopCount(1);
-    ui->topalarm_label->installEventFilter(this);
     if(!common.is_server)
     {
         ui->main_stackedWidget->setCurrentIndex(1);
@@ -95,7 +94,7 @@ MainDialog::MainDialog(QWidget *parent)
     exporter.init();
     mainWorker = new QTimer(this);
     connect(mainWorker, SIGNAL(timeout()), this, SLOT(mainWorkerUpdate()));
-    connect(ui->topalarm_label, SIGNAL(on_click()), this, SLOT(is_alarmSound()));
+    connect(ui->topalarm_label, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
     mainWorker->start(16);
     db_cleaner = new QTimer(this);
     connect(db_cleaner, SIGNAL(timeout()), this, SLOT(db_clean()));

@@ -2,12 +2,12 @@
 #include "MainDialog.h"
 
 
-void TopAlarmManager::init()
+void Manager_Topalarm::init()
 {
     Common* common = Common::instance();
     last_query_time = 0;
 }
-void TopAlarmManager::step()
+void Manager_Topalarm::step()
 { 
 
     Common* common = Common::instance();
@@ -24,8 +24,8 @@ void TopAlarmManager::step()
     uint32_t current_time = Common::get_time_ms();
     if(Common::get_elapsed_time(current_time, last_query_time) > (uint32_t)common->Alarmloop_interval*1000)
     {
-    qDebug()<<"TopAlarmManager";
-        fflog_out(common->log,"TopAlarmManager");
+    qDebug()<<"Manager_Topalarm";
+        fflog_out(common->log,"Manager_Topalarm");
         last_query_time = current_time;
         common->md->ui->topalarm_label->setText("");
         std::string querystr = "vmd_id MATCH '";

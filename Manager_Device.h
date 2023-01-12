@@ -3,7 +3,7 @@
 
 #include "Common.h"
 
-class DeviceManager
+class Manager_Device
 {
 public:
     dds::sub::cond::QueryCondition* cond;

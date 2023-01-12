@@ -4,9 +4,9 @@
 #include "qevent.h"
 
 
-jsontext::jsontext(QWidget *parent) :
+Dialog_jsontext::Dialog_jsontext(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::jsontext)
+    ui(new Ui::Dialog_jsontext)
 {
     ui->setupUi(this);
     setWindowFlags(Qt::Popup);
@@ -14,11 +14,11 @@ jsontext::jsontext(QWidget *parent) :
 
 }
 
-jsontext::~jsontext()
+Dialog_jsontext::~Dialog_jsontext()
 {
     delete ui;
 }
-void jsontext::getText(QString jsonfile)
+void Dialog_jsontext::getText(QString jsonfile)
 {
     if (jsonfile=="") return;
     QString label ="../output/";
@@ -42,16 +42,16 @@ void jsontext::getText(QString jsonfile)
 
     file.close();
 }
-void jsontext::clearText()
+void Dialog_jsontext::clearText()
 {
     ui->json_text->clear();
 }
 
-void jsontext::on_pushButton_clicked()
+void Dialog_jsontext::on_pushButton_clicked()
 {
     close();
 }
-void jsontext::mousePressEvent(QMouseEvent *event)
+void Dialog_jsontext::mousePressEvent(QMouseEvent *event)
 {
 }
 

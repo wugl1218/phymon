@@ -4,12 +4,12 @@
 #include <QAbstractItemModel>
 #include <QLabel>
 
-class mc_btn_topalart : public QLabel
+class Topalartbtn : public QLabel
 {
     Q_OBJECT
 
 public:
-    explicit mc_btn_topalart(QWidget *parent = nullptr);
+    explicit Topalartbtn(QWidget *parent = nullptr);
 
 
 protected:

@@ -20,8 +20,19 @@ public:
     std::string gender;
     std::string vehicle;
 };
-
-class PatientManager
+class PatientVisualization
+{
+public:
+    std::string id;
+    std::string date_name;
+    QList<float> date;
+    float lowest;
+    float lower;
+    float higher;
+    float highest;
+    QColor color;
+};
+class Manager_Patient
 {
 public:
     uint8_t running;
@@ -37,7 +48,6 @@ public:
     void force_release();
     bool is_checking=0 ;
     QTcpSocket *client = nullptr;
-
 
 };
 

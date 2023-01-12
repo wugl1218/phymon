@@ -32,18 +32,18 @@ public:
     ~MainDialog();
 
     Ui::MainDialog *ui;
-    PatientManager pm;
-    DeviceManager dm;
-    DomainInput di;
+    Manager_Patient pm;
+    Manager_Device dm;
+    Tab_Domaininput di;
     Exporter exporter;
-    TopAlarmManager ta;
-    MDSConnectivityManager mdsm;
+    Manager_Topalarm ta;
+    Manager_MDSConnectivity mdsm;
     Tab_NS_Monitor monitor;
 //    NetworkManager nm;
-    NetworkDialog nd;
+    Dialog_network nd;
     QSoundEffect *efx;
     bool is_alarmSound_index=1;
-    jsontext jt;
+    Dialog_jsontext jt;
     network_thread* network;
 
     void outPutInfo(QString info);

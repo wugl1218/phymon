@@ -5,7 +5,7 @@
 #include <QJsonValue>
 
 
-void MDSConnectivityManager::init()
+void Manager_MDSConnectivity::init()
 {
     Common* common = Common::instance();
     cond = new dds::sub::cond::ReadCondition(
@@ -30,7 +30,7 @@ void MDSConnectivityManager::init()
     last_query_time = 0;
     last_query_time1 = 0;
 }
-void MDSConnectivityManager::step()
+void Manager_MDSConnectivity::step()
 {
     return;
     Common* common = Common::instance();
@@ -78,8 +78,8 @@ void MDSConnectivityManager::step()
     if(Common::get_elapsed_time(current_time, last_query_time) > (uint32_t)common->MDSloop_interval*1000)
         {
         common->observation_puller.start(true);
-    qDebug()<<"MDSConnectivityManager";
-        fflog_out(common->log,"MDSConnectivityManager");
+    qDebug()<<"Manager_MDSConnectivity";
+        fflog_out(common->log,"Manager_MDSConnectivity");
         last_query_time = current_time;
         dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->mdsm_reader.select().condition(*cond).read();
         for(auto& sample : samples)//MDS

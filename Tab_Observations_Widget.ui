@@ -58,15 +58,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Tab_Observations_historyPage_Widget</class>
-   <extends>QWidget</extends>
-   <header location="global">Tab_Observations_historyPage_Widget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>Tab_Observations_mainPage_Widget</class>
    <extends>QWidget</extends>
    <header>Tab_Observations_mainPage_Widget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Tab_Observations_historyPage_Widget</class>
+   <extends>QWidget</extends>
+   <header>Tab_Observations_historyPage_Widget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

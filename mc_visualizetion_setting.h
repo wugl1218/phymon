@@ -1,14 +1,14 @@
-#ifndef DIALOG_VISUALIZETIONSELECTION_H
-#define DIALOG_VISUALIZETIONSELECTION_H
+#ifndef MC_VISUALIZETION_SETTING_H
+#define MC_VISUALIZETION_SETTING_H
 
 #include <QAbstractItemModel>
 
-class Dialog_visualizetionselection : public QAbstractItemModel
+class mc_visualizetion_setting : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    explicit Dialog_visualizetionselection(QObject *parent = nullptr);
+    explicit mc_visualizetion_setting(QObject *parent = nullptr);
 
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
@@ -26,4 +26,4 @@ public:
 private:
 };
 
-#endif // DIALOG_VISUALIZETIONSELECTION_H
+#endif // MC_VISUALIZETION_SETTING_H

@@ -2820,30 +2820,17 @@ background-color: rgb(7, 22, 40);</string>
          </property>
         </widget>
        </widget>
-       <widget class="mc_visualizetion" name="visualizetion" native="true">
+       <widget class="QPushButton" name="pushButton">
         <property name="geometry">
          <rect>
-          <x>420</x>
-          <y>90</y>
-          <width>441</width>
-          <height>331</height>
+          <x>470</x>
+          <y>380</y>
+          <width>89</width>
+          <height>25</height>
          </rect>
         </property>
-       </widget>
-       <widget class="QSpinBox" name="spinBox">
-        <property name="geometry">
-         <rect>
-          <x>260</x>
-          <y>250</y>
-          <width>101</width>
-          <height>111</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <family>Ubuntu</family>
-          <pointsize>30</pointsize>
-         </font>
+        <property name="text">
+         <string>PushButton</string>
         </property>
        </widget>
       </widget>
@@ -2852,14 +2839,6 @@ background-color: rgb(7, 22, 40);</string>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>mc_visualizetion</class>
-   <extends>QWidget</extends>
-   <header>mc_visualizetion.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

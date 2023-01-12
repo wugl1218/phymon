@@ -18,7 +18,7 @@ public:
     uint64_t sec;
     uint64_t nanosec;
 };
-class TopAlarmManager
+class Manager_Topalarm
 {
 public:
     uint32_t last_query_time;

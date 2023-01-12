@@ -5,12 +5,12 @@
 #include "Tab_Observations_metricItemsDisplayConfigPage_Widget.h"
 #include "MainDialog.h"
 
-void DeviceManager::init()
+void Manager_Device::init()
 {
     last_query_time = 0;
 }
 
-void DeviceManager::step()
+void Manager_Device::step()
 {
     Common* common = Common::instance();
     std::string querystr1 = "state MATCH 'READY'";
@@ -27,8 +27,8 @@ void DeviceManager::step()
     if(common->is_server && common->patient_id.size()==0)return;
     if(Common::get_elapsed_time(current_time, last_query_time) > (uint32_t)common->devices_query_interval*1000)
     {
-     qDebug()<<"DeviceManager";
-        fflog_out(common->log,"DeviceManager");
+     qDebug()<<"Manager_Device";
+        fflog_out(common->log,"Manager_Device");
         last_query_time = current_time;
         devices.clear();
         dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->devcon_reader.select().condition(cond).read();

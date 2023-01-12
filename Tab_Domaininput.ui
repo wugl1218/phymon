@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DomainInput</class>
+ <class>Tab_Domaininput</class>
  <widget class="QDialog" name="DomainInput">
   <property name="geometry">
    <rect>

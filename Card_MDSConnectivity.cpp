@@ -4,7 +4,7 @@
 #include "MainDialog.h"
 
 
-MDSConnectivityCard::MDSConnectivityCard(QWidget *parent)
+Card_MDSConnectivity::Card_MDSConnectivity(QWidget *parent)
     : QWidget{parent}
 {
     setAutoFillBackground(true);
@@ -31,7 +31,7 @@ MDSConnectivityCard::MDSConnectivityCard(QWidget *parent)
 
 }
 
-bool MDSConnectivityCard::eventFilter(QObject *watched, QEvent *event)
+bool Card_MDSConnectivity::eventFilter(QObject *watched, QEvent *event)
 {
     Common* common = Common::instance();
     if(circle == watched || title == watched) {
@@ -185,7 +185,7 @@ bool MDSConnectivityCard::eventFilter(QObject *watched, QEvent *event)
     return QWidget::eventFilter(watched, event);
 }
 
-void MDSConnectivityCard::update_but()
+void Card_MDSConnectivity::update_but()
 {
     if(id == "") return;
     CustomButton *releasebtn = new CustomButton(this);
@@ -197,7 +197,7 @@ void MDSConnectivityCard::update_but()
     connect(releasebtn, SIGNAL(signalButtonClicked()), this, SLOT(on_releasebtn_clicked()));
 }
 
-void MDSConnectivityCard::paintEvent(QPaintEvent *event)
+void Card_MDSConnectivity::paintEvent(QPaintEvent *event)
 {
     Common* common = Common::instance();
 
@@ -356,7 +356,7 @@ void MDSConnectivityCard::paintEvent(QPaintEvent *event)
 
 }
 
-void MDSConnectivityCard::on_releasebtn_clicked()
+void Card_MDSConnectivity::on_releasebtn_clicked()
 {
     Common* common = Common::instance();
     common->rd.ok = 0;
@@ -369,7 +369,7 @@ void MDSConnectivityCard::on_releasebtn_clicked()
     if(common->rd.ok && employeeID.size() > 0)
         perform_release(employeeID,local_bed,local_vmd);
 }
-void MDSConnectivityCard::perform_release(std::string employeeID,std::string local_bed ,std::string local_vmd)
+void Card_MDSConnectivity::perform_release(std::string employeeID,std::string local_bed ,std::string local_vmd)
 {
     Common* common = Common::instance();
     if(employeeID.size() > 0)
@@ -388,12 +388,12 @@ void MDSConnectivityCard::perform_release(std::string employeeID,std::string loc
 
 }
 //================================== card funtion
-void MDSConnectivityCard::mouseMoveEvent(QMouseEvent *event)
+void Card_MDSConnectivity::mouseMoveEvent(QMouseEvent *event)
 {
 
 }
 
-void MDSConnectivityCard::mousePressEvent(QMouseEvent *event)
+void Card_MDSConnectivity::mousePressEvent(QMouseEvent *event)
 {
     if(id!="" && RR!="")
         {
@@ -402,99 +402,99 @@ void MDSConnectivityCard::mousePressEvent(QMouseEvent *event)
 
 }
 
-void MDSConnectivityCard::mouseReleaseEvent(QMouseEvent *event)
+void Card_MDSConnectivity::mouseReleaseEvent(QMouseEvent *event)
 {
 
 }
 
-void MDSConnectivityCard::set_is_male(uint8_t is_male)
+void Card_MDSConnectivity::set_is_male(uint8_t is_male)
 {
     male = is_male;
     update();
 }
 
-uint8_t MDSConnectivityCard::is_male()
+uint8_t Card_MDSConnectivity::is_male()
 {
     return male;
 }
-void MDSConnectivityCard::set_bed(std::string bed)
+void Card_MDSConnectivity::set_bed(std::string bed)
 {
     this->bed = bed;
     update();
 }
 
-std::string MDSConnectivityCard::get_bed()
+std::string Card_MDSConnectivity::get_bed()
 {
     return bed;
 }
 
-void MDSConnectivityCard::set_id(std::string id)
+void Card_MDSConnectivity::set_id(std::string id)
 {
     this->id = id;
     update();
 }
-std::string MDSConnectivityCard::get_id()
+std::string Card_MDSConnectivity::get_id()
 {
     return id;
 }
 
-void MDSConnectivityCard::set_RR(std::string RR)
+void Card_MDSConnectivity::set_RR(std::string RR)
 {
     this->RR = RR;
     update();
 }
-void MDSConnectivityCard::set_IE(std::string IE)
+void Card_MDSConnectivity::set_IE(std::string IE)
 {
     this->IE = IE;
     update();
 }
-void MDSConnectivityCard::set_MV(std::string MV)
+void Card_MDSConnectivity::set_MV(std::string MV)
 {
     this->MV = MV;
     update();
 }
-void MDSConnectivityCard::set_VT(std::string VT)
+void Card_MDSConnectivity::set_VT(std::string VT)
 {
     this->VT = VT;
     update();
 }
-std::string MDSConnectivityCard::get_RR()
+std::string Card_MDSConnectivity::get_RR()
 {
     return RR;
 }
-std::string MDSConnectivityCard::get_IE()
+std::string Card_MDSConnectivity::get_IE()
 {
     return IE;
 }
-std::string MDSConnectivityCard::get_MV()
+std::string Card_MDSConnectivity::get_MV()
 {
     return MV;
 }
-std::string MDSConnectivityCard::get_VT()
+std::string Card_MDSConnectivity::get_VT()
 {
     return VT;
 }
-void MDSConnectivityCard::set_selected(uint8_t selected)
+void Card_MDSConnectivity::set_selected(uint8_t selected)
 {
     this->selected = selected;
     update();
 }
 
-uint8_t MDSConnectivityCard::is_selected()
+uint8_t Card_MDSConnectivity::is_selected()
 {
     return selected;
 }
-void MDSConnectivityCard::set_vmd(std::string vmd)
+void Card_MDSConnectivity::set_vmd(std::string vmd)
 {
     this->vmd = vmd;
     update();
 }
-std::string MDSConnectivityCard::get_vmd()
+std::string Card_MDSConnectivity::get_vmd()
 {
     return vmd;
 }
 
-void MDSConnectivityCard::set_alarm(std::map<std::string, int> patient_alarm)
+void Card_MDSConnectivity::set_alarm(std::map<std::string, int> patient_alarm)
 {
     this->patient_alarm = patient_alarm;
 }

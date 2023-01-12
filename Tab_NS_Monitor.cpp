@@ -8,7 +8,7 @@
 #include "Tab_Observations_mainPage_Widget.h"
 #include "ui_Tab_Observations_mainPage_Widget.h"
 #include "Tab_Mapping_Widget.h"
-#include "ui_Tab_Mapping_Widget.h"
+#include "ui_MappingTab_Widget.h"
 #include "Tab_Utilities_alarmHistoryPage_Widget.h"
 #include "ui_Tab_Utilities_alarmHistoryPage_Widget.h"
 #include "ui_Tab_Utilities_exporterPage_Widget.h"
@@ -51,18 +51,17 @@ void Tab_NS_Monitor::init()
     }
 }
 
-
 Tab_NS_Monitor::Tab_NS_Monitor(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Tab_NS_Monitor)
 {
     ui->setupUi(this);
+
 }
 Tab_NS_Monitor::~Tab_NS_Monitor()
 {
     delete ui;
 }
-
 void Tab_NS_Monitor::update_MDS()
 {
     Common* common = Common::instance();
@@ -167,7 +166,7 @@ void Tab_NS_Monitor::update_MDS()
         }
 
 
-        MDSConnectivityCard *card = new MDSConnectivityCard(ui->scrollAreaWidgetContents);
+        Card_MDSConnectivity *card = new Card_MDSConnectivity(ui->scrollAreaWidgetContents);
         card->setGeometry(CARD_SPACING+(CARD_WIDTH+CARD_SPACING)*c,
                           CARD_SPACING+(CARD_HEIGHT+CARD_SPACING)*r,
                           CARD_WIDTH, CARD_HEIGHT);
@@ -317,10 +316,55 @@ void Tab_NS_Monitor::on_itemSelectionChanged()
     common->md->ui->nav->repaint();
 }
 
-
-
-void Tab_NS_Monitor::on_spinBox_valueChanged(int arg1)
+void Tab_NS_Monitor::on_pushButton_clicked()
 {
-    ui->visualizetion->set_modle_count(arg1);
+    Common* common = Common::instance();
+    qDebug()<<"=========1111===========";
+    // URL
+    QString baseUrl = "http://10.1.1.44:8081/commonService/Common/VmdSync/getRTObservationData";
+    // 構造請求
+    QNetworkRequest request;
+    request.setUrl(QUrl(baseUrl));
+    request.setRawHeader("API-Key", "dm1kX3N5bmM=");
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+    // 發送請求
+    QByteArray post_index ="patientId=3642587";
+    //post_index.append(common->patient_id);
+    post_index.append("&mdcCode=MDC_PRESS_AWAY");
+    //post_index.append(common->history_mdccode);
+    post_index.append("&channelId=Savina");
+    //post_index.append(common->history_channel);
+    post_index.append("&queryStartTime=1673057096");
+
+    post_index.append("&queryEndTime=1673057098");
+
+    QNetworkReply *pReplay = manager->post(request,post_index);
+    // 開啟一個局部的事件循環，等待響應結束，退出
+    QEventLoop eventLoop;
+    QObject::connect(manager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
+    eventLoop.exec();
+    // 獲取響應信息
+    QByteArray bytes = pReplay->readAll();
+    qDebug() << "====================bytes";
+    QJsonParseError jsonParseError;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes, &jsonParseError);
+    QJsonObject json = jsonDoc.object();
+
+    QString strJson(bytes);
+    QVariantMap map = json.toVariantMap();
+    int numMap = map.size();
+    qDebug() << "numMap===========" << numMap;
+    qDebug() << "map[\"id\"]===========" << map["id"];
+    qDebug() << "map[\"id\"].toString()===========" << map["id"].toString();
+    //qDebug() << "map.take(\"number\")===========" << map.take("number").toString();
+    qDebug() << "map.value(\"name\")===========" << map.value("name").toString();
+
+    QMap<QString, QVariant>::const_iterator iter = map.constBegin();
+    while(iter != map.constEnd())
+    {
+          qDebug() << "key:" << iter.key() << "  value:" << iter.value();
+          ++iter;
+    }
 }
+
 

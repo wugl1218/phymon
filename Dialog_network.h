@@ -4,18 +4,18 @@
 #include <QDialog>
 
 namespace Ui {
-class NetworkDialog;
+class Dialog_network;
 }
 
-class NetworkDialog : public QDialog
+class Dialog_network : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit NetworkDialog(QWidget *parent = nullptr);
-    ~NetworkDialog();
-    Ui::NetworkDialog *ui;
-    bool is_server ;
+    explicit Dialog_network(QWidget *parent = nullptr);
+    ~Dialog_network();
+    Ui::Dialog_network *ui;
+    bool is_server=0 ;
 
 
 private:

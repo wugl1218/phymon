@@ -13,10 +13,10 @@
 Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Tab_Observations_mainPage_Widget),
-    update_timer(this),
-    chart_update_timer(this),
     lsd(this),
-    vsd(this)
+    vsd(this),
+    update_timer(this),
+    chart_update_timer(this)
 {
     ui->setupUi(this);
     Common* common = Common::instance();
@@ -40,6 +40,10 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     delay_reference = 0;
     set_checked(ui->cap_btn, 0);
     set_checked(ui->ref_btn, 0);
+    ui->loop1->hide();
+    ui->loop2->hide();
+    ui->cap_btn->hide();
+    ui->ref_btn->hide();
 
     ui->device1_tableWidget->setColumnWidth(0, Device_TableWidget_WIDTH);
     ui->device2_tableWidget->setColumnWidth(0, Device_TableWidget_WIDTH);
@@ -83,6 +87,8 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     connect(ui->rt_chart2, SIGNAL(on_series_select(int)), this, SLOT(on_series_pressed(int)));
     connect(ui->loop1, SIGNAL(on_press()), this, SLOT(loop_clicked()));
     connect(ui->loop2, SIGNAL(on_press()), this, SLOT(loop_clicked()));
+    connect(ui->visualizetion, SIGNAL(on_press()), this, SLOT(visualizetion_clicked()));
+
     set_loop1_type(LOOP_PRESSURE_VOLUME);
     set_loop2_type(LOOP_VOLUME_FLOW);
     last_flow_val = 0.0f;
@@ -99,6 +105,12 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     max_loop2_y = 0.0f;
     min_loop2_x = 0.0f;
     min_loop2_y = 0.0f;
+}
+
+void Tab_Observations_mainPage_Widget::visualizetion_clicked()
+{
+    Common* common = Common::instance();
+
 }
 
 void Tab_Observations_mainPage_Widget::loop_clicked()
@@ -310,23 +322,24 @@ void Tab_Observations_mainPage_Widget::set_loop2_type(int type)
     ui->loop2->clear_ref_points();
     load_loops(ui->loop2, type);
 }
-
 void Tab_Observations_mainPage_Widget::clear_points()
 {
-    ui->loop1->clear_points();
-    ui->loop1->clear_ref_points();
-    ui->loop2->clear_points();
-    ui->loop2->clear_ref_points();
+
     ui->rt_chart1->clear_points(0);
     ui->rt_chart1->clear_points(1);
     ui->rt_chart2->clear_points(0);
     left_over_rtchart1_paw_vals.clear();
     left_over_rtchart1_flow_vals.clear();
     left_over_rtchart2_vals.clear();
-    on_ref_btn_toggled(false);
+
+    ui->loop1->clear_points();
+    ui->loop1->clear_ref_points();
+    ui->loop2->clear_points();
+    ui->loop2->clear_ref_points();
+/*    on_ref_btn_toggled(false);
     ui->ref_btn->setChecked(false);
     on_cap_btn_toggled(false);
-    ui->cap_btn->setChecked(false);
+    ui->cap_btn->setChecked(false); */
 
 }
 
@@ -1374,4 +1387,5 @@ void Tab_Observations_mainPage_Widget::on_cap_btn_toggled(bool checked)
         cap_loop_snapshot.clear();
     }
 }
+
 

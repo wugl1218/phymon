@@ -22,7 +22,7 @@ public:
     void handle_stop();
     void log(const char* line);
     void clear_log();
-    jsontext jt;
+    Dialog_jsontext jt;
 
 protected:
     void showEvent(QShowEvent *event);

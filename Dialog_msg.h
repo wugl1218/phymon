@@ -4,23 +4,23 @@
 #include <QDialog>
 
 namespace Ui {
-class MsgDialog;
+class Dialog_msg;
 }
 
-class MsgDialog : public QDialog
+class Dialog_msg : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit MsgDialog(QWidget *parent = nullptr);
-    ~MsgDialog();
+    explicit Dialog_msg(QWidget *parent = nullptr);
+    ~Dialog_msg();
     void setText(QString qstr);
 
 private slots:
     void on_ConfirmButton_clicked();
 
 private:
-    Ui::MsgDialog *ui;
+    Ui::Dialog_msg *ui;
 };
 
 #endif // DIALOG_MSG_H
