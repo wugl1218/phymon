@@ -7,7 +7,7 @@
 #include "qpainter.h"
 
 Common* _common = NULL;
-
+//123
 
 
 Common::Common(MainDialog* m)
