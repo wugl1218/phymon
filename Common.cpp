@@ -52,6 +52,7 @@ Common::Common(MainDialog* m)
     display_items_uid = d["DisplayItemsUid"].GetString();
     display_items_pwd = d["DisplayItemsPwd"].GetString();
     vmd_url = d["VMDUrl"].GetString();
+    restful_API_url = d["RestfulUrl"].GetString();
     button_hold_state_duration0 = d["ButtonHoldStateDuration0"].GetUint();
     button_hold_state_duration1 = d["ButtonHoldStateDuration1"].GetUint();
     button_hold_tick_interval_slow = d["ButtonHoldTickIntervalSlow"].GetUint();
@@ -84,7 +85,8 @@ Common::Common(MainDialog* m)
     if (QFile::exists("../../vmd/bin/config/app.cfg"))
     {
         QJsonObject jsonAppConfig = RetrieveJson(("../../vmd/bin/config/app.cfg"));
-        sPID = jsonAppConfig["_PID"].toString();       
+        sPID = jsonAppConfig["_PID"].toString();
+
         PID = get_PID();
         if((PID == sPID) && (sPID !=""))
             is_server = 0;
@@ -181,6 +183,7 @@ void Common::init_dds(int domain_id)
     observation_topic = dds->getTopic("TP_Observation", observation_type, "");
     exporter_observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
     history_observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
+    visualizetion_observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
     observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
 
     chansettings_type = dds->getTypeObject("dds_collector::ChannelSettings");
@@ -667,4 +670,84 @@ PID = QString::number(pid);
 pclose(cmd);
 
 return PID;
+}
+void replyFinished()
+{
+
+}
+
+QJsonArray Common::Restful_API(char queryStartTime[64] ,char queryEndTime[64],std::string dataSource)
+{ //使用於 Tab_Observations_historyPage中 NS端資料庫搜尋
+    Common* common = Common::instance();
+    // URL
+    QString restfulUrl = "http://";
+    restfulUrl.append(QString::fromStdString(common->restful_API_url));
+    restfulUrl.append("/Common/VmdSync/getRTObservationData");
+    // 構造請求
+    QNetworkRequest request;
+    request.setUrl(QUrl(restfulUrl));
+    request.setRawHeader("API-Key", "dm1kX3N5bmM=");
+    QNetworkAccessManager *manager = new QNetworkAccessManager(md);
+    // 發送請求
+    QByteArray post_index ="patientId=";
+    post_index.append(common->patient_id);
+    post_index.append("&mdcCode=");
+    post_index.append(common->history_mdccode);
+    post_index.append("&channelId=");
+    post_index.append(common->history_channel);
+    post_index.append("&queryStartTime=");
+    post_index.append(queryStartTime);
+    post_index.append("&queryEndTime=");
+    post_index.append(queryEndTime);
+    post_index.append("&dataSource=");
+    post_index.append(dataSource);
+ /*   qDebug()<<"patient_id="<<QString::fromStdString(common->patient_id);
+    qDebug()<<"history_mdccode="<<QString::fromStdString(common->history_mdccode);
+    qDebug()<<"history_channel="<<QString::fromStdString(common->history_channel);
+    qDebug()<<"queryStartTime="<<queryStartTime;
+    qDebug()<<"queryEndTime="<<queryEndTime;
+    qDebug()<<"dataSource="<<QString::fromStdString(dataSource); */
+
+    QNetworkReply *pReplay = manager->post(request,post_index);
+    // 開啟一個局部的事件循環，等待響應結束，退出
+    QEventLoop eventLoop;
+    QObject::connect(manager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
+    eventLoop.exec();
+    // 獲取響應信息
+    QByteArray bytes = pReplay->readAll();
+    QJsonParseError jsonParseError;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes, &jsonParseError);
+    qDebug() << jsonParseError.errorString();
+    QJsonObject jsonobject = jsonDoc.object();
+    QJsonArray array =jsonobject["row"].toArray();
+   // qDebug()<<array;
+    pReplay->deleteLater();
+    delete manager;
+    manager = nullptr;
+    return array;
+    /*        switch(value.type()) //測試 QJsonValue資料型態
+            {
+            case QJsonValue::Bool:
+                qDebug() << value.toBool();
+                break;
+            case QJsonValue::Double:
+                qDebug() << value.toDouble();
+                break;
+            case QJsonValue::String:
+                qDebug() << value.toString();
+                break;
+            case QJsonValue::Null:
+                qDebug() << " ";
+                break;
+            case QJsonValue::Array:
+                //转化为数组
+                qDebug() << value.toArray();
+                break;
+            case QJsonValue::Object:
+                qDebug() <<value.toObject();
+                break;
+
+            default:
+                qDebug() << "未知类型";
+            }*/
 }

@@ -7,15 +7,33 @@
 mc_visualizetion::mc_visualizetion(QWidget *parent)
     : QWidget(parent)
 {
+
 }
-void mc_visualizetion::mousePressEvent(QMouseEvent *event)
+void mc_visualizetion::mousePressEvent(QMouseEvent* event)
 {
-    emit on_press();
+    emit clicked();
+    emit pressed();
 }
+
+void mc_visualizetion::mouseReleaseEvent(QMouseEvent* event)
+{
+    emit released();
+}
+
 void mc_visualizetion::paintEvent(QPaintEvent *event)
 {
-    int count = modle_count;
-    if(count<3)return;
+    Common* common = Common::instance();
+
+ //   int count = modle_count;
+   int count = visualizetion.size();
+
+    if(count<3)
+    {
+        QPainter painter(this);
+        painter.translate(width()/2., height()/2.);
+        Common::draw_text(painter,0,0, Qt::AlignLeft | Qt::AlignVCenter, "Pleasa add at least three vital signs");
+        return;
+    }
     QFont date_font ;
     QFont value_font ;
     bool Show_pen =1;
@@ -38,7 +56,6 @@ void mc_visualizetion::paintEvent(QPaintEvent *event)
    QColor pen_color =QColor(255,255,255);
    painter.setPen(pen_color);
    painter.setFont(value_font);
-
    /*
     * 绘图设备的坐标原点(0,0)在左上角，水平向右增长，垂直向下增长。
     * 首先先平移坐标原点，让原点在绘图设备的中心
@@ -49,7 +66,6 @@ void mc_visualizetion::paintEvent(QPaintEvent *event)
    QPainterPath alarm_line;
    float alarm_line_start_x,alarm_line_start_y;
    QColor Color=QColor(141, 195, 151); //圖形顏色
-
     if(count>9)return;
    //开始绘制多边形
    for (int i = 0; i < count; ++i)
@@ -76,16 +92,24 @@ void mc_visualizetion::paintEvent(QPaintEvent *event)
         painter.setPen(pen_color);
         painter.drawPath(path);
         painter.setRenderHint(QPainter::Antialiasing, true);
-        float high=20*i+50;
-        float low=10*i+10;
+
+        float high=visualizetion[i].higher;
+        float low=visualizetion[i].lower;
         float avg=qRound((high+low)/2);
         float max =high*2-avg;
         float min =low*2-avg;
-        QString datename= "datename";
+        QString datename= visualizetion[i].datename;
         bool REVERSE_DIRECTION = y2 > y1 -1;
         bool VERTICAL = abs(x2 - x1) <= 1;
         QList<float> date;
         int date_size =0;
+        dds::sub::cond::QueryCondition cond(
+                    dds::sub::Query(common->mdsm_reader, querystr),
+                    dds::sub::status::DataState(
+                    dds::sub::status::SampleState::any(),
+                    dds::sub::status::ViewState::any(),
+                    dds::sub::status::InstanceState::alive()));
+        dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->mdsm_reader.select().condition(cond).read();
         if(i==2)
         {
             date<<60<<90<<85 ;

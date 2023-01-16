@@ -4,6 +4,16 @@ mc_visualizetion_setting::mc_visualizetion_setting(QObject *parent)
     : QAbstractItemModel(parent)
 {
 }
+void mc_visualizetion_setting::mousePressEvent(QMouseEvent* event)
+{
+    emit clicked();
+    emit pressed();
+}
+
+void mc_visualizetion_setting::mouseReleaseEvent(QMouseEvent* event)
+{
+    emit released();
+}
 
 QVariant mc_visualizetion_setting::headerData(int section, Qt::Orientation orientation, int role) const
 {

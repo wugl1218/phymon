@@ -315,16 +315,20 @@ void Tab_NS_Monitor::on_itemSelectionChanged()
     }
     common->md->ui->nav->repaint();
 }
-
+/*
 void Tab_NS_Monitor::on_pushButton_clicked()
-{
+{ //Restful_API樣板
+
     Common* common = Common::instance();
+    //  QJsonArray array =common->Restful_API("1673057096","1673057098","RTObservation");
     qDebug()<<"=========1111===========";
     // URL
-    QString baseUrl = "http://10.1.1.44:8081/commonService/Common/VmdSync/getRTObservationData";
+    QString restfulUrl = "http://";
+    restfulUrl.append(QString::fromStdString(common->restful_API_url));
+    restfulUrl.append("/Common/VmdSync/getRTObservationData");
     // 構造請求
     QNetworkRequest request;
-    request.setUrl(QUrl(baseUrl));
+    request.setUrl(QUrl(restfulUrl));
     request.setRawHeader("API-Key", "dm1kX3N5bmM=");
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     // 發送請求
@@ -335,9 +339,8 @@ void Tab_NS_Monitor::on_pushButton_clicked()
     post_index.append("&channelId=Savina");
     //post_index.append(common->history_channel);
     post_index.append("&queryStartTime=1673057096");
-
     post_index.append("&queryEndTime=1673057098");
-
+   // post_index.append("&dataSource=RTObservation");
     QNetworkReply *pReplay = manager->post(request,post_index);
     // 開啟一個局部的事件循環，等待響應結束，退出
     QEventLoop eventLoop;
@@ -348,23 +351,46 @@ void Tab_NS_Monitor::on_pushButton_clicked()
     qDebug() << "====================bytes";
     QJsonParseError jsonParseError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes, &jsonParseError);
+    qDebug() << jsonParseError.errorString();
     QJsonObject json = jsonDoc.object();
-
-    QString strJson(bytes);
-    QVariantMap map = json.toVariantMap();
-    int numMap = map.size();
-    qDebug() << "numMap===========" << numMap;
-    qDebug() << "map[\"id\"]===========" << map["id"];
-    qDebug() << "map[\"id\"].toString()===========" << map["id"].toString();
-    //qDebug() << "map.take(\"number\")===========" << map.take("number").toString();
-    qDebug() << "map.value(\"name\")===========" << map.value("name").toString();
-
-    QMap<QString, QVariant>::const_iterator iter = map.constBegin();
-    while(iter != map.constEnd())
+    QJsonArray array =json["row"].toArray();
+    for (int i=0; i<array.count();++i)
     {
-          qDebug() << "key:" << iter.key() << "  value:" << iter.value();
-          ++iter;
+        QJsonValue value = array.at(i).toObject();
+        QJsonValue source_timestamp =value["source_timestamp"];
+        uint32_t sec = source_timestamp["sec"].toInteger();
+        QJsonArray values = value["values"].toArray();
+        qDebug() << "sec="<<sec;
+        qDebug() << "values="<<values;
+        qDebug() << "====================";
+
+/*        switch(value.type()) //測試 QJsonValue資料型態
+        {
+        case QJsonValue::Bool:
+            qDebug() << value.toBool();
+            break;
+        case QJsonValue::Double:
+            qDebug() << value.toDouble();
+            break;
+        case QJsonValue::String:
+            qDebug() << value.toString();
+            break;
+        case QJsonValue::Null:
+            qDebug() << " ";
+            break;
+        case QJsonValue::Array:
+            //转化为数组
+            qDebug() << value.toArray();
+            break;
+        case QJsonValue::Object:
+            qDebug() <<value.toObject();
+            break;
+
+        default:
+            qDebug() << "未知类型";
+        }
     }
-}
+    pReplay->deleteLater();
+}*/
 
 

@@ -553,7 +553,7 @@ background-color: rgb(4, 5, 7);
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QScrollArea" name="tab0">
         <property name="palette">

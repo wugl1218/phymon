@@ -39,7 +39,6 @@ public:
 private slots:
     void patient_clicked();
 
-    void on_pushButton_clicked();
 
 signals:
     void bindingChanged();

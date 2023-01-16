@@ -94,7 +94,11 @@ MainDialog::MainDialog(QWidget *parent)
     exporter.init();
     mainWorker = new QTimer(this);
     connect(mainWorker, SIGNAL(timeout()), this, SLOT(mainWorkerUpdate()));
-    connect(ui->topalarm_label, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
+    connect(ui->topalarm_label_1, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
+    connect(ui->topalarm_label_1, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
+    connect(ui->topalarm_label_1, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
+    connect(ui->topalarm_label_1, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
+
     mainWorker->start(16);
     db_cleaner = new QTimer(this);
     connect(db_cleaner, SIGNAL(timeout()), this, SLOT(db_clean()));

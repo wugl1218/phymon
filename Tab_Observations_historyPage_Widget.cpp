@@ -91,89 +91,365 @@ void Tab_Observations_historyPage_Widget::on_worker()
         right_locked = 0;
     if(!right_locked)
     {
-        if((ui->chart->get_view_range_max_x() == ui->chart->get_right_bounds() ||
-           ui->chart->get_view_range_max_x() == ui->chart->get_custom_right_bound()) &&
-           ui->chart->get_right_bounds() >= (now-2)*1000)
-            right_locked = 1;
-        else if(ui->chart->get_view_range_min_x() < last_left_bound + 30*1000)
+        if(common->is_server)  //@NS
         {
-            ui->chart->set_custom_left_bound(last_left_bound - 30*1000);
-            uint64_t custom_right_bound = last_left_bound - 30*1000 + 180*1000;
-            if(custom_right_bound > now*1000)
-                custom_right_bound = now*1000;
-            ui->chart->set_custom_right_bound(custom_right_bound);
-            std::string dummy;
-            std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>=";
-            char timebuf[64];
-            sprintf(timebuf, "%llu", last_left_bound/1000 - 30);
-            sql.append(timebuf);
-            sql.append(" AND source_timestamp.sec<=");
-            sprintf(timebuf, "%llu", last_left_bound/1000 - 30 + 180);
-            sql.append(timebuf);
-            sql.append(" AND mdc_code='");
-            sql.append(common->history_mdccode);
-            sql.append("' AND patient_id='");
-            sql.append(common->patient_id);
-            sql.append("' AND channel_id='");
-            sql.append(common->history_channel);
-            sql.append("'");
-            uint32_t query_start = Common::get_time_ms();
-            cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
-            uint32_t query_end = Common::get_time_ms();
-//           printf("unlocked query took %u milliseconds.\n", query_end-query_start);
-            std::multimap<uint64_t, fleece::Array> vals;
-            for(auto& result: results)
+            if((ui->chart->get_view_range_max_x() == ui->chart->get_right_bounds() ||
+               ui->chart->get_view_range_max_x() == ui->chart->get_custom_right_bound()) &&
+               ui->chart->get_right_bounds() >= (now-2)*1000)
+                right_locked = 1;
+            else if(ui->chart->get_view_range_min_x() < last_left_bound + 30*1000)
             {
-                int32_t sec = result.valueAtIndex(0).asInt();
-                uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
-                fleece::Array values = result.valueAtIndex(2).asArray();
-                uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
-                vals.emplace(key, values);
-            }
-            std::multimap<uint64_t, float> new_pts;
-            for(auto it=vals.begin();it!=vals.end();it++)
-            {
-                if(it->second.count() == 0)
-                    continue;
-                auto next = it;
-                next++;
-                if(next==vals.end()  || next->first - it->first > LINE_BREAK_DELTA)
+                ui->chart->set_custom_left_bound(last_left_bound - 30*1000);
+                uint64_t custom_right_bound = last_left_bound - 30*1000 + 180*1000;
+                if(custom_right_bound > now*1000)
+                    custom_right_bound = now*1000;
+                ui->chart->set_custom_right_bound(custom_right_bound);
+                /*std::string dummy;
+                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>=";
+                char timebuf[64];
+                sprintf(timebuf, "%llu", last_left_bound/1000 - 30);
+                sql.append(timebuf);
+                char timebuf1[64];
+                sql.append(" AND source_timestamp.sec<=");
+                sprintf(timebuf1, "%llu", last_left_bound/1000 - 30 + 180);
+                sql.append(timebuf1);
+                sql.append(" AND mdc_code='");
+                sql.append(common->history_mdccode);
+                sql.append("' AND patient_id='");
+                sql.append(common->patient_id);
+                sql.append("' AND channel_id='");
+                sql.append(common->history_channel);
+                sql.append("'");
+                cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
+    //           printf("unlocked query took %u milliseconds.\n", query_end-query_start);*/
+    /*            std::multimap<uint64_t, fleece::Array> vals;
+                for(auto& result: results)
                 {
-                    new_pts.emplace(it->first, it->second[0].asFloat());
+                    int32_t sec = result.valueAtIndex(0).asInt();
+                    uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
+                    fleece::Array values = result.valueAtIndex(2).asArray();
+                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                    vals.emplace(key, values);
+                }*/
+                char timebuf[64];
+                char timebuf1[64];
+                sprintf(timebuf, "%llu", last_left_bound/1000 - 60);
+                sprintf(timebuf1, "%llu", last_left_bound/1000 + 180);
+                std::multimap<uint64_t, QJsonArray> vals;
+                QJsonArray array =common->Restful_API(timebuf,timebuf1,"RTObservation");
+                for (int i=0; i<array.count();++i)
+                {
+                    QJsonValue value = array.at(i).toObject();
+                    QJsonValue source_timestamp =value["source_timestamp"];
+                    uint32_t sec = source_timestamp["sec"].toInteger();
+                    uint32_t nanosec = source_timestamp["nanosec"].toInteger();
+                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                    QJsonArray values = value["values"].toArray();
+                    vals.emplace(key, values);
                 }
-                else
+                std::multimap<uint64_t, float> new_pts;
+                for(auto it=vals.begin();it!=vals.end();it++)
                 {
-                    uint64_t delta = (next->first - it->first)/it->second.count();
-                    for(unsigned i=0;i<it->second.count();i++)
+                    if(it->second.count() == 0)
+                        continue;
+                    auto next = it;
+                    next++;
+                    if(next==vals.end()  || next->first - it->first > LINE_BREAK_DELTA)
                     {
-                        new_pts.emplace(it->first + delta*i, it->second[i].asFloat());
+                        new_pts.emplace(it->first, it->second[0].toDouble());
+                    }
+                    else
+                    {
+                        uint64_t delta = (next->first - it->first)/it->second.count();
+                        for(unsigned i=0;i<it->second.count();i++)
+                        {
+                            new_pts.emplace(it->first + delta*i, it->second[i].toDouble());
+                        }
                     }
                 }
+                uint64_t a = ui->chart->get_view_range_min_x();
+                uint64_t b = ui->chart->get_view_range_max_x();
+                ui->chart->clear_points(0);
+                for(auto it=new_pts.begin();it!=new_pts.end();it++)
+                    ui->chart->add_point(0, it->first, it->second);
+                ui->chart->set_view_range_min_x(a);
+                ui->chart->set_view_range_max_x(b);
+                last_left_bound = ui->chart->get_custom_left_bound();
+                last_right_bound = ui->chart->get_custom_right_bound();
             }
-            uint64_t a = ui->chart->get_view_range_min_x();
-            uint64_t b = ui->chart->get_view_range_max_x();
-            ui->chart->clear_points(0);
-            for(auto it=new_pts.begin();it!=new_pts.end();it++)
-                ui->chart->add_point(0, it->first, it->second);
-            ui->chart->set_view_range_min_x(a);
-            ui->chart->set_view_range_max_x(b);
-            last_left_bound = ui->chart->get_custom_left_bound();
-            last_right_bound = ui->chart->get_custom_right_bound();
+            else if(ui->chart->get_view_range_max_x() > last_right_bound - 30*1000)
+            {
+                uint64_t new_right_bounds = last_right_bound + 30*1000;
+                if(new_right_bounds > now*1000)
+                    new_right_bounds = now*1000;
+                ui->chart->set_custom_left_bound(new_right_bounds - 180*1000);
+                ui->chart->set_custom_right_bound(new_right_bounds);
+                std::string dummy;
+                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>=";
+    /*            char timebuf[64];
+                sprintf(timebuf, "%llu", new_right_bounds/1000 - 180);
+                sql.append(timebuf);
+                sql.append(" AND source_timestamp.sec<=");
+                sprintf(timebuf, "%llu", new_right_bounds/1000);
+                sql.append(timebuf);
+                sql.append(" AND mdc_code='");
+                sql.append(common->history_mdccode);
+                sql.append("' AND patient_id='");
+                sql.append(common->patient_id);
+                sql.append("' AND channel_id='");
+                sql.append(common->history_channel);
+                sql.append("' AND vmd_id='");
+                sql.append(common->vmd_id);
+                sql.append("'");
+                uint32_t query_start = Common::get_time_ms();
+                cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
+                uint32_t query_end = Common::get_time_ms();
+    //            printf("unlocked query took %u milliseconds.\n", query_end-query_start);
+                std::multimap<uint64_t, fleece::Array> vals;
+
+                for(auto& result: results)
+                {
+                    int32_t sec = result.valueAtIndex(0).asInt();
+                    uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
+                    fleece::Array values = result.valueAtIndex(2).asArray();
+                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                    vals.emplace(key, values);
+                }*/
+                char timebuf[64];
+                char timebuf1[64];
+                sprintf(timebuf, "%llu", last_left_bound/1000 -60);
+                sprintf(timebuf1, "%llu", last_left_bound/1000  + 180);
+                std::multimap<uint64_t, QJsonArray> vals;
+                QJsonArray array =common->Restful_API(timebuf,timebuf1,"RTObservation");
+                for (int i=0; i<array.count();++i)
+                {
+                    QJsonValue value = array.at(i).toObject();
+                    QJsonValue source_timestamp =value["source_timestamp"];
+                    uint32_t sec = source_timestamp["sec"].toInteger();
+                    uint32_t nanosec = source_timestamp["nanosec"].toInteger();
+                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                    QJsonArray values = value["values"].toArray();
+                    vals.emplace(key, values);
+                }
+                std::multimap<uint64_t, float> new_pts;
+                for(auto it=vals.begin();it!=vals.end();it++)
+                {
+                    if(it->second.count() == 0)
+                        continue;
+                    auto next = it;
+                    next++;
+                    if(next==vals.end() || next->first - it->first > LINE_BREAK_DELTA)
+                    {
+                        new_pts.emplace(it->first, it->second[0].toDouble());
+                    }
+                    else
+                    {
+                        uint64_t delta = (next->first - it->first)/it->second.count();
+                        for(unsigned i=0;i<it->second.count();i++)
+                        {
+                            new_pts.emplace(it->first + delta*i, it->second[i].toDouble());
+                        }
+                    }
+                }
+                uint64_t a = ui->chart->get_view_range_min_x();
+                uint64_t b = ui->chart->get_view_range_max_x();
+                ui->chart->clear_points(0);
+                for(auto it=new_pts.begin();it!=new_pts.end();it++)
+                    ui->chart->add_point(0, it->first, it->second);
+                ui->chart->set_view_range_min_x(a);
+                ui->chart->set_view_range_max_x(b);
+                last_left_bound = ui->chart->get_custom_left_bound();
+                last_right_bound = ui->chart->get_custom_right_bound();
+            }
         }
-        else if(ui->chart->get_view_range_max_x() > last_right_bound - 30*1000)
+        else
         {
-            uint64_t new_right_bounds = last_right_bound + 30*1000;
-            if(new_right_bounds > now*1000)
-                new_right_bounds = now*1000;
-            ui->chart->set_custom_left_bound(new_right_bounds - 180*1000);
-            ui->chart->set_custom_right_bound(new_right_bounds);
+            if((ui->chart->get_view_range_max_x() == ui->chart->get_right_bounds() ||
+               ui->chart->get_view_range_max_x() == ui->chart->get_custom_right_bound()) &&
+               ui->chart->get_right_bounds() >= (now-2)*1000)
+                right_locked = 1;
+            else if(ui->chart->get_view_range_min_x() < last_left_bound + 30*1000)
+            {
+                ui->chart->set_custom_left_bound(last_left_bound - 30*1000);
+                uint64_t custom_right_bound = last_left_bound - 30*1000 + 180*1000;
+                if(custom_right_bound > now*1000)
+                    custom_right_bound = now*1000;
+                ui->chart->set_custom_right_bound(custom_right_bound);
+                std::string dummy;
+                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>=";
+                char timebuf[64];
+                sprintf(timebuf, "%llu", last_left_bound/1000 - 30);
+                sql.append(timebuf);
+                char timebuf1[64];
+                sql.append(" AND source_timestamp.sec<=");
+                sprintf(timebuf1, "%llu", last_left_bound/1000 - 30 + 180);
+                sql.append(timebuf1);
+                sql.append(" AND mdc_code='");
+                sql.append(common->history_mdccode);
+                sql.append("' AND patient_id='");
+                sql.append(common->patient_id);
+                sql.append("' AND channel_id='");
+                sql.append(common->history_channel);
+                sql.append("'");
+                cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
+    //           printf("unlocked query took %u milliseconds.\n", query_end-query_start);*/
+                std::multimap<uint64_t, fleece::Array> vals;
+                for(auto& result: results)
+                {
+                    int32_t sec = result.valueAtIndex(0).asInt();
+                    uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
+                    fleece::Array values = result.valueAtIndex(2).asArray();
+                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                    vals.emplace(key, values);
+                }
+           /*     char timebuf[64];
+                char timebuf1[64];
+                sprintf(timebuf, "%llu", last_left_bound/1000 - 30);
+                sprintf(timebuf1, "%llu", last_left_bound/1000 - 30 + 180);
+                std::multimap<uint64_t, QJsonArray> vals;
+                QJsonArray array =common->Restful_API(timebuf,timebuf1,"RTObservation");
+                for (int i=0; i<array.count();++i)
+                {
+                    QJsonValue value = array.at(i).toObject();
+                    QJsonValue source_timestamp =value["source_timestamp"];
+                    uint32_t sec = source_timestamp["sec"].toInteger();
+                    uint32_t nanosec = source_timestamp["nanosec"].toInteger();
+                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                    QJsonArray values = value["values"].toArray();
+                    vals.emplace(key, values);
+                }*/
+                std::multimap<uint64_t, float> new_pts;
+                for(auto it=vals.begin();it!=vals.end();it++)
+                {
+                    if(it->second.count() == 0)
+                        continue;
+                    auto next = it;
+                    next++;
+                    if(next==vals.end()  || next->first - it->first > LINE_BREAK_DELTA)
+                    {
+                        new_pts.emplace(it->first, it->second[0].asFloat());
+                    }
+                    else
+                    {
+                        uint64_t delta = (next->first - it->first)/it->second.count();
+                        for(unsigned i=0;i<it->second.count();i++)
+                        {
+                            new_pts.emplace(it->first + delta*i, it->second[i].asFloat());
+                        }
+                    }
+                }
+                uint64_t a = ui->chart->get_view_range_min_x();
+                uint64_t b = ui->chart->get_view_range_max_x();
+                ui->chart->clear_points(0);
+                for(auto it=new_pts.begin();it!=new_pts.end();it++)
+                    ui->chart->add_point(0, it->first, it->second);
+                ui->chart->set_view_range_min_x(a);
+                ui->chart->set_view_range_max_x(b);
+                last_left_bound = ui->chart->get_custom_left_bound();
+                last_right_bound = ui->chart->get_custom_right_bound();
+            }
+            else if(ui->chart->get_view_range_max_x() > last_right_bound - 30*1000)
+            {
+                uint64_t new_right_bounds = last_right_bound + 30*1000;
+                if(new_right_bounds > now*1000)
+                    new_right_bounds = now*1000;
+                ui->chart->set_custom_left_bound(new_right_bounds - 180*1000);
+                ui->chart->set_custom_right_bound(new_right_bounds);
+                std::string dummy;
+                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>=";
+                char timebuf[64];
+                sprintf(timebuf, "%llu", new_right_bounds/1000 - 180);
+                sql.append(timebuf);
+                sql.append(" AND source_timestamp.sec<=");
+                sprintf(timebuf, "%llu", new_right_bounds/1000);
+                sql.append(timebuf);
+                sql.append(" AND mdc_code='");
+                sql.append(common->history_mdccode);
+                sql.append("' AND patient_id='");
+                sql.append(common->patient_id);
+                sql.append("' AND channel_id='");
+                sql.append(common->history_channel);
+                sql.append("' AND vmd_id='");
+                sql.append(common->vmd_id);
+                sql.append("'");
+    //            uint32_t query_start = Common::get_time_ms();
+                cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
+    //            uint32_t query_end = Common::get_time_ms();
+    //            printf("unlocked query took %u milliseconds.\n", query_end-query_start);
+                std::multimap<uint64_t, fleece::Array> vals;
+                for(auto& result: results)
+                {
+                    int32_t sec = result.valueAtIndex(0).asInt();
+                    uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
+                    fleece::Array values = result.valueAtIndex(2).asArray();
+                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                    vals.emplace(key, values);
+                }
+                /*char timebuf[64];
+                char timebuf1[64];
+                sprintf(timebuf, "%llu", last_left_bound/1000 - 30);
+                sprintf(timebuf1, "%llu", last_left_bound/1000 - 30 + 180);
+                std::multimap<uint64_t, QJsonArray> vals;
+                QJsonArray array =common->Restful_API(timebuf,timebuf1,"RTObservation");
+                for (int i=0; i<array.count();++i)
+                {
+                    QJsonValue value = array.at(i).toObject();
+                    QJsonValue source_timestamp =value["source_timestamp"];
+                    uint32_t sec = source_timestamp["sec"].toInteger();
+                    uint32_t nanosec = source_timestamp["nanosec"].toInteger();
+                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                    QJsonArray values = value["values"].toArray();
+                    vals.emplace(key, values);
+                }*/
+                std::multimap<uint64_t, float> new_pts;
+                for(auto it=vals.begin();it!=vals.end();it++)
+                {
+                    if(it->second.count() == 0)
+                        continue;
+                    auto next = it;
+                    next++;
+                    if(next==vals.end() || next->first - it->first > LINE_BREAK_DELTA)
+                    {
+                        new_pts.emplace(it->first, it->second[0].asFloat());
+                    }
+                    else
+                    {
+                        uint64_t delta = (next->first - it->first)/it->second.count();
+                        for(unsigned i=0;i<it->second.count();i++)
+                        {
+                            new_pts.emplace(it->first + delta*i, it->second[i].asFloat());
+                        }
+                    }
+                }
+                uint64_t a = ui->chart->get_view_range_min_x();
+                uint64_t b = ui->chart->get_view_range_max_x();
+                ui->chart->clear_points(0);
+                for(auto it=new_pts.begin();it!=new_pts.end();it++)
+                    ui->chart->add_point(0, it->first, it->second);
+                ui->chart->set_view_range_min_x(a);
+                ui->chart->set_view_range_max_x(b);
+                last_left_bound = ui->chart->get_custom_left_bound();
+                last_right_bound = ui->chart->get_custom_right_bound();
+            }
+        }
+    }
+}
+
+void Tab_Observations_historyPage_Widget::update_triggered()
+{
+    Common* common = Common::instance();
+    if(right_locked)
+    {
+        if(common->is_server)
+        {
+            uint64_t now = time(NULL);
+            ui->chart->set_custom_right_bound(now*1000);
+            ui->chart->set_custom_left_bound((now-180)*1000);
+            now -=180;
+      /*      char timebuf[64];
+            sprintf(timebuf, "%llu", now);
             std::string dummy;
-            std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>=";
-            char timebuf[64];
-            sprintf(timebuf, "%llu", new_right_bounds/1000 - 180);
-            sql.append(timebuf);
-            sql.append(" AND source_timestamp.sec<=");
-            sprintf(timebuf, "%llu", new_right_bounds/1000);
+            std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>";
             sql.append(timebuf);
             sql.append(" AND mdc_code='");
             sql.append(common->history_mdccode);
@@ -184,12 +460,124 @@ void Tab_Observations_historyPage_Widget::on_worker()
             sql.append("' AND vmd_id='");
             sql.append(common->vmd_id);
             sql.append("'");
+
             uint32_t query_start = Common::get_time_ms();
-            cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
-            uint32_t query_end = Common::get_time_ms();
-//            printf("unlocked query took %u milliseconds.\n", query_end-query_start);
+            cbl::ResultSet results2 = common->cbl->queryDocuments(common->db, sql, dummy);
+            uint32_t query_end = Common::get_time_ms();*/
+    //        printf("query took %u milliseconds.\n", query_end-query_start);
+        /*
+            std::multimap<uint64_t, float> new_pts;
+            for(auto& result: results2)
+            {
+                int32_t sec = result.valueAtIndex(0).asInt();
+                uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
+                fleece::Array values = result.valueAtIndex(2).asArray();
+                uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                double avg = 0.0;
+                for(int i=0;i<(int)values.count();i++)
+                    avg += values[i].asFloat();
+                avg /= values.count();
+                new_pts.emplace(key, avg);
+            }
             std::multimap<uint64_t, fleece::Array> vals;
-            for(auto& result: results)
+            for(auto& result: results2)
+            {
+                int32_t sec = result.valueAtIndex(0).asInt();
+                uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
+                fleece::Array values = result.valueAtIndex(2).asArray();
+                uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                vals.emplace(key, values);
+            }*/
+            char timebuf[64];
+            char timebuf1[64];
+            sprintf(timebuf, "%llu", now-30);
+            sprintf(timebuf1, "%llu", now+180);
+            std::multimap<uint64_t, QJsonArray> vals;
+            QJsonArray array =common->Restful_API(timebuf,timebuf1,"RTObservation");
+            for (int i=0; i<array.count();++i)
+            {
+                QJsonValue value = array.at(i).toObject();
+                QJsonValue source_timestamp =value["source_timestamp"];
+                uint32_t sec = source_timestamp["sec"].toInteger();
+                uint32_t nanosec = source_timestamp["nanosec"].toInteger();
+                uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                QJsonArray values = value["values"].toArray();
+                vals.emplace(key, values);
+            }
+            std::multimap<uint64_t, float> new_pts;
+            for(auto it=vals.begin();it!=vals.end();it++)
+            {
+                if(it->second.count() == 0)
+                    continue;
+                auto next = it;
+                next++;
+                if(next==vals.end() || next->first - it->first > LINE_BREAK_DELTA)
+                {
+                    new_pts.emplace(it->first, it->second[0].toDouble());
+                }
+                else
+                {
+                    uint64_t delta = (next->first - it->first)/it->second.count();
+                    for(unsigned i=0;i<it->second.count();i++)
+                    {
+                        new_pts.emplace(it->first + delta*i, it->second[i].toDouble());
+                    }
+                }
+            }
+            ui->chart->clear_points(0);
+            for(auto it=new_pts.begin();it!=new_pts.end();it++)
+                {
+                ui->chart->add_point(0, it->first, it->second);
+                }
+            uint64_t viewable = ui->chart->get_view_range_max_x() - ui->chart->get_view_range_min_x();
+            ui->chart->set_view_range_max_x(ui->chart->get_right_bounds());
+            ui->chart->set_view_range_min_x(ui->chart->get_right_bounds() - viewable);
+            last_right_bound = ui->chart->get_right_bounds();
+            //last_left_bound = ui->chart->get_right_bounds()-180*1000;
+
+        }
+        else
+        {
+            uint64_t now = time(NULL);
+            ui->chart->set_custom_right_bound(now*1000);
+            ui->chart->set_custom_left_bound((now-180)*1000);
+            now -= 180;
+            char timebuf[64];
+            sprintf(timebuf, "%llu", now);
+            std::string dummy;
+            std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>";
+            sql.append(timebuf);
+            sql.append(" AND mdc_code='");
+            sql.append(common->history_mdccode);
+            sql.append("' AND patient_id='");
+            sql.append(common->patient_id);
+            sql.append("' AND channel_id='");
+            sql.append(common->history_channel);
+            sql.append("' AND vmd_id='");
+            sql.append(common->vmd_id);
+            sql.append("'");
+
+            uint32_t query_start = Common::get_time_ms();
+            cbl::ResultSet results2 = common->cbl->queryDocuments(common->db, sql, dummy);
+            uint32_t query_end = Common::get_time_ms();
+    //        printf("query took %u milliseconds.\n", query_end-query_start);
+        /*
+            std::multimap<uint64_t, float> new_pts;
+            for(auto& result: results2)
+            {
+                int32_t sec = result.valueAtIndex(0).asInt();
+                uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
+                fleece::Array values = result.valueAtIndex(2).asArray();
+                uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                double avg = 0.0;
+                for(int i=0;i<(int)values.count();i++)
+                    avg += values[i].asFloat();
+                avg /= values.count();
+                new_pts.emplace(key, avg);
+            }*/
+
+            std::multimap<uint64_t, fleece::Array> vals;
+            for(auto& result: results2)
             {
                 int32_t sec = result.valueAtIndex(0).asInt();
                 uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
@@ -217,100 +605,16 @@ void Tab_Observations_historyPage_Widget::on_worker()
                     }
                 }
             }
-            uint64_t a = ui->chart->get_view_range_min_x();
-            uint64_t b = ui->chart->get_view_range_max_x();
             ui->chart->clear_points(0);
             for(auto it=new_pts.begin();it!=new_pts.end();it++)
                 ui->chart->add_point(0, it->first, it->second);
-            ui->chart->set_view_range_min_x(a);
-            ui->chart->set_view_range_max_x(b);
+            uint64_t viewable = ui->chart->get_view_range_max_x() - ui->chart->get_view_range_min_x();
+            ui->chart->set_view_range_max_x(ui->chart->get_right_bounds());
+            ui->chart->set_view_range_min_x(ui->chart->get_right_bounds() - viewable);
+            last_right_bound = ui->chart->get_right_bounds();
+            //last_left_bound = ui->chart->get_right_bounds()-180*1000;
             last_left_bound = ui->chart->get_custom_left_bound();
-            last_right_bound = ui->chart->get_custom_right_bound();
         }
-    }
-}
-
-void Tab_Observations_historyPage_Widget::update_triggered()
-{
-    Common* common = Common::instance();
-    if(right_locked)
-    {
-        uint64_t now = time(NULL);
-        ui->chart->set_custom_right_bound(now*1000);
-        ui->chart->set_custom_left_bound((now-180)*1000);
-        now -= 180;
-        char timebuf[64];
-        sprintf(timebuf, "%llu", now);
-        std::string dummy;
-        std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>";
-        sql.append(timebuf);
-        sql.append(" AND mdc_code='");
-        sql.append(common->history_mdccode);
-        sql.append("' AND patient_id='");
-        sql.append(common->patient_id);
-        sql.append("' AND channel_id='");
-        sql.append(common->history_channel);
-        sql.append("' AND vmd_id='");
-        sql.append(common->vmd_id);
-        sql.append("'");
-
-        uint32_t query_start = Common::get_time_ms();
-        cbl::ResultSet results2 = common->cbl->queryDocuments(common->db, sql, dummy);
-        uint32_t query_end = Common::get_time_ms();
-//        printf("query took %u milliseconds.\n", query_end-query_start);
-    /*
-        std::multimap<uint64_t, float> new_pts;
-        for(auto& result: results2)
-        {
-            int32_t sec = result.valueAtIndex(0).asInt();
-            uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
-            fleece::Array values = result.valueAtIndex(2).asArray();
-            uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
-            double avg = 0.0;
-            for(int i=0;i<(int)values.count();i++)
-                avg += values[i].asFloat();
-            avg /= values.count();
-            new_pts.emplace(key, avg);
-        }*/
-
-        std::multimap<uint64_t, fleece::Array> vals;
-        for(auto& result: results2)
-        {
-            int32_t sec = result.valueAtIndex(0).asInt();
-            uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
-            fleece::Array values = result.valueAtIndex(2).asArray();
-            uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
-            vals.emplace(key, values);
-        }
-        std::multimap<uint64_t, float> new_pts;
-        for(auto it=vals.begin();it!=vals.end();it++)
-        {
-            if(it->second.count() == 0)
-                continue;
-            auto next = it;
-            next++;
-            if(next==vals.end() || next->first - it->first > LINE_BREAK_DELTA)
-            {
-                new_pts.emplace(it->first, it->second[0].asFloat());
-            }
-            else
-            {
-                uint64_t delta = (next->first - it->first)/it->second.count();
-                for(unsigned i=0;i<it->second.count();i++)
-                {
-                    new_pts.emplace(it->first + delta*i, it->second[i].asFloat());
-                }
-            }
-        }
-        ui->chart->clear_points(0);
-        for(auto it=new_pts.begin();it!=new_pts.end();it++)
-            ui->chart->add_point(0, it->first, it->second);
-        uint64_t viewable = ui->chart->get_view_range_max_x() - ui->chart->get_view_range_min_x();
-        ui->chart->set_view_range_max_x(ui->chart->get_right_bounds());
-        ui->chart->set_view_range_min_x(ui->chart->get_right_bounds() - viewable);
-        last_right_bound = ui->chart->get_right_bounds();
-        //last_left_bound = ui->chart->get_right_bounds()-180*1000;
-        last_left_bound = ui->chart->get_custom_left_bound();
     }
 
     if(reposition)

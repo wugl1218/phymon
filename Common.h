@@ -108,6 +108,7 @@ public:
     std::string display_items_uid;
     std::string display_items_pwd;
     std::string vmd_url;
+    std::string restful_API_url;
     PluginManager *pluginManager;
     DDSInterface *dds;
     CBLInterface *cbl;
@@ -131,6 +132,7 @@ public:
     QString PID;
     QString sPID;
     fflog_t* log;
+    QJsonArray Restful_API(char queryStartTime[64] , char queryEndTime[64], std::string dataSource);
 
     dds::domain::DomainParticipant participant = nullptr;
     dds::pub::Publisher publisher = nullptr;
@@ -169,6 +171,7 @@ public:
     dds::topic::Topic<dds::core::xtypes::DynamicData> observation_topic = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> exporter_observation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> history_observation_reader = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> visualizetion_observation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> observation_reader = nullptr;
     dds::core::xtypes::DynamicType observation_type;
 
@@ -204,6 +207,7 @@ public:
     void remove_savina_items(std::multimap<int, mc_entry>* entries);
     void populate_item_checkstate();
     void populate_device_checkstate();
+
 
     static Common* instance();
     static uint32_t get_time_ms();

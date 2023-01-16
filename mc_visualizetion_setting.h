@@ -2,6 +2,7 @@
 #define MC_VISUALIZETION_SETTING_H
 
 #include <QAbstractItemModel>
+#include <QWidget>
 
 class mc_visualizetion_setting : public QAbstractItemModel
 {
@@ -24,6 +25,15 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 private:
+protected:
+    void paintEvent(QPaintEvent *event) ;
+    void mousePressEvent(QMouseEvent *event) ;
+    void mouseReleaseEvent(QMouseEvent* event);
+
+signals:
+    void clicked();
+    void pressed();
+    void released();
 };
 
 #endif // MC_VISUALIZETION_SETTING_H

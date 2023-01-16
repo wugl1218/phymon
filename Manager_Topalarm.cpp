@@ -6,6 +6,10 @@ void Manager_Topalarm::init()
 {
     Common* common = Common::instance();
     last_query_time = 0;
+    common->md->ui->topalarm_label_1->setText("");
+    common->md->ui->topalarm_label_2->hide();
+    common->md->ui->topalarm_label_3->hide();
+    common->md->ui->topalarm_label_4->hide();
 }
 void Manager_Topalarm::step()
 { 
@@ -13,13 +17,13 @@ void Manager_Topalarm::step()
     Common* common = Common::instance();
     if(common->patient_id.size()==0)
         {
-        common->md->ui->topalarm_label->setText("");
+        common->md->ui->topalarm_label_1->setText("");
         common->md->efx->stop();
         return;
         }
-    if(common->md->ui->topalarm_label->text()=="" || common->md->is_alarmSound_index==0)
+    if(common->md->ui->topalarm_label_1->text()=="" || common->md->is_alarmSound_index==0)
         common->md->efx->stop();
-    if(common->md->ui->topalarm_label->text()=="" && common->md->is_alarmSound_index==0)
+    if(common->md->ui->topalarm_label_1->text()=="" && common->md->is_alarmSound_index==0)
         common->md->is_alarmSound_index=1;
     uint32_t current_time = Common::get_time_ms();
     if(Common::get_elapsed_time(current_time, last_query_time) > (uint32_t)common->Alarmloop_interval*1000)
@@ -27,7 +31,7 @@ void Manager_Topalarm::step()
     qDebug()<<"Manager_Topalarm";
         fflog_out(common->log,"Manager_Topalarm");
         last_query_time = current_time;
-        common->md->ui->topalarm_label->setText("");
+        common->md->ui->topalarm_label_1->setText("");
         std::string querystr = "vmd_id MATCH '";
         querystr.append(common->vmd_id);
         querystr.append("' AND patient_id MATCH '");
@@ -162,8 +166,8 @@ void Manager_Topalarm::step()
                 msg.append(" (");
                 msg.append(i->channel_id);
                 msg.append(")");
-                common->md->ui->topalarm_label->setText(msg.c_str());
-                if(common->md->ui->topalarm_label->text()=="")
+                common->md->ui->topalarm_label_1->setText(msg.c_str());
+                if(common->md->ui->topalarm_label_1->text()=="")
                     common->md->efx->stop();
                 else if (common->md->is_alarmSound_index)
                     common->md->efx->play();
@@ -176,8 +180,8 @@ void Manager_Topalarm::step()
                 msg.append(" (");
                 msg.append(i->channel_id);
                 msg.append(")");
-                common->md->ui->topalarm_label->setText(msg.c_str());
-                if(common->md->ui->topalarm_label->text()=="")
+                common->md->ui->topalarm_label_1->setText(msg.c_str());
+                if(common->md->ui->topalarm_label_1->text()=="")
                     common->md->efx->stop();
                 else if (common->md->is_alarmSound_index)
                     common->md->efx->play();

@@ -344,7 +344,14 @@ color:rgb(255, 255, 255);</string>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
-        <widget class="mc_visualizetion" name="visualizetion" native="true"/>
+        <widget class="mc_visualizetion" name="visualizetion" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>350</width>
+           <height>400</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_2">
