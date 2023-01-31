@@ -1,6 +1,7 @@
 #ifndef CSS_INFUSION_H
 #define CSS_INFUSION_H
 
+#include "qcolor.h"
 #include <QString>
 class CSS
 {
@@ -16,6 +17,9 @@ class CSS
     QString Enabled_unChecked_ButtonStyle ="QPushButton {font-style:\"Arial\";color:rgb(61, 56, 70);background-color:rgb(8, 98, 202);border-style: solid;border-width:1px;border-radius:20px;border-color:  rgb(11, 42, 78);border:2px groove gray;padding:20px 17px;border: none;}QPushButton:checked{background-color: rgb(11, 42, 78);};";
     QString Checked_ButtonStyle           ="QPushButton {font-style:\"Arial\";color:rgb(255, 255, 255);background-color:rgb(11, 42, 78);border-style: solid;border-width:1px;border-radius:20px;border-color:  rgb(11, 42, 78);border:2px groove gray;padding:20px 17px;border: none;}QPushButton:checked{background-color: rgb(11, 42, 78);};";;
     QString unChecked_ButtonStyle         ="QPushButton {font-style:\"Arial\";color:rgb(255, 255, 255);background-color:rgb(8, 98, 202);border-style: solid;border-width:1px;border-radius:20px;border-color:  rgb(11, 42, 78);border:2px groove gray;padding:20px 17px;border: none;}QPushButton:checked{background-color: rgb(11, 42, 78);};";;
+    QColor alarm_yellow                   =QColor(196, 160, 0);
+    QColor alarm_red                      =QColor(164,0,0);
+    QColor alarm_green                    =QColor(141, 195, 151);
 };
 
 #endif // CSS_INFUSION_H

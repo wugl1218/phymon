@@ -63,7 +63,7 @@ void Tab_Mapping_Widget::update_patients()
     int c = 0;
     for(auto it=common->md->pm.patients.begin();it!=common->md->pm.patients.end();it++)
     {
-        Card_Patient* card = new Card_Patient(ui->scrollAreaWidgetContents);
+        Manager_Patient_Card* card = new Manager_Patient_Card(ui->scrollAreaWidgetContents);
         card->setGeometry(CARD_SPACING+(CARD_WIDTH+CARD_SPACING)*c,
                           CARD_SPACING+(CARD_HEIGHT+CARD_SPACING)*r,
                           CARD_WIDTH, CARD_HEIGHT);
@@ -74,7 +74,6 @@ void Tab_Mapping_Widget::update_patients()
             card->set_is_male(0);
         else
             card->set_is_male(1);
-        //card->setPalette(ui->template_patient->palette());
         Common::set_inactive_colors(card);
         if(!it->second.bound)
         {
@@ -97,7 +96,7 @@ void Tab_Mapping_Widget::update_patients()
 
 /*    for(auto it=common->md->pm.patients.begin();it!=common->md->pm.patients.end();it++)
     {
-        Card_Patient* card = new Card_Patient(ui->scrollAreaWidgetContents);
+        Manager_Patient_Card* card = new Manager_Patient_Card(ui->scrollAreaWidgetContents);
         card->setGeometry(CARD_SPACING+(CARD_WIDTH+CARD_SPACING)*c,
                           CARD_SPACING+(CARD_HEIGHT+CARD_SPACING)*r,
                           CARD_WIDTH, CARD_HEIGHT);
@@ -108,7 +107,6 @@ void Tab_Mapping_Widget::update_patients()
             card->set_is_male(0);
         else
             card->set_is_male(1);
-        //card->setPalette(ui->template_patient->palette());
         Common::set_inactive_colors(card);
         card->show();
         connect(card, SIGNAL(clicked()), this, SLOT(patient_clicked()));
@@ -182,7 +180,6 @@ Tab_Mapping_Widget::Tab_Mapping_Widget(QWidget *parent) :
         ui->scrollAreaWidgetContents->setStyleSheet("background-color: rgb(3, 9, 12)");
     }
     ui->releasebtn->setEnabled(false);
-    ui->template_patient->hide();
     selected_patient = -1;
     connect(&worker_timer, SIGNAL(timeout()), this, SLOT(worker()));
     worker_timer.start(16);

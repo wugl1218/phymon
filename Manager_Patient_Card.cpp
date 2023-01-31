@@ -1,8 +1,8 @@
-#include "Card_Patient.h"
+#include "Manager_Patient_Card.h"
 #include "Common.h"
 #include "qpainter.h"
 
-Card_Patient::Card_Patient(QWidget *parent)
+Manager_Patient_Card::Manager_Patient_Card(QWidget *parent)
     : QWidget{parent}
 {
     setAutoFillBackground(true);
@@ -10,7 +10,7 @@ Card_Patient::Card_Patient(QWidget *parent)
     selected = 0;
 }
 
-void Card_Patient::paintEvent(QPaintEvent *event)
+void Manager_Patient_Card::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     painter.setPen(Qt::NoPen);
@@ -51,72 +51,72 @@ void Card_Patient::paintEvent(QPaintEvent *event)
         Common::draw_text(painter, 148, 95, Qt::AlignLeft | Qt::AlignVCenter, name.c_str());
 }
 
-void Card_Patient::mouseMoveEvent(QMouseEvent *event)
+void Manager_Patient_Card::mouseMoveEvent(QMouseEvent *event)
 {
 
 }
 
-void Card_Patient::mousePressEvent(QMouseEvent *event)
+void Manager_Patient_Card::mousePressEvent(QMouseEvent *event)
 {
     emit clicked();
 }
 
-void Card_Patient::mouseReleaseEvent(QMouseEvent *event)
+void Manager_Patient_Card::mouseReleaseEvent(QMouseEvent *event)
 {
 
 }
 
-void Card_Patient::set_is_male(uint8_t is_male)
+void Manager_Patient_Card::set_is_male(uint8_t is_male)
 {
     male = is_male;
     update();
 }
 
-uint8_t Card_Patient::is_male()
+uint8_t Manager_Patient_Card::is_male()
 {
     return male;
 }
 
-void Card_Patient::set_selected(uint8_t selected)
+void Manager_Patient_Card::set_selected(uint8_t selected)
 {
     this->selected = selected;
     update();
 }
 
-uint8_t Card_Patient::is_selected()
+uint8_t Manager_Patient_Card::is_selected()
 {
     return selected;
 }
 
-void Card_Patient::set_bed(std::string bed)
+void Manager_Patient_Card::set_bed(std::string bed)
 {
     this->bed = bed;
     update();
 }
 
-std::string Card_Patient::get_bed()
+std::string Manager_Patient_Card::get_bed()
 {
     return bed;
 }
 
-void Card_Patient::set_mrn(std::string mrn)
+void Manager_Patient_Card::set_mrn(std::string mrn)
 {
     this->mrn = mrn;
     update();
 }
 
-std::string Card_Patient::get_mrn()
+std::string Manager_Patient_Card::get_mrn()
 {
     return mrn;
 }
 
-void Card_Patient::set_name(std::string name)
+void Manager_Patient_Card::set_name(std::string name)
 {
     this->name = name;
     update();
 }
 
-std::string Card_Patient::get_name()
+std::string Manager_Patient_Card::get_name()
 {
     return name;
 }

@@ -7,7 +7,6 @@
 mc_visualizetion::mc_visualizetion(QWidget *parent)
     : QWidget(parent)
 {
-
 }
 void mc_visualizetion::mousePressEvent(QMouseEvent* event)
 {
@@ -25,7 +24,7 @@ void mc_visualizetion::paintEvent(QPaintEvent *event)
     Common* common = Common::instance();
 
  //   int count = modle_count;
-   int count = visualizetion.size();
+   int count = visualizetionlist.size();
 
     if(count<3)
     {
@@ -34,23 +33,26 @@ void mc_visualizetion::paintEvent(QPaintEvent *event)
         Common::draw_text(painter,0,0, Qt::AlignLeft | Qt::AlignVCenter, "Pleasa add at least three vital signs");
         return;
     }
-    QFont date_font ;
+    QFont data_font ;
     QFont value_font ;
     bool Show_pen =1;
-    date_font.setPixelSize(22);
-    date_font.setFamily("Arial [Mono]");
+    data_font.setPixelSize(22);
+    data_font.setFamily("Arial [Mono]");
     value_font.setPixelSize(16);
     value_font.setFamily("Arial [Mono]");
 
    int radius = height()/2-60;
 
    /*
-    * date須提供 date_name,date[n],low,high,color
+    * data須提供 data_name,data[n],low,high,color
     *
     *
     *
     */
    QPainter painter(this);
+   painter.setPen(Qt::NoPen);
+   painter.setBrush(QColor(7, 22, 40));
+   painter.drawRect(0,0,width(),height());
    //设置为抗锯齿,并且设置画笔颜色为浅灰
    painter.setRenderHint(QPainter::Antialiasing);
    QColor pen_color =QColor(255,255,255);
@@ -65,7 +67,7 @@ void mc_visualizetion::paintEvent(QPaintEvent *event)
    QPainterPath path;
    QPainterPath alarm_line;
    float alarm_line_start_x,alarm_line_start_y;
-   QColor Color=QColor(141, 195, 151); //圖形顏色
+   QColor visualizetionColor=common->css.alarm_green; //圖形顏色
     if(count>9)return;
    //开始绘制多边形
    for (int i = 0; i < count; ++i)
@@ -93,44 +95,52 @@ void mc_visualizetion::paintEvent(QPaintEvent *event)
         painter.drawPath(path);
         painter.setRenderHint(QPainter::Antialiasing, true);
 
-        float high=visualizetion[i].higher;
-        float low=visualizetion[i].lower;
+        float high=visualizetionlist[i].higher;
+        float low=visualizetionlist[i].lower;
         float avg=qRound((high+low)/2);
         float max =high*2-avg;
         float min =low*2-avg;
-        QString datename= visualizetion[i].datename;
+        QString dataname= visualizetionlist[i].dataname;
         bool REVERSE_DIRECTION = y2 > y1 -1;
         bool VERTICAL = abs(x2 - x1) <= 1;
-        QList<float> date;
-        int date_size =0;
+        QList<float> data;
+        std::string querystr = "patient_id MATCH '";
+            querystr.append(common->patient_id);
+            querystr.append("' AND vmd_id MATCH '");
+            querystr.append(common->vmd_id);
+            querystr.append("' AND mdc_code MATCH '");
+            querystr.append(dataname.toStdString());
+            querystr.append("'");
+
         dds::sub::cond::QueryCondition cond(
-                    dds::sub::Query(common->mdsm_reader, querystr),
+                    dds::sub::Query(common->visualizetion_observation_reader, querystr),
                     dds::sub::status::DataState(
                     dds::sub::status::SampleState::any(),
                     dds::sub::status::ViewState::any(),
                     dds::sub::status::InstanceState::alive()));
-        dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->mdsm_reader.select().condition(cond).read();
-        if(i==2)
+        dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->visualizetion_observation_reader.select().condition(cond).read();
+        for (auto sample :samples)
         {
-            date<<60<<90<<85 ;
-            if(REVERSE_DIRECTION)
-                std::sort(date.begin(), date.end(),std::greater<int>());
-            else
-                std::sort(date.begin(), date.end(),std::less<int>());
-            date_size = date.size();
-         }
-        else
-        {
-            date<<15*i+25;
-            date_size = date.size();;
+            dds::core::xtypes::DynamicData& d = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
+            float value=d.value<float>("value");
+            if(visualizetionlist[i].highest<value ||visualizetionlist[i].lowest >value)
+                visualizetionColor=common->css.alarm_red;
+            else if(visualizetionColor!=common->css.alarm_red&&(visualizetionlist[i].higher<value ||visualizetionlist[i].lower >value))
+                visualizetionColor=common->css.alarm_yellow;
+            data<<value;
         }
+        data<<50;
+        if(REVERSE_DIRECTION) //重新排列data
+            std::sort(data.begin(), data.end(),std::greater<int>());
+        else
+            std::sort(data.begin(), data.end(),std::less<int>());
 
         float x_ideal,y_ideal;
-        for (int j=0 ;j<date_size;++j)
+        for (int j=0 ;j<data.size();++j)
         {
             if (REVERSE_DIRECTION)
             {
-                float proportion=(date[j]-min)/(max-min);  //計算即時資料在線上位置
+                float proportion=(data[j]-min)/(max-min);  //計算即時資料在線上位置
                 float slope = 1.0 * (y1 - y2) / (x1 - x2);
                 double intercept = y2 - slope * x2;
                 x_ideal = proportion * (x1 - x2) + x2;;
@@ -142,7 +152,7 @@ void mc_visualizetion::paintEvent(QPaintEvent *event)
             }
             else
             {
-                float proportion=(date[j]-min)/(max-min);  //計算即時資料在線上位置
+                float proportion=(data[j]-min)/(max-min);  //計算即時資料在線上位置
                 float slope = 1.0 * (y2 - y1) / (x2 - x1);
                 double intercept = y1 - slope * x1;
                 x_ideal = proportion * (x2 - x1) + x1;;
@@ -160,16 +170,16 @@ void mc_visualizetion::paintEvent(QPaintEvent *event)
 
        int length1,length2;
        float proportion1 =1.4; //調整距離圓心位置
-       painter.setFont(date_font);
+       painter.setFont(data_font);
        if((x1+(x2-x1)*0.50)<0) //讓左側文字靠左
         {
-           length1= datename.length()*10;
+           length1= dataname.length()*10;
            length2= QString::number(avg).length()*5;
 
         }
        else if(x1+(x2-x1)*0.50<1)
         {
-           length1= datename.length()*5;
+           length1= dataname.length()*5;
            length2= 0;
         }
        else
@@ -179,7 +189,7 @@ void mc_visualizetion::paintEvent(QPaintEvent *event)
         }
 
 
-        Common::draw_text(painter, (x1+(x2-x1)*0.50)*proportion1-length1, (y1+(y2-y1)*0.50)*proportion1, Qt::AlignLeft | Qt::AlignVCenter, datename);
+        Common::draw_text(painter, (x1+(x2-x1)*0.50)*proportion1-length1, (y1+(y2-y1)*0.50)*proportion1, Qt::AlignLeft | Qt::AlignVCenter, dataname);
         if (REVERSE_DIRECTION)
         {
            painter.setFont(value_font);
@@ -230,10 +240,10 @@ void mc_visualizetion::paintEvent(QPaintEvent *event)
    painter.setPen(Qt::blue);
    alarm_line.closeSubpath();
    painter.drawPath(alarm_line);
-   painter.setPen(Color);
+   painter.setPen(visualizetionColor);
    RT.closeSubpath();
    painter.drawPath(RT);
-   painter.fillPath(RT, Color);
+   painter.fillPath(RT, visualizetionColor);
 }
 
 void mc_visualizetion::set_modle_count(int count)

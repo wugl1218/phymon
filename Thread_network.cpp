@@ -24,7 +24,6 @@ void network_thread::init()
         int posStart = url.indexOf("/");
         int posEnd = url.lastIndexOf(":");
         url = url.sliced(posStart + 2, posEnd - posStart - 2);
-        msg = "";
     }
     else
     {
@@ -36,6 +35,7 @@ void network_thread::init()
 }
 void network_thread::run()
 {
+    if(url=="0.0.0.0")return;
     return;
     Common* common = Common::instance();
     while(1)

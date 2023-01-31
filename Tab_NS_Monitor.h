@@ -4,11 +4,11 @@
 #include <QWidget>
 #include <QDate>
 #include <QFile>
-#include "Card_Patient.h"
+#include "Manager_Patient_Card.h"
 #include "qtimer.h"
 #include "Dialog_release.h"
 #include <vector>
-#include "Card_MDSConnectivity.h"
+#include "Manager_MDSConnectivity_Card.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
@@ -44,7 +44,7 @@ signals:
     void bindingChanged();
 private:
     Ui::Tab_NS_Monitor *ui;
-    std::vector<Card_MDSConnectivity*> cards;
+    std::vector<Manager_MDSConnectivity_Card*> cards;
     void on_itemSelectionChanged();
 
 

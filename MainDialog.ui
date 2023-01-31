@@ -505,8 +505,23 @@ QPushButton:pressed{border-image: url(:/icons/X1.png);}</string>
            <height>160</height>
           </size>
          </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,0,5">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>20</number>
+          </property>
+          <item>
            <widget class="QWidget" name="binding_layout" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -1060,7 +1075,7 @@ color: rgb(255, 255, 255);</string>
             </layout>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item>
            <widget class="QWidget" name="header_spacing" native="true">
             <property name="minimumSize">
              <size>
@@ -1070,7 +1085,7 @@ color: rgb(255, 255, 255);</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
+          <item>
            <widget class="QWidget" name="header_right" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -1351,8 +1366,14 @@ color: rgb(255, 255, 255);</string>
              </item>
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_2">
+               <property name="spacing">
+                <number>3</number>
+               </property>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <property name="spacing">
+                  <number>3</number>
+                 </property>
                  <item>
                   <widget class="mc_btn_Clickable" name="topalarm_label_1">
                    <property name="palette">
@@ -1803,6 +1824,9 @@ background:rgb(7, 22, 40);
                </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <property name="spacing">
+                  <number>3</number>
+                 </property>
                  <item>
                   <widget class="mc_btn_Clickable" name="topalarm_label_2">
                    <property name="palette">

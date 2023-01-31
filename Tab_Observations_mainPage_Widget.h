@@ -111,6 +111,12 @@ private slots:
 
     void on_cap_btn_toggled(bool checked);
 
+    void on_visualization_hide_btn_clicked();
+
+    void on_visualization_show_btn_clicked();
+
+    void on_visualization_new_clicked();
+
 signals:
     void changeToMetricItemsDisplayConfigPage();
     void changeToHistoryPage();

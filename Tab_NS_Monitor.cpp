@@ -16,6 +16,7 @@
 #include "ui_Tab_Devices_Widget.h"
 #include "Tab_Observations_metricItemsDisplayConfigPage_Widget.h"
 #include "Common.h"
+#include "mc_visualizetion_setting_item.h"
 
 
 
@@ -49,6 +50,8 @@ void Tab_NS_Monitor::init()
             exit(1);
         }
     }
+
+
 }
 
 Tab_NS_Monitor::Tab_NS_Monitor(QWidget *parent) :
@@ -56,7 +59,9 @@ Tab_NS_Monitor::Tab_NS_Monitor(QWidget *parent) :
     ui(new Ui::Tab_NS_Monitor)
 {
     ui->setupUi(this);
-
+    mc_visualizetion_setting_item* e = new mc_visualizetion_setting_item(ui->scrollAreaWidgetContents);
+    e->setGeometry(100, 50,500, 500);
+    e->show();
 }
 Tab_NS_Monitor::~Tab_NS_Monitor()
 {
@@ -166,7 +171,7 @@ void Tab_NS_Monitor::update_MDS()
         }
 
 
-        Card_MDSConnectivity *card = new Card_MDSConnectivity(ui->scrollAreaWidgetContents);
+        Manager_MDSConnectivity_Card *card = new Manager_MDSConnectivity_Card(ui->scrollAreaWidgetContents);
         card->setGeometry(CARD_SPACING+(CARD_WIDTH+CARD_SPACING)*c,
                           CARD_SPACING+(CARD_HEIGHT+CARD_SPACING)*r,
                           CARD_WIDTH, CARD_HEIGHT);

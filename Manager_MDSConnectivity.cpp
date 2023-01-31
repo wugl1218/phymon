@@ -103,7 +103,6 @@ void Manager_MDSConnectivity::step()
                 dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> patient_samples = common->patient_reader.select().condition(cond2).read();
                 if(patient_samples.length() > 0)
                     mdsconnectivity.emplace(mdsc.bed_id, mdsc);
-
             }
         for(int i=0; i<common->monitor_page->Set_bed.size(); i++)
             {

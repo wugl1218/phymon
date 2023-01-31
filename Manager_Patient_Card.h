@@ -1,13 +1,13 @@
-#ifndef CARD_PATIENT_H
-#define CARD_PATIENT_H
+#ifndef Manager_Patient_Card_H
+#define Manager_Patient_Card_H
 
 #include <QWidget>
 
-class Card_Patient : public QWidget
+class Manager_Patient_Card : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Card_Patient(QWidget *parent = nullptr);
+    explicit Manager_Patient_Card(QWidget *parent = nullptr);
     void set_is_male(uint8_t is_male);
     uint8_t is_male();
     void set_selected(uint8_t selected);
@@ -36,4 +36,4 @@ private:
     std::string name;
 };
 
-#endif // CARD_PATIENT_H
+#endif // Manager_Patient_Card_H

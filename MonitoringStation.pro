@@ -15,8 +15,8 @@ DEFINES += RTI_UNIX \
 
 SOURCES += \
     BarcodeDaemon.cpp \
-    Card_MDSConnectivity.cpp \
-    Card_Patient.cpp \
+    Manager_MDSConnectivity_Card.cpp \
+    Manager_Patient_Card.cpp \
     Common.cpp \
     Dialog_forcerelease.cpp \
     Dialog_jsontext.cpp \
@@ -55,13 +55,14 @@ SOURCES += \
     mc_navigation.cpp \
     mc_selection_entry.cpp \
     mc_visualizetion.cpp \
-    mc_visualizetion_setting.cpp
+    mc_visualizetion_setting.cpp \
+    mc_visualizetion_setting_item.cpp
 
 HEADERS += \
     BarcodeDaemon.h \
     CSS_Infusion.h \
-    Card_MDSConnectivity.h \
-    Card_Patient.h \
+    Manager_MDSConnectivity_Card.h \
+    Manager_Patient_Card.h \
     Common.h \
     Dialog_forcerelease.h \
     Dialog_jsontext.h \
@@ -99,7 +100,8 @@ HEADERS += \
     mc_navigation.h \
     mc_selection_entry.h \
     mc_visualizetion.h \
-    mc_visualizetion_setting.h
+    mc_visualizetion_setting.h \
+    mc_visualizetion_setting_item.h
 
 FORMS += \
     Dialog_forcerelease.ui \

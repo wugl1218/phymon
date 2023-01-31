@@ -1,16 +1,16 @@
-#ifndef CARD_MDSCONNECTIVITY_H
-#define CARD_MDSCONNECTIVITY_H
+#ifndef Manager_MDSConnectivity_Card_H
+#define Manager_MDSConnectivity_Card_H
 
 #include <QWidget>
 #include <QPushButton>
 #include <QLabel>
 #include <QMouseEvent>
 
-class Card_MDSConnectivity : public QWidget
+class Manager_MDSConnectivity_Card : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Card_MDSConnectivity(QWidget *parent = nullptr);
+    explicit Manager_MDSConnectivity_Card(QWidget *parent = nullptr);
     void set_is_male(uint8_t is_male);
     uint8_t is_male();
     void set_id (std::string id);
@@ -93,4 +93,4 @@ private:
 
 
 };
-#endif // CARD_MDSCONNECTIVITY_H
+#endif // Manager_MDSConnectivity_Card_H

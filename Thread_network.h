@@ -24,7 +24,6 @@ public:
     void init();
     void run();
     QString url ;
-    QString msg ;
     bool is_network_error = 0;
     bool is_network_checking = 0;
     bool frist =1;

@@ -6,12 +6,12 @@
 class Visualizetion
 {
 public:
-    float count;
     float highest;
     float higher;
     float lower;
     float lowest;
-    QString datename;
+    QString device;
+    QString dataname;
 //    uint64_t source_timestamp;
 };
 class mc_visualizetion : public QWidget
@@ -21,7 +21,7 @@ class mc_visualizetion : public QWidget
 public:
     explicit mc_visualizetion(QWidget *parent = nullptr);
     void set_modle_count(int count);
-    QList <Visualizetion> visualizetion;
+    QList <Visualizetion> visualizetionlist;
 
 private:
     int modle_count=0;

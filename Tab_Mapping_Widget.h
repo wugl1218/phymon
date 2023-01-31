@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QDate>
-#include "Card_Patient.h"
+#include "Manager_Patient_Card.h"
 #include "Dialog_forcerelease.h"
 #include "qtimer.h"
 #include "Dialog_release.h"
@@ -59,7 +59,7 @@ private:
     double friction;
     uint8_t press_is_stationary;
     QPointF press_pos;
-    std::vector<Card_Patient*> cards;
+    std::vector<Manager_Patient_Card*> cards;
     int selected_patient;
     void on_itemSelectionChanged();
 };
