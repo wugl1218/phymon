@@ -32,7 +32,7 @@ public:
     ~Tab_Observations_mainPage_Widget();
     void clear_points();
     Ui::Tab_Observations_mainPage_Widget *ui;
-    std::string CapturedIssues_channel_id;
+    std::string CapturedIssues_model;
     Dialog_loopselection lsd;
     Dialog_visualization_config vsd;
 protected:

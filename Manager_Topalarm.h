@@ -13,6 +13,7 @@ public:
     std::string alarm_code;
     std::string alarm_no;
     std::string channel_id;
+    std::string model;
     std::string vmd_id;
     std::string alarm_state;
     uint64_t sec;
@@ -22,8 +23,8 @@ class Manager_Topalarm
 {
 public:
     uint32_t last_query_time;
-    QList<TOPAlarm> top_patient_alarm;
-    QList<TOPAlarm> top_technical_alarm;
+    std::multimap<int,TOPAlarm,std::greater<int>> top_patient_alarm;
+    std::multimap<int,TOPAlarm,std::greater<int>> top_technical_alarm;
     void init();
     void step();
 

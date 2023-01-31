@@ -16,7 +16,7 @@
 #include "ui_Tab_Devices_Widget.h"
 #include "Tab_Observations_metricItemsDisplayConfigPage_Widget.h"
 #include "Common.h"
-#include "mc_visualizetion_setting_item.h"
+#include "mc_visualization_setting_item.h"
 
 
 
@@ -59,7 +59,7 @@ Tab_NS_Monitor::Tab_NS_Monitor(QWidget *parent) :
     ui(new Ui::Tab_NS_Monitor)
 {
     ui->setupUi(this);
-    mc_visualizetion_setting_item* e = new mc_visualizetion_setting_item(ui->scrollAreaWidgetContents);
+    mc_visualization_setting_item* e = new mc_visualization_setting_item(ui->scrollAreaWidgetContents);
     e->setGeometry(100, 50,500, 500);
     e->show();
 }
@@ -342,7 +342,7 @@ void Tab_NS_Monitor::on_pushButton_clicked()
     post_index.append("&mdcCode=MDC_PRESS_AWAY");
     //post_index.append(common->history_mdccode);
     post_index.append("&channelId=Savina");
-    //post_index.append(common->history_channel);
+    //post_index.append(common->history_model);
     post_index.append("&queryStartTime=1673057096");
     post_index.append("&queryEndTime=1673057098");
    // post_index.append("&dataSource=RTObservation");

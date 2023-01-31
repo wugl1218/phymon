@@ -61,9 +61,10 @@ void Manager_Device::step()
                     auto i=devid_samples.begin();
                     p.manufacturer = i->data().value<std::string>("manufacturer");
                     p.model = i->data().value<std::string>("model");
+                    p.channel_id = i->data().value<std::string>("channel_id");
                     p.serial_no = i->data().value<std::string>("serial_no");
                     p.desc = i->data().value<std::string>("description");
-                    devices.emplace(p.channel_id, p);
+                    devices.emplace(p.model, p);
                 }
 
             }

@@ -122,7 +122,7 @@ public:
     std::string qos_path;
     std::string log_path;
     std::string export_path;
-    std::string history_channel;
+    std::string history_model;
     std::string history_mdccode;
     std::map<std::string, std::vector<std::string>> special_items;
     bool is_server=1;
@@ -133,6 +133,7 @@ public:
     QString sPID;
     fflog_t* log;
     QJsonArray Restful_API(char queryStartTime[64] , char queryEndTime[64], std::string dataSource);
+    QJsonArray Restful_API_Orderby(char queryStartTime[64] , char queryEndTime[64], std::string dataSource, std::string model, std::string orderStr);
 
     dds::domain::DomainParticipant participant = nullptr;
     dds::pub::Publisher publisher = nullptr;

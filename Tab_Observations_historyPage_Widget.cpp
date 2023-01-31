@@ -117,8 +117,8 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 sql.append(common->history_mdccode);
                 sql.append("' AND patient_id='");
                 sql.append(common->patient_id);
-                sql.append("' AND channel_id='");
-                sql.append(common->history_channel);
+                sql.append("' AND model='");
+                sql.append(common->history_model);
                 sql.append("'");
                 cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
     //           printf("unlocked query took %u milliseconds.\n", query_end-query_start);*/
@@ -196,8 +196,8 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 sql.append(common->history_mdccode);
                 sql.append("' AND patient_id='");
                 sql.append(common->patient_id);
-                sql.append("' AND channel_id='");
-                sql.append(common->history_channel);
+                sql.append("' AND model='");
+                sql.append(common->history_model);
                 sql.append("' AND vmd_id='");
                 sql.append(common->vmd_id);
                 sql.append("'");
@@ -288,8 +288,8 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 sql.append(common->history_mdccode);
                 sql.append("' AND patient_id='");
                 sql.append(common->patient_id);
-                sql.append("' AND channel_id='");
-                sql.append(common->history_channel);
+                sql.append("' AND model='");
+                sql.append(common->history_model);
                 sql.append("'");
                 cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
     //           printf("unlocked query took %u milliseconds.\n", query_end-query_start);*/
@@ -367,8 +367,8 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 sql.append(common->history_mdccode);
                 sql.append("' AND patient_id='");
                 sql.append(common->patient_id);
-                sql.append("' AND channel_id='");
-                sql.append(common->history_channel);
+                sql.append("' AND model='");
+                sql.append(common->history_model);
                 sql.append("' AND vmd_id='");
                 sql.append(common->vmd_id);
                 sql.append("'");
@@ -455,8 +455,8 @@ void Tab_Observations_historyPage_Widget::update_triggered()
             sql.append(common->history_mdccode);
             sql.append("' AND patient_id='");
             sql.append(common->patient_id);
-            sql.append("' AND channel_id='");
-            sql.append(common->history_channel);
+            sql.append("' AND model_id='");
+            sql.append(common->history_model);
             sql.append("' AND vmd_id='");
             sql.append(common->vmd_id);
             sql.append("'");
@@ -551,8 +551,8 @@ void Tab_Observations_historyPage_Widget::update_triggered()
             sql.append(common->history_mdccode);
             sql.append("' AND patient_id='");
             sql.append(common->patient_id);
-            sql.append("' AND channel_id='");
-            sql.append(common->history_channel);
+            sql.append("' AND model='");
+            sql.append(common->history_model);
             sql.append("' AND vmd_id='");
             sql.append(common->vmd_id);
             sql.append("'");
@@ -650,8 +650,8 @@ observation:
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");
     querystr.append(common->patient_id);
-    querystr.append("' AND channel_id MATCH '");
-    querystr.append(common->history_channel);
+    querystr.append("' AND model MATCH '");
+    querystr.append(common->history_model);
     querystr.append("'");
     dds::sub::cond::QueryCondition qcond(
                 dds::sub::Query(common->history_observation_reader, querystr),
@@ -679,7 +679,7 @@ observation:
             loaned_member.return_loan();
             if(common->item_checkstate.size() == 0)
             {
-                auto it2 = common->special_items.find(common->history_channel);
+                auto it2 = common->special_items.find(common->history_model);
                 if(it2 != common->special_items.end())
                 {
                     int i=0;
@@ -696,7 +696,7 @@ observation:
             }
             else
             {
-                std::string str = common->history_channel;
+                std::string str = common->history_model;
                 str.append(",");
                 str.append(e.desc);
                 auto it2 = common->item_checkstate.find(str);
@@ -711,11 +711,11 @@ observation:
             }
         }
     }
-    if(common->history_channel.compare("Savina") == 0 ||
-       common->history_channel.compare("Savina 300") == 0)
+    if(common->history_model.compare("Savina") == 0 ||
+       common->history_model.compare("Savina 300") == 0)
     {
         common->remove_savina_items(&entries);
-        common->add_savina_items(common->history_channel, &entries, &left_over);
+        common->add_savina_items(common->history_model, &entries, &left_over);
     }
     ui->current_table->clearContents();
     ui->current_table->setRowCount(entries.size());
@@ -777,8 +777,8 @@ void Tab_Observations_historyPage_Widget::on_point_select(int series_index, uint
     sprintf(endbuf, "%llu", timestamp+1);
     sprintf(startbuf, "%llu", start_time);
     std::string dummy;
-    std::string sql = "SELECT description,value,unit,code FROM _ WHERE data_source='Observation' AND channel_id='";
-    sql.append(common->history_channel);
+    std::string sql = "SELECT description,value,unit,code FROM _ WHERE data_source='Observation' AND model='";
+    sql.append(common->history_model);
     sql.append("' AND vmd_id='");
     sql.append(common->vmd_id);
     sql.append("' AND patient_id='");
@@ -798,7 +798,7 @@ void Tab_Observations_historyPage_Widget::on_point_select(int series_index, uint
         e.val = result.valueAtIndex(1).asFloat();
         e.unit = result.valueAtIndex(2).asstring();
         e.code = result.valueAtIndex(3).asstring();
-        std::string str = common->history_channel;
+        std::string str = common->history_model;
         str.append(",");
         str.append(e.desc);
         auto it2 = common->item_checkstate.find(str);
@@ -832,9 +832,9 @@ void Tab_Observations_historyPage_Widget::on_point_select(int series_index, uint
         ui->selection_table->setHorizontalHeaderLabels(InfHeader);
         return;
     }
-    if(common->history_channel.compare("Savina") == 0 ||
-       common->history_channel.compare("Savina 300") == 0)
-        common->add_savina_items(common->history_channel, &vals, &left_over);
+    if(common->history_model.compare("Savina") == 0 ||
+       common->history_model.compare("Savina 300") == 0)
+        common->add_savina_items(common->history_model, &vals, &left_over);
     ui->selection_table->clearContents();
     ui->selection_table->setRowCount(vals.size()+left_over.size());
     int row=0;
@@ -910,9 +910,9 @@ void Tab_Observations_historyPage_Widget::showEvent(QShowEvent *event)
     update_timer.start(1000);
     worker.start(33);
     reposition = 1;
-    //common->history_channel = "Savina";
+    //common->history_model = "Savina";
     //common->history_mdccode = "MDC_PRESS_AWAY";
-    if(common->history_channel.compare("Savina") == 0)
+    if(common->history_model.compare("Savina") == 0)
     {
         if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
         {
@@ -933,7 +933,7 @@ void Tab_Observations_historyPage_Widget::showEvent(QShowEvent *event)
             ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
         }
     }
-    else if(common->history_channel.compare("Savina 300") == 0)
+    else if(common->history_model.compare("Savina 300") == 0)
     {
         if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
         {
@@ -954,7 +954,7 @@ void Tab_Observations_historyPage_Widget::showEvent(QShowEvent *event)
             ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
         }
     }
-    ui->label->setText(common->history_channel.c_str());
+    ui->label->setText(common->history_model.c_str());
     ui->chart->clear_points(0);
     ui->chart->clear_selection();
     pts.clear();
@@ -990,7 +990,7 @@ void Tab_Observations_historyPage_Widget::on_PAWpushButton_clicked()
     common->history_mdccode = "MDC_PRESS_AWAY";
     //update_timer.start(1000);
     reposition = 1;
-    if(common->history_channel.compare("Savina") == 0)
+    if(common->history_model.compare("Savina") == 0)
     {
         if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
         {
@@ -1011,7 +1011,7 @@ void Tab_Observations_historyPage_Widget::on_PAWpushButton_clicked()
             ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
         }
     }
-    else if(common->history_channel.compare("Savina 300") == 0)
+    else if(common->history_model.compare("Savina 300") == 0)
     {
         if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
         {
@@ -1032,7 +1032,7 @@ void Tab_Observations_historyPage_Widget::on_PAWpushButton_clicked()
             ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
         }
     }
-    ui->label->setText(common->history_channel.c_str());
+    ui->label->setText(common->history_model.c_str());
     ui->chart->clear_points(0);
     ui->chart->clear_selection();
     pts.clear();
@@ -1057,7 +1057,7 @@ void Tab_Observations_historyPage_Widget::on_FLOWpushButton_clicked()
     common->history_mdccode = "MDC_FLOW_AWAY";
     //update_timer.start(1000);
     reposition = 1;
-    if(common->history_channel.compare("Savina") == 0)
+    if(common->history_model.compare("Savina") == 0)
     {
         if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
         {
@@ -1078,7 +1078,7 @@ void Tab_Observations_historyPage_Widget::on_FLOWpushButton_clicked()
             ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
         }
     }
-    else if(common->history_channel.compare("Savina 300") == 0)
+    else if(common->history_model.compare("Savina 300") == 0)
     {
         if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
         {
@@ -1099,7 +1099,7 @@ void Tab_Observations_historyPage_Widget::on_FLOWpushButton_clicked()
             ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
         }
     }
-    ui->label->setText(common->history_channel.c_str());
+    ui->label->setText(common->history_model.c_str());
     ui->chart->clear_points(0);
     ui->chart->clear_selection();
     pts.clear();
@@ -1124,7 +1124,7 @@ void Tab_Observations_historyPage_Widget::on_RVpushButton_clicked()
     common->history_mdccode = "FOYA_MEASURED_VolumeInspirationBegan";
     //update_timer.start(1000);
     reposition = 1;
-    if(common->history_channel.compare("Savina") == 0)
+    if(common->history_model.compare("Savina") == 0)
     {
         if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
         {
@@ -1145,7 +1145,7 @@ void Tab_Observations_historyPage_Widget::on_RVpushButton_clicked()
             ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
         }
     }
-    else if(common->history_channel.compare("Savina 300") == 0)
+    else if(common->history_model.compare("Savina 300") == 0)
     {
         if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
         {
@@ -1166,7 +1166,7 @@ void Tab_Observations_historyPage_Widget::on_RVpushButton_clicked()
             ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
         }
     }
-    ui->label->setText(common->history_channel.c_str());
+    ui->label->setText(common->history_model.c_str());
     ui->chart->clear_points(0);
     ui->chart->clear_selection();
     pts.clear();

@@ -15,6 +15,7 @@ DEFINES += RTI_UNIX \
 
 SOURCES += \
     BarcodeDaemon.cpp \
+    Dialog_Topalarm_Mute.cpp \
     Manager_MDSConnectivity_Card.cpp \
     Manager_Patient_Card.cpp \
     Common.cpp \
@@ -54,13 +55,14 @@ SOURCES += \
     mc_loop.cpp \
     mc_navigation.cpp \
     mc_selection_entry.cpp \
-    mc_visualizetion.cpp \
-    mc_visualizetion_setting.cpp \
-    mc_visualizetion_setting_item.cpp
+    mc_visualization.cpp \
+    mc_visualization_setting.cpp \
+    mc_visualization_setting_item.cpp
 
 HEADERS += \
     BarcodeDaemon.h \
     CSS_Infusion.h \
+    Dialog_Topalarm_Mute.h \
     Manager_MDSConnectivity_Card.h \
     Manager_Patient_Card.h \
     Common.h \
@@ -99,9 +101,9 @@ HEADERS += \
     mc_loop.h \
     mc_navigation.h \
     mc_selection_entry.h \
-    mc_visualizetion.h \
-    mc_visualizetion_setting.h \
-    mc_visualizetion_setting_item.h
+    mc_visualization.h \
+    mc_visualization_setting.h \
+    mc_visualization_setting_item.h
 
 FORMS += \
     Dialog_forcerelease.ui \

@@ -55,8 +55,8 @@ void Tab_Utilities_alarmHistoryPage_Widget::update_devices(std::map<std::string,
 
         qButtonGroup->addButton(btn);
         btn->setProperty("index", i);
-        QString str = it->second.channel_id.c_str();
-        btn->setProperty("channel_id", str);
+        QString str = it->second.model.c_str();
+        btn->setProperty("model", str);
         connect(btn, SIGNAL(pressed()), this, SLOT(btn_clicked()));
         ui->devices_horizontalLayout->addWidget(btn);
         devices.push_back(btn);
@@ -98,7 +98,7 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
         {
         return;
         }
-    if(1==0/*common->is_server*/)
+    if(common->is_server)
     {
         time_t now = time(NULL);
         time_t start_time = 0;
@@ -112,10 +112,152 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
             start_time = now - 48*60*60;
         char timebuf[128];
         char timebuf1[128];
-        sprintf(timebuf1, "%u", (uint32_t)start_time);
-        sprintf(timebuf, "%u", (uint32_t)now);
+        sprintf(timebuf, "%u", (uint32_t)start_time);
+        sprintf(timebuf1, "%u", (uint32_t)now);
         std::multimap<uint64_t, QJsonArray> vals;
-        QJsonArray array =common->Restful_API(timebuf,timebuf1,"RTObservation");
+        std::string orderstr;
+        if(order == 0)
+        {
+            orderstr.append("source_timestamp.sec DESC");
+            orderstr.append(",alarm_no");
+        }
+        else
+        {
+            orderstr.append("alarm_description");
+            orderstr.append(",source_timestamp.sec DESC");
+            orderstr.append(",alarm_no");
+        }
+        QJsonArray array;
+        if(is_technical)
+            array=common->Restful_API_Orderby(timebuf,timebuf1,"TechnicalAlert",devices[dev_index]->property("model").value<QString>().toStdString(),orderstr);
+        else
+            array=common->Restful_API_Orderby(timebuf,timebuf1,"PatientAlert",devices[dev_index]->property("model").value<QString>().toStdString(),orderstr);
+        int row=0;
+        //philo
+        char buf[128];
+        char sumbuf[128];
+        sprintf(buf, "%u", (uint32_t)start_time);
+        sprintf(sumbuf, "%u", (uint32_t)start_time);
+        time_t old_timestamp,old_timestamp_2,sum,old_sum =0;
+        int dur_index=1,old_dur_index; //philo
+        for (int j=0; j<array.count();++j)
+        {
+            QJsonValue value = array.at(j).toObject();
+            QJsonValue source_timestamp =value["source_timestamp"];
+            time_t timestamp = source_timestamp["sec"].toInteger();
+            std::string alarm_no =value["alarm_no"].toString().toStdString();
+            std::string msg =value["alarm_description"].toString().toStdString();
+            ui->queryResult_tableWidget->setRowCount(row+1);
+          /*std::string alarm_no = result.valueAtIndex(0).asstring();
+            time_t timestamp = (time_t)result.valueAtIndex(1).asUnsigned();
+            std::string msg = result.valueAtIndex(2).asstring();*/
+            struct tm t;
+            localtime_r(&timestamp, &t);
+            sprintf(buf, "%d-%d-%d %02d:%02d:%02d", t.tm_year+1900, t.tm_mon+1,
+                    t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec);
+            int col = 0;
+            QTableWidgetItem* item1 = new QTableWidgetItem(alarm_no.c_str());
+            item1->setFlags(Qt::ItemIsEnabled);
+            ui->queryResult_tableWidget->setItem(row, col++, item1);
+            QTableWidgetItem* item2 = new QTableWidgetItem(buf);
+            item2->setFlags(Qt::ItemIsEnabled);
+            ui->queryResult_tableWidget->setItem(row, col++, item2);
+            QTableWidgetItem* item3 = new QTableWidgetItem(msg.c_str());
+            item3->setFlags(Qt::ItemIsEnabled);
+            ui->queryResult_tableWidget->setItem(row, col, item3);
+            //================訊息確認//philo
+            QString new_message = ui->queryResult_tableWidget->item(row,col)->text();
+            QString old_message,old_message_2;
+            if(row>0)
+                old_message = ui->queryResult_tableWidget->item(row-1,col)->text();
+            if(row>1)
+                old_message_2 = ui->queryResult_tableWidget->item(row-2,col)->text();
+            if(QString::compare(new_message,old_message,Qt::CaseInsensitive)== 0)
+            {
+
+                if(old_timestamp - timestamp > 6)
+                {
+                    sum=0;
+                    dur_index++;
+                }
+                else
+
+                    {
+                    sum+= old_timestamp - timestamp;
+                    old_sum=sum;
+                    }
+            }
+            else
+               dur_index=1,old_dur_index=0,sum=0;
+            col++;
+            //=================Duration運算
+            struct tm old_t;
+            localtime_r(&sum, &old_t);
+            sprintf(sumbuf, "%02d:%02d:%02d",old_t.tm_hour-8, old_t.tm_min, old_t.tm_sec);
+            QTableWidgetItem* item4 = new QTableWidgetItem(QString::number(dur_index));
+            item4->setFlags(Qt::ItemIsEnabled);
+            ui->queryResult_tableWidget->setItem(row, col, item4);
+
+            if (row>0) //=========刪除判定
+            {
+                int Y =QString::compare(new_message,old_message,Qt::CaseInsensitive);
+                if ( dur_index ==old_dur_index && Y ==0)
+                {
+                    ui->queryResult_tableWidget->removeRow(--row);
+                    ui->queryResult_tableWidget->item(row,3)->setText(sumbuf);
+                    old_timestamp_2=old_timestamp;
+                    old_timestamp = timestamp,old_dur_index = dur_index;
+                    row++;
+                    continue;
+                }
+                else
+                {
+                    ui->queryResult_tableWidget->item(row,3)->setText(sumbuf);
+                };
+            }
+            else
+                ui->queryResult_tableWidget->item(row,3)->setText(sumbuf);
+            int i;
+            QDateTime old_time = QDateTime::fromString(ui->queryResult_tableWidget->item(row,1)->text(),"yyyy-M-d hh:mm:ss");
+                for (i=row-1,dur_index==1;old_timestamp-timestamp<=6,i>=0;i--)
+                {
+                    old_message =ui->queryResult_tableWidget->item(i,2)->text();
+                    int Y =QString::compare(new_message,old_message,Qt::CaseInsensitive);
+                    QDateTime time = QDateTime::fromString(ui->queryResult_tableWidget->item(i,1)->text(),"yyyy-M-d hh:mm:ss");
+                    QDateTime dur = QDateTime::fromString(ui->queryResult_tableWidget->item(i,3)->text(),"hh:mm:ss");
+                    if (old_time.secsTo(time)>6)
+                        break;
+                    if(Y!=0)
+                        continue;
+                    sum+=old_time.secsTo(time)+dur.toSecsSinceEpoch()+2209017600;//+2209017600是GMT+8
+                    ui->queryResult_tableWidget->removeRow(i);
+                    row--;
+                    localtime_r(&sum, &old_t);
+                    sprintf(sumbuf, "%02d:%02d:%02d",old_t.tm_hour-8, old_t.tm_min, old_t.tm_sec);
+                    ui->queryResult_tableWidget->item(row,3)->setText(sumbuf);
+            }
+
+            old_timestamp_2=old_timestamp;
+            old_timestamp = timestamp,old_dur_index = dur_index;
+            row++;
+        }
+        if(order == 0)
+            ui->queryResult_tableWidget->sortByColumn(1,Qt::DescendingOrder);
+        for (int i=0;i<row;i++) //偶數列塗色
+        {
+            if(i % 2 ==1)
+                {
+                ui->queryResult_tableWidget->item(i,0)->setBackground(QBrush(QColor(11, 42, 78)));
+                ui->queryResult_tableWidget->item(i,1)->setBackground(QBrush(QColor(11, 42, 78)));
+                ui->queryResult_tableWidget->item(i,2)->setBackground(QBrush(QColor(11, 42, 78)));
+                ui->queryResult_tableWidget->item(i,3)->setBackground(QBrush(QColor(11, 42, 78)));
+            }
+            QDateTime Duration = QDateTime::fromString(ui->queryResult_tableWidget->item(i,3)->text(),"hh:mm:ss");
+            if(Duration.toSecsSinceEpoch()== -2209017600)
+                {
+                ui->queryResult_tableWidget->item(i,3)->setText("00:00:01");
+                }
+        }
     }
     else
     {
@@ -125,8 +267,8 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
             sql.append("TechnicalAlert");
         else
             sql.append("PatientAlert");
-        sql.append("' AND channel_id='");
-        sql.append(devices[dev_index]->property("channel_id").value<QString>().toStdString());
+        sql.append("' AND model='");
+        sql.append(devices[dev_index]->property("model").value<QString>().toStdString());
         sql.append("' AND vmd_id='");
         sql.append(common->vmd_id);
         sql.append("' AND patient_id='");
@@ -163,7 +305,6 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
         //philo
         char sumbuf[128];
         sprintf(sumbuf, "%u", (uint32_t)start_time);
-        sql.append(sumbuf);
         time_t old_timestamp,old_timestamp_2,sum,old_sum =0;
         int dur_index=1,old_dur_index; //philo
         for(auto& result: results)

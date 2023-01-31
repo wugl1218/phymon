@@ -1,15 +1,15 @@
-#ifndef MC_VISUALIZETION_SETTING_H
-#define MC_VISUALIZETION_SETTING_H
+#ifndef mc_visualization_SETTING_H
+#define mc_visualization_SETTING_H
 
 #include <QAbstractItemModel>
 #include <QWidget>
 
-class mc_visualizetion_setting : public QAbstractItemModel
+class mc_visualization_setting : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    explicit mc_visualizetion_setting(QObject *parent = nullptr);
+    explicit mc_visualization_setting(QObject *parent = nullptr);
 
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
@@ -36,4 +36,4 @@ signals:
     void released();
 };
 
-#endif // MC_VISUALIZETION_SETTING_H
+#endif // mc_visualization_SETTING_H

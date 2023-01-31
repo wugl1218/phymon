@@ -342,7 +342,7 @@ void Tab_Observations_mainPage_Widget::clear_points()
 void Tab_Observations_mainPage_Widget::on_series_pressed(int series_index)
 {
     Common* common = Common::instance();
-    std::string channel_id;
+    std::string model;
     auto fit = common->md->dm.devices.find("Savina");
     if(fit == common->md->dm.devices.end())
     {
@@ -350,12 +350,12 @@ void Tab_Observations_mainPage_Widget::on_series_pressed(int series_index)
         if(fit == common->md->dm.devices.end())
             return;
         else
-            CapturedIssues_channel_id="Savina 300";
+            CapturedIssues_model="Savina 300";
     }
     else
-        CapturedIssues_channel_id="Savina";
-    channel_id = fit->first;
-    common->history_channel = channel_id;
+        CapturedIssues_model="Savina";
+    model = fit->first;
+    common->history_model = model;
     if(sender() == ui->legend)
     {
         if(series_index == 0)
@@ -407,7 +407,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
     Common* common = Common::instance();
     if(common->patient_id.size() == 0)
         return;
-    std::string channel_id;
+    std::string model;
     auto fit = common->md->dm.devices.find("Savina");
     if(fit == common->md->dm.devices.end())
     {
@@ -415,11 +415,11 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
         if(fit == common->md->dm.devices.end())
             return;
         else
-            CapturedIssues_channel_id="Savina 300";
+            CapturedIssues_model="Savina 300";
     }
     else
-        CapturedIssues_channel_id="Savina";
-    channel_id = fit->first;
+        CapturedIssues_model="Savina";
+    model = fit->first;
     int loop_start = -1;
     std::vector<float> loop1_x;
     std::vector<float> loop1_y;
@@ -432,8 +432,8 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");
     querystr.append(common->patient_id);
-    querystr.append("' AND channel_id MATCH '");
-    querystr.append(channel_id);
+    querystr.append("' AND model MATCH '");
+    querystr.append(model);
     querystr.append("' AND mdc_code MATCH 'MDC_FLOW_AWAY'");
     dds::sub::cond::QueryCondition qcond2(
                 dds::sub::Query(common->rtobservation_reader, querystr),
@@ -540,8 +540,8 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");
     querystr.append(common->patient_id);
-    querystr.append("' AND channel_id MATCH '");
-    querystr.append(channel_id);
+    querystr.append("' AND model MATCH '");
+    querystr.append(model);
     querystr.append("' AND mdc_code MATCH 'MDC_PRESS_AWAY'");
     dds::sub::cond::QueryCondition qcond(
                 dds::sub::Query(common->rtobservation_reader, querystr),
@@ -638,8 +638,8 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");
     querystr.append(common->patient_id);
-    querystr.append("' AND channel_id MATCH '");
-    querystr.append(channel_id);
+    querystr.append("' AND model MATCH '");
+    querystr.append(model);
     querystr.append("' AND mdc_code MATCH 'FOYA_MEASURED_VolumeInspirationBegan'");
     dds::sub::cond::QueryCondition qcond3(
                 dds::sub::Query(common->rtobservation_reader, querystr),
@@ -1130,20 +1130,20 @@ void Tab_Observations_mainPage_Widget::update_triggered()
         int table_index = 0;
         for(auto it=common->md->dm.devices.begin();it!=common->md->dm.devices.end();it++)
         {
-            auto dit = common->device_checkstate.find(it->second.channel_id);
+            auto dit = common->device_checkstate.find(it->second.model);
             if(dit != common->device_checkstate.end() && dit->second == 0)
             {
                 table_index++;
                 continue;
             }
             tables[table_index]->show();
-            tables[table_index]->setTitle(it->second.channel_id.c_str());
+            tables[table_index]->setTitle(it->second.model.c_str());
             std::string querystr = "vmd_id MATCH '";
             querystr.append(common->vmd_id);
             querystr.append("' AND patient_id MATCH '");
             querystr.append(common->patient_id);
-            querystr.append("' AND channel_id MATCH '");
-            querystr.append(it->second.channel_id);
+            querystr.append("' AND model MATCH '");
+            querystr.append(it->second.model);
             querystr.append("'");
             dds::sub::cond::QueryCondition qcond(
                         dds::sub::Query(common->history_observation_reader, querystr),
@@ -1171,7 +1171,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                     loaned_member.return_loan();
                     if(common->item_checkstate.size() == 0)
                     {
-                        auto it2 = common->special_items.find(it->second.channel_id);
+                        auto it2 = common->special_items.find(it->second.model);
                         if(it2 != common->special_items.end())
                         {
                             int i=0;
@@ -1188,7 +1188,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                     }
                     else
                     {
-                        std::string str = it->second.channel_id;
+                        std::string str = it->second.model;
                         str.append(",");
                         str.append(e.desc);
                         auto it2 = common->item_checkstate.find(str);
@@ -1201,11 +1201,11 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                     }
                 }
             }
-            if(it->second.channel_id.compare("Savina") == 0 ||
-               it->second.channel_id.compare("Savina 300") == 0)
+            if(it->second.model.compare("Savina") == 0 ||
+               it->second.model.compare("Savina 300") == 0)
             {
                 common->remove_savina_items(&entries);
-                common->add_savina_items(it->second.channel_id, &entries, &left_over);
+                common->add_savina_items(it->second.model, &entries, &left_over);
             }
             table_widgets[table_index]->clearContents();
             table_widgets[table_index]->setRowCount(entries.size());
@@ -1341,7 +1341,7 @@ void Tab_Observations_mainPage_Widget::on_cap_btn_toggled(bool checked)
 
         dds::core::xtypes::DynamicData sample(common->CapturedIssues_type);
         sample.value<std::string>("patient_id", common->patient_id);
-        sample.value<std::string>("channel_id", CapturedIssues_channel_id);
+        sample.value<std::string>("model", CapturedIssues_model);
         rti::core::xtypes::LoanedDynamicData point_member = sample.loan_value("captured_point");
         point_member.get().value("x_mdc_code", loop1_x_label);
         point_member.get().value("y_mdc_code", loop1_y_label);
@@ -1356,7 +1356,7 @@ void Tab_Observations_mainPage_Widget::on_cap_btn_toggled(bool checked)
 
         dds::core::xtypes::DynamicData sample1(common->CapturedIssues_type);
         sample1.value<std::string>("patient_id", common->patient_id);
-        sample1.value<std::string>("channel_id", CapturedIssues_channel_id);
+        sample1.value<std::string>("model", CapturedIssues_model);
         rti::core::xtypes::LoanedDynamicData point_member1 = sample1.loan_value("captured_point");
         point_member1.get().value("x_mdc_code", loop2_x_label);
         point_member1.get().value("y_mdc_code", loop2_y_label);

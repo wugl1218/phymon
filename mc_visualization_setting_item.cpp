@@ -1,7 +1,7 @@
-#include "mc_visualizetion_setting_item.h"
+#include "mc_visualization_setting_item.h"
 #include "qpainter.h"
 #include "Common.h"
-mc_visualizetion_setting_item::mc_visualizetion_setting_item(QWidget *parent)
+mc_visualization_setting_item::mc_visualization_setting_item(QWidget *parent)
     : QWidget{parent}
 {
     margin_x = 30;
@@ -10,7 +10,7 @@ mc_visualizetion_setting_item::mc_visualizetion_setting_item(QWidget *parent)
     table_index = 0;
 }
 
-void mc_visualizetion_setting_item::paintEvent(QPaintEvent *event)
+void mc_visualization_setting_item::paintEvent(QPaintEvent *event)
 {
     Common* common = Common::instance();
 

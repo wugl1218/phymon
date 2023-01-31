@@ -1,15 +1,15 @@
-#ifndef MC_VISUALIZETION_SETTING_ITEM_H
-#define MC_VISUALIZETION_SETTING_ITEM_H
+#ifndef mc_visualization_SETTING_ITEM_H
+#define mc_visualization_SETTING_ITEM_H
 
 #include <QWidget>
 
-class mc_visualizetion_setting_item : public QWidget
+class mc_visualization_setting_item : public QWidget
 {
 public:
     int table_index;
     int tab_index;
 
-    explicit mc_visualizetion_setting_item(QWidget *parent = nullptr);
+    explicit mc_visualization_setting_item(QWidget *parent = nullptr);
  /*   void set_type(int type);
     int get_type();
     void set_text(const char* text);
@@ -31,4 +31,4 @@ private:
 };
 
 
-#endif // MC_VISUALIZETION_SETTING_ITEM_H
+#endif // mc_visualization_SETTING_ITEM_H

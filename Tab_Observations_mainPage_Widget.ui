@@ -365,7 +365,7 @@ color:rgb(255, 255, 255);</string>
      <item>
       <layout class="QHBoxLayout" name="visualization_layout">
        <item>
-        <widget class="mc_visualizetion" name="visualizetion" native="true">
+        <widget class="mc_visualization" name="visualizetion" native="true">
          <property name="minimumSize">
           <size>
            <width>350</width>
@@ -453,7 +453,7 @@ color:rgb(255, 255, 255);</string>
           </size>
          </property>
          <property name="text">
-          <string>mc_visualizetionsetting</string>
+          <string>mc_visualizationsetting</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -1446,9 +1446,9 @@ QScrollBar::sub-line:vertical{
  </widget>
  <customwidgets>
   <customwidget>
-   <class>mc_visualizetion</class>
+   <class>mc_visualization</class>
    <extends>QWidget</extends>
-   <header>mc_visualizetion.h</header>
+   <header>mc_visualization.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

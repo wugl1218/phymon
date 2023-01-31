@@ -1,29 +1,28 @@
-#include "mc_visualizetion.h"
+#include "mc_visualization.h"
 #include "Common.h"
 #include <QtMath>
 #include <QPainter>
 #include <QPainterPath>
 
-mc_visualizetion::mc_visualizetion(QWidget *parent)
+mc_visualization::mc_visualization(QWidget *parent)
     : QWidget(parent)
 {
 }
-void mc_visualizetion::mousePressEvent(QMouseEvent* event)
+void mc_visualization::mousePressEvent(QMouseEvent* event)
 {
     emit clicked();
     emit pressed();
 }
 
-void mc_visualizetion::mouseReleaseEvent(QMouseEvent* event)
+void mc_visualization::mouseReleaseEvent(QMouseEvent* event)
 {
     emit released();
 }
 
-void mc_visualizetion::paintEvent(QPaintEvent *event)
+void mc_visualization::paintEvent(QPaintEvent *event)
 {
     Common* common = Common::instance();
 
- //   int count = modle_count;
    int count = visualizetionlist.size();
 
     if(count<3)
@@ -246,7 +245,7 @@ void mc_visualizetion::paintEvent(QPaintEvent *event)
    painter.fillPath(RT, visualizetionColor);
 }
 
-void mc_visualizetion::set_modle_count(int count)
+void mc_visualization::set_modle_count(int count)
 {
     modle_count =count;
     update();

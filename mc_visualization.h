@@ -1,5 +1,5 @@
-#ifndef MC_VISUALIZETION_H
-#define MC_VISUALIZETION_H
+#ifndef mc_visualization_H
+#define mc_visualization_H
 
 #include <QWidget>
 
@@ -14,12 +14,12 @@ public:
     QString dataname;
 //    uint64_t source_timestamp;
 };
-class mc_visualizetion : public QWidget
+class mc_visualization : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit mc_visualizetion(QWidget *parent = nullptr);
+    explicit mc_visualization(QWidget *parent = nullptr);
     void set_modle_count(int count);
     QList <Visualizetion> visualizetionlist;
 
@@ -37,4 +37,4 @@ signals:
     void released();
 };
 
-#endif // MC_VISUALIZETION_H
+#endif // mc_visualization_H

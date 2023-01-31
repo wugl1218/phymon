@@ -57,8 +57,8 @@ void Exporter::step()
             if(sample.info().valid())
             {
                 dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
-                std::string channel_id = data.value<std::string>("channel_id");
-                auto dit = common->md->dm.devices.find(channel_id);
+                std::string model = data.value<std::string>("model");
+                auto dit = common->md->dm.devices.find(model);
                 if(dit == common->md->dm.devices.end())
                     continue;
                 obs_entry e;
@@ -76,12 +76,12 @@ void Exporter::step()
                         t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec);
                 loaned_member.return_loan();
                 e.timestamp = buf1;
-                auto eit = obs_data.find(channel_id);
+                auto eit = obs_data.find(model);
                 if(eit == obs_data.end())
                 {
                     std::vector<obs_entry> v;
                     v.push_back(e);
-                    obs_data.emplace(channel_id,v);
+                    obs_data.emplace(model,v);
                 }
                 else
                     eit->second.push_back(e);
@@ -107,7 +107,7 @@ void Exporter::step()
         {
             rapidjson::Value c;
             c.SetObject();
-            c.AddMember("channel_id", rapidjson::Value().SetString(oit->first.c_str(), d.GetAllocator()), d.GetAllocator());
+            c.AddMember("model", rapidjson::Value().SetString(oit->first.c_str(), d.GetAllocator()), d.GetAllocator());
             rapidjson::Value obs;
             obs.SetArray();
             for(int i=0;i<(int)oit->second.size();i++)

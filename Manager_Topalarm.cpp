@@ -15,6 +15,7 @@ void Manager_Topalarm::step()
 { 
 
     Common* common = Common::instance();
+    return;
     if(common->patient_id.size()==0)
         {
         common->md->ui->topalarm_label_1->setText("");
@@ -52,27 +53,27 @@ void Manager_Topalarm::step()
                 rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
                 uint64_t sec = (time_t)loaned_member.get().value<int32_t>("sec");
                 loaned_member.return_loan();
-                std::string channel_id=data.value<std::string>("channel_id").c_str();
+                std::string model=data.value<std::string>("model").c_str();
                 std::string alarm_description=data.value<std::string>("alarm_description").c_str();
                 std::string patient_id=data.value<std::string>("patient_id").c_str();
-
+                std::string alarm_priority=data.value<std::string>("alarm_priority").c_str();
                 alarm.patient_id = patient_id;
                 alarm.alarm_description = alarm_description;
                 alarm.sec=sec;
-                alarm.channel_id=channel_id;
+                alarm.model=model;
 
                 bool is_exist=0;
                 for(auto i=top_patient_alarm.begin(); i!=top_patient_alarm.end();++i)
                 {
-                    if(i->patient_id == patient_id && i->alarm_description == alarm_description)
+                    if(i->second.patient_id == patient_id && i->second.alarm_description == alarm_description)
                         {
-                        i->sec=sec;
+                        i->second.sec=sec;
                         is_exist=1;
                         break;
                         }
                 }
                 if(!is_exist)
-                    top_patient_alarm.push_back(alarm);
+                    top_patient_alarm.emplace(QString::fromStdString(alarm.alarm_priority).toInt(),alarm);
             }
         dds::sub::cond::QueryCondition topalarm_cond1(
                     dds::sub::Query(common->topalarm_reader_2, querystr),
@@ -88,26 +89,26 @@ void Manager_Topalarm::step()
                 rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
                 uint64_t sec = (time_t)loaned_member.get().value<int32_t>("sec");
                 loaned_member.return_loan();
-                std::string channel_id=data.value<std::string>("channel_id").c_str();
+                std::string model=data.value<std::string>("model").c_str();
                 std::string alarm_description=data.value<std::string>("alarm_description").c_str();
                 std::string patient_id=data.value<std::string>("patient_id").c_str();
 
                 alarm.patient_id = patient_id;
                 alarm.alarm_description = alarm_description;
                 alarm.sec=sec;
-                alarm.channel_id=channel_id;
+                alarm.model=model;
                 bool is_exist=0;
                 for(auto i=top_technical_alarm.begin(); i!=top_technical_alarm.end();++i)
                 {
-                    if(i->patient_id == common->patient_id && i->alarm_description == alarm_description)
+                    if(i->second.patient_id == common->patient_id && i->second.alarm_description == alarm_description)
                         {
-                        i->sec=sec;
+                        i->second.sec=sec;
                         is_exist=1;
                         break;
                         }
                 }
                 if(!is_exist)
-                    top_technical_alarm.push_back(alarm);
+                    top_technical_alarm.emplace(QString::fromStdString(alarm.alarm_priority).toInt(),alarm);
 
             }
         uint64_t m=time(NULL)-6;
@@ -116,10 +117,10 @@ void Manager_Topalarm::step()
             {
                 std::string querystr = "patient_id MATCH '";
                 querystr.append(common->patient_id);
-                querystr.append("' AND channel_id MATCH '");
-                querystr.append(i->channel_id);
+                querystr.append("' AND model MATCH '");
+                querystr.append(i->second.model);
                 querystr.append("' AND alarm_description MATCH '");
-                querystr.append(i->alarm_description);
+                querystr.append(i->second.alarm_description);
                 querystr.append("'");
                 dds::sub::cond::QueryCondition cond2(
                             dds::sub::Query(common->topalarm_reader, querystr),
@@ -128,7 +129,7 @@ void Manager_Topalarm::step()
                             dds::sub::status::ViewState::any(),
                             dds::sub::status::InstanceState::alive()));
                 dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> patient_samples = common->topalarm_reader.select().condition(cond2).read();
-                if(i->sec<m ||patient_samples.length() == 0)
+                if(i->second.sec<m ||patient_samples.length() == 0)
                     {
                     top_patient_alarm.erase(i);
                     if(i == top_patient_alarm.end()) break;
@@ -140,10 +141,10 @@ void Manager_Topalarm::step()
             {
                 std::string querystr = "patient_id MATCH '";
                 querystr.append(common->patient_id);
-                querystr.append("' AND channel_id MATCH '");
-                querystr.append(i->channel_id);
+                querystr.append("' AND model MATCH '");
+                querystr.append(i->second.model);
                 querystr.append("' AND alarm_description MATCH '");
-                querystr.append(i->alarm_description);
+                querystr.append(i->second.alarm_description);
                 querystr.append("'");
                 dds::sub::cond::QueryCondition cond2(
                             dds::sub::Query(common->topalarm_reader_2, querystr),
@@ -152,19 +153,19 @@ void Manager_Topalarm::step()
                             dds::sub::status::ViewState::any(),
                             dds::sub::status::InstanceState::alive()));
                 dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> patient_samples = common->topalarm_reader_2.select().condition(cond2).read();
-                if(i->sec<m ||patient_samples.length() == 0)
+                if(i->second.sec<m ||patient_samples.length() == 0)
                     {
                     top_technical_alarm.erase(i);
                     if(i == top_technical_alarm.end()) break;
                     }
             }
-
+        //這裡新增不同設備判斷排序方式
         if(top_patient_alarm.size()>0)
             for(auto i=top_patient_alarm.begin(); i!=top_patient_alarm.end(); i++)
             {
-                std::string msg = i->alarm_description;
+                std::string msg = i->second.alarm_description;
                 msg.append(" (");
-                msg.append(i->channel_id);
+                msg.append(i->second.model);
                 msg.append(")");
                 common->md->ui->topalarm_label_1->setText(msg.c_str());
                 if(common->md->ui->topalarm_label_1->text()=="")
@@ -176,9 +177,9 @@ void Manager_Topalarm::step()
         else if (top_technical_alarm.size()>0)
             for(auto i=top_technical_alarm.begin(); i!=top_technical_alarm.end(); i++)
             {
-                std::string msg = i->alarm_description;
+                std::string msg = i->second.alarm_description;
                 msg.append(" (");
-                msg.append(i->channel_id);
+                msg.append(i->second.model);
                 msg.append(")");
                 common->md->ui->topalarm_label_1->setText(msg.c_str());
                 if(common->md->ui->topalarm_label_1->text()=="")
