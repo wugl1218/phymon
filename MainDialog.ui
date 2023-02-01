@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>1204</width>
     <height>700</height>
    </rect>
   </property>
@@ -1323,10 +1323,16 @@ color: rgb(255, 255, 255);</string>
              <item>
               <widget class="QWidget" name="header_right_bar" native="true">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>3</width>
+                 <height>0</height>
+                </size>
                </property>
                <property name="maximumSize">
                 <size>
@@ -1576,7 +1582,13 @@ color: rgb(255, 255, 255);</string>
                   <number>3</number>
                  </property>
                  <item>
-                  <widget class="mc_btn_Clickable" name="topalarm_label_1">
+                  <widget class="mc_btn_topalart" name="topalarm_label_1">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="palette">
                     <palette>
                      <active>
@@ -1799,7 +1811,13 @@ background:rgb(7, 22, 40);
                   </widget>
                  </item>
                  <item>
-                  <widget class="mc_btn_Clickable" name="topalarm_label_3">
+                  <widget class="mc_btn_topalart" name="topalarm_label_3">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="palette">
                     <palette>
                      <active>
@@ -2029,7 +2047,13 @@ background:rgb(7, 22, 40);
                   <number>3</number>
                  </property>
                  <item>
-                  <widget class="mc_btn_Clickable" name="topalarm_label_2">
+                  <widget class="mc_btn_topalart" name="topalarm_label_2">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="palette">
                     <palette>
                      <active>
@@ -2252,7 +2276,13 @@ background:rgb(7, 22, 40);
                   </widget>
                  </item>
                  <item>
-                  <widget class="mc_btn_Clickable" name="topalarm_label_4">
+                  <widget class="mc_btn_topalart" name="topalarm_label_4">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="palette">
                     <palette>
                      <active>
@@ -2492,11 +2522,6 @@ background:rgb(7, 22, 40);
  </widget>
  <customwidgets>
   <customwidget>
-   <class>mc_btn_Clickable</class>
-   <extends>QLabel</extends>
-   <header>mc_btn_Clickable.h</header>
-  </customwidget>
-  <customwidget>
    <class>Tab_Devices_Widget</class>
    <extends>QWidget</extends>
    <header>Tab_Devices_Widget.h</header>
@@ -2531,6 +2556,11 @@ background:rgb(7, 22, 40);
    <extends>QWidget</extends>
    <header>Tab_NS_Monitor.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>mc_btn_topalart</class>
+   <extends>QLabel</extends>
+   <header>mc_btn_topalart.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

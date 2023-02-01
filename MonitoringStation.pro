@@ -15,7 +15,7 @@ DEFINES += RTI_UNIX \
 
 SOURCES += \
     BarcodeDaemon.cpp \
-    Dialog_Topalarm_Mute.cpp \
+    Dialog_topalarm_mute.cpp \
     Manager_MDSConnectivity_Card.cpp \
     Manager_Patient_Card.cpp \
     Common.cpp \
@@ -62,7 +62,7 @@ SOURCES += \
 HEADERS += \
     BarcodeDaemon.h \
     CSS_Infusion.h \
-    Dialog_Topalarm_Mute.h \
+    Dialog_topalarm_mute.h \
     Manager_MDSConnectivity_Card.h \
     Manager_Patient_Card.h \
     Common.h \
@@ -112,6 +112,7 @@ FORMS += \
     Dialog_msg.ui \
     Dialog_network.ui \
     Dialog_release.ui \
+    Dialog_topalarm_mute.ui \
     Dialog_visualization_config.ui \
     Dialog_visualization_selection.ui \
     MainDialog.ui \

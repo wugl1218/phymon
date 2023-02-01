@@ -3,7 +3,7 @@
 #include <QMessageBox>
 #include "ui_Dialog_network.h"
 
-//已用network_thread代替 未來刪除
+//已用Thread_network代替 未來刪除
 
 void NetworkManager::init()
 {
@@ -24,7 +24,7 @@ void NetworkManager::init()
     else
     {
         QMessageBox msgBox;
-        msgBox.setText("Debug by Philo\nPlese check config.json.");
+        msgBox.setText("Debug by Philo\nPlease check config.json.");
         msgBox.exec();
         exit(1);
     }

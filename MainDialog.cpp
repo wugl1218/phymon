@@ -80,7 +80,7 @@ MainDialog::MainDialog(QWidget *parent)
     connect(currentTimer, SIGNAL(timeout()), this, SLOT(updateCurrentTimeDisplay()));
     currentTimer->start(1000);
     //資料庫監測
-    network = new network_thread(this);
+    network = new Thread_network(this);
     network->init();
     network->start();
 
@@ -95,9 +95,9 @@ MainDialog::MainDialog(QWidget *parent)
     mainWorker = new QTimer(this);
     connect(mainWorker, SIGNAL(timeout()), this, SLOT(mainWorkerUpdate()));
     connect(ui->topalarm_label_1, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
-    connect(ui->topalarm_label_1, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
-    connect(ui->topalarm_label_1, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
-    connect(ui->topalarm_label_1, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
+    connect(ui->topalarm_label_2, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
+    connect(ui->topalarm_label_3, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
+    connect(ui->topalarm_label_4, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
 
     mainWorker->start(16);
     db_cleaner = new QTimer(this);

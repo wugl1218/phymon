@@ -5,15 +5,15 @@
 #include <QMessageBox>
 #include "ui_Dialog_network.h"
 
-network_thread::network_thread(QWidget *parent)
+Thread_network::Thread_network(QWidget *parent)
 {
     client = new QTcpSocket(this);
     client->connectToHost(url, 80);
 }
-network_thread::~network_thread()
+Thread_network::~Thread_network()
 {
 }
-void network_thread::init()
+void Thread_network::init()
 {
     return;
     Common* common = Common::instance();
@@ -21,27 +21,24 @@ void network_thread::init()
     {
         jsonReplicator = common->RetrieveJson(("../config/config.json"));
         url = jsonReplicator["PingIP"].toString();
-        int posStart = url.indexOf("/");
-        int posEnd = url.lastIndexOf(":");
-        url = url.sliced(posStart + 2, posEnd - posStart - 2);
     }
     else
     {
         QMessageBox msgBox;
-        msgBox.setText("Debug by Philo\nPlese check config.json.");
+        msgBox.setText("Debug by Philo\nPlease check config.json.");
         msgBox.exec();
     }
 
 }
-void network_thread::run()
+void Thread_network::run()
 {
     if(url=="0.0.0.0")return;
     return;
     Common* common = Common::instance();
     while(1)
     {
-       qDebug()<<"Network_thread";
-        fflog_out(common->log,"Network_thread");
+       qDebug()<<"Thread_network";
+        fflog_out(common->log,"Thread_network");
         foyaCouchbaseReplicator();
         if(common->is_server)
             QThread::currentThread()->msleep(common->Network_Interval*1000);
@@ -50,7 +47,7 @@ void network_thread::run()
 
     }
 }
-void network_thread::foyaCouchbaseReplicator()
+void Thread_network::foyaCouchbaseReplicator()
 {
     Common* common = Common::instance();
     // we need to wait...

@@ -45,7 +45,7 @@ void Tab_NS_Monitor::init()
         else
         {
             QMessageBox msgBox;
-            msgBox.setText("Debug by Philo\nPlese check setbed.json.");
+            msgBox.setText("Debug by Philo\nPlease check setbed.json.");
             msgBox.exec();
             exit(1);
         }

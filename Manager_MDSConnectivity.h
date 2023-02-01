@@ -22,6 +22,7 @@ public:
     std::string alarm_no;
     std::string channel_id;
     std::string vmd_id;
+    std::string model;
     std::string alarm_state;
     uint64_t sec;
     uint64_t nanosec;

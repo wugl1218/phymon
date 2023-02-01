@@ -39,12 +39,13 @@ public:
     Manager_Topalarm ta;
     Manager_MDSConnectivity mdsm;
     Tab_NS_Monitor monitor;
-//    NetworkManager nm;
+    //NetworkManager nm;
+    Dialog_jsontext jt;
     Dialog_network nd;
+    Thread_network* network;
+    //topalarm
     QSoundEffect *efx;
     bool is_alarmSound_index=1;
-    Dialog_jsontext jt;
-    network_thread* network;
 
     void outPutInfo(QString info);
     void startThread();

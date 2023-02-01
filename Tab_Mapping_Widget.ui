@@ -1288,38 +1288,7 @@ color:rgb(255, 255, 255);
                 <property name="verticalSpacing">
                  <number>6</number>
                 </property>
-                <item row="4" column="1">
-                 <widget class="QLabel" name="sex_label">
-                  <property name="font">
-                   <font>
-                    <family>Arial</family>
-                    <pointsize>18</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="bidTitle_label">
-                  <property name="font">
-                   <font>
-                    <family>Arial</family>
-                    <pointsize>18</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>BID:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="5" column="0">
+                <item row="4" column="0">
                  <widget class="QLabel" name="birthdayTitle_label">
                   <property name="font">
                    <font>
@@ -1336,7 +1305,21 @@ color:rgb(255, 255, 255);
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="0">
+                <item row="2" column="1">
+                 <widget class="QLabel" name="familyName_label">
+                  <property name="font">
+                   <font>
+                    <family>Arial</family>
+                    <pointsize>18</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
                  <widget class="QLabel" name="sexTitle_label">
                   <property name="font">
                    <font>
@@ -1353,7 +1336,7 @@ color:rgb(255, 255, 255);
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="1" column="1">
                  <widget class="QLabel" name="mrn_label">
                   <property name="font">
                    <font>
@@ -1367,7 +1350,7 @@ color:rgb(255, 255, 255);
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
+                <item row="0" column="1">
                  <widget class="QLabel" name="bid_label">
                   <property name="font">
                    <font>
@@ -1381,69 +1364,7 @@ color:rgb(255, 255, 255);
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
-                 <widget class="QLabel" name="qrcode_label">
-                  <property name="font">
-                   <font>
-                    <family>Arial</family>
-                    <pointsize>18</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
                 <item row="2" column="0">
-                 <widget class="QLabel" name="mrnTitle_label">
-                  <property name="font">
-                   <font>
-                    <family>Arial</family>
-                    <pointsize>18</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>MRN:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="qrcodeTitle_label">
-                  <property name="font">
-                   <font>
-                    <family>Arial</family>
-                    <pointsize>18</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>QRCode:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QLabel" name="familyName_label">
-                  <property name="font">
-                   <font>
-                    <family>Arial</family>
-                    <pointsize>18</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
                  <widget class="QLabel" name="familyNameTitle_label">
                   <property name="font">
                    <font>
@@ -1460,7 +1381,7 @@ color:rgb(255, 255, 255);
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="1">
+                <item row="4" column="1">
                  <widget class="QLabel" name="birthday_label">
                   <property name="font">
                    <font>
@@ -1470,6 +1391,54 @@ color:rgb(255, 255, 255);
                   </property>
                   <property name="text">
                    <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLabel" name="sex_label">
+                  <property name="font">
+                   <font>
+                    <family>Arial</family>
+                    <pointsize>18</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="bidTitle_label">
+                  <property name="font">
+                   <font>
+                    <family>Arial</family>
+                    <pointsize>18</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>BID:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="mrnTitle_label">
+                  <property name="font">
+                   <font>
+                    <family>Arial</family>
+                    <pointsize>18</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>MRN:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                   </property>
                  </widget>
                 </item>

@@ -45,8 +45,7 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                     common->msg.exec();
                     return true;
                 }
-                std::string Uid ="";
-                if(is_patient_alarm)
+                /*if(is_patient_alarm)
                     for(auto i=common->md->mdsm.patient_alarm.begin(); i!=common->md->mdsm.patient_alarm.end(); i++)
                     {
                         if(i->patient_id!=id)
@@ -67,8 +66,8 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         std::string sql = "SELECT meta().id FROM _ WHERE (data_source='HandledAlarm')";
                         sql.append(" AND patient_id='");
                         sql.append(i->patient_id);
-                        sql.append("' AND channel_id='");
-                        sql.append(i->channel_id);
+                        sql.append("' AND model='");
+                        sql.append(i->model);
                         sql.append("' AND alarm_code='");
                         sql.append(i->alarm_code);
                         sql.append("'");
@@ -96,7 +95,6 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         rapidjson::StringBuffer buffer;
                         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
                         d.Accept(writer);
-                        std::string dummy2;
                         common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), Uid, dummy);
                         break;
                     }
@@ -121,11 +119,12 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         std::string sql = "SELECT meta().id FROM _ WHERE (data_source='HandledAlarm')";
                         sql.append(" AND patient_id='");
                         sql.append(i->patient_id);
-                        sql.append("' AND channel_id='");
-                        sql.append(i->channel_id);
+                        sql.append("' AND model='");
+                        sql.append(i->model);
                         sql.append("' AND alarm_code='");
                         sql.append(i->alarm_code);
                         sql.append("'");
+
                         cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
                         for(auto& result: results)
                             Uid = result.valueAtIndex(0).asstring();
@@ -150,10 +149,9 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         rapidjson::StringBuffer buffer;
                         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
                         d.Accept(writer);
-                        std::string dummy2;
                         common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), Uid, dummy);
                         break;
-                    }
+                    }*/
             }
                 return true;
         }
@@ -258,13 +256,13 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
         if(devcon_samples.length() > 0)
             {
             title->setText("Medical Equipment \nDisconnection");
-            common->msg.setText("Plese click \nMedical Equipment");
+            common->msg.setText("Please click \nMedical Equipment");
 
             }
         else if (devcon_samples.length() == 0)
             {
             title->setText("MetaCares Box Error");
-            common->msg.setText("Plese click \nMetaCares Box");
+            common->msg.setText("Please click \nMetaCares Box");
 
             }
         Show_pen=0;
@@ -276,7 +274,7 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             circle->setStyleSheet("background:rgb(200,37,37);color:rgb(248, 208, 4);");
             circle->show();
             title->setText("Medical Equipment \nUnselected");
-            common->msg.setText("Plese click \nDisplay setting");
+            common->msg.setText("Please click \nDisplay setting");
             Show_pen=0;
             title->setWordWrap(true);
         }

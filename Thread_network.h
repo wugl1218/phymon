@@ -9,7 +9,7 @@
 #include "Common.h"
 #include <QTcpSocket>
 
-class network_thread : public QThread
+class Thread_network : public QThread
 {
     Q_OBJECT
 signals:
@@ -19,8 +19,8 @@ signals:
     void nd_hide();
     void client_close();
 public:
-    network_thread(QWidget *parent = nullptr);
-    ~network_thread();
+    Thread_network(QWidget *parent = nullptr);
+    ~Thread_network();
     void init();
     void run();
     QString url ;

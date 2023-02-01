@@ -118,7 +118,7 @@ void Manager_MDSConnectivity::step()
             null.bed_id= common->monitor_page->Set_bed[i].toString().toStdString();
             mdsconnectivity.emplace(null.bed_id, null);
             }
-        //製作空床位
+        //收集警告
 /*        std::string dummy; //警告訊息從資料庫拿
         std::string sql = "SELECT meta().id,alarm_no,channel_id,vmd_id,patient_id,alarm_code,alarm_description,alarm_priority,alarm_state,source_timestamp.sec,source_timestamp.nanosec FROM _ WHERE data_source='NumericDeviceSelection'";
         cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
@@ -138,6 +138,7 @@ void Manager_MDSConnectivity::step()
             std::string alarm_no=data.value<std::string>("alarm_no").c_str();
             std::string channel_id=data.value<std::string>("channel_id").c_str();
             std::string vmd_id=data.value<std::string>("vmd_id").c_str();
+            std::string model=data.value<std::string>("model").c_str();
             std::string patient_id=data.value<std::string>("patient_id").c_str();
             std::string alarm_priority=data.value<std::string>("alarm_priority").c_str();
             std::string alarm_code=data.value<std::string>("alarm_code").c_str();
@@ -149,6 +150,7 @@ void Manager_MDSConnectivity::step()
             alarm.sec=sec;
             alarm.nanosec=nanosec;
             alarm.vmd_id=vmd_id;
+            alarm.model=model;
             alarm.alarm_priority=alarm_priority;
             alarm.alarm_code=alarm_code;
             alarm.alarm_no=alarm_no;
@@ -190,16 +192,19 @@ void Manager_MDSConnectivity::step()
             std::string alarm_no=data.value<std::string>("alarm_no").c_str();
             std::string channel_id=data.value<std::string>("channel_id").c_str();
             std::string vmd_id=data.value<std::string>("vmd_id").c_str();
+            std::string model=data.value<std::string>("model").c_str();
             std::string patient_id=data.value<std::string>("patient_id").c_str();
             std::string alarm_priority=data.value<std::string>("alarm_priority").c_str();
             std::string alarm_code=data.value<std::string>("alarm_code").c_str();
             std::string alarm_description=data.value<std::string>("alarm_description").c_str();
             std::string alarm_state=data.value<std::string>("alarm_state").c_str();
+
             alarm.patient_id = patient_id;
             alarm.alarm_description = alarm_description;
             alarm.sec=sec;
             alarm.nanosec=nanosec;
             alarm.vmd_id=vmd_id;
+            alarm.model=model;
             alarm.alarm_priority=alarm_priority;
             alarm.alarm_code=alarm_code;
             alarm.alarm_no=alarm_no;
@@ -218,7 +223,7 @@ void Manager_MDSConnectivity::step()
             if(!is_exist)
                 common->md->mdsm.technical_alarm.push_back(alarm);
         }
-        //收集警告*/
+        //刪除過期警告
 /*      std::string dummy;
         std::string sql2 = "SELECT meta().alarm_no,channel_id,vmd_id,patient_id,alarm_code,alarm_description,alarm_priority,alarm_state,source_timestamp.sec,source_timestamp.nanosec FROM _ WHERE data_source='NumericDeviceSelection'";
         cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql2, dummy); */
@@ -246,27 +251,25 @@ void Manager_MDSConnectivity::step()
                 common->md->mdsm.patient_alarm.erase(i); break;
                 if(i == common->md->mdsm.patient_alarm.end()) break;
             }
-
-                std::string dummy;
-                std::string sql = "SELECT handled_time FROM _ WHERE (data_source='HandledAlarm')";
-                sql.append(" AND patient_id='");
-                sql.append(i->patient_id);
-                sql.append("' AND channel_id='");
-                sql.append(i->channel_id);
-                sql.append("' AND alarm_code='");
-                sql.append(i->alarm_code);
-                sql.append("'");
-                cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-                for(auto& result: results)
+            std::string dummy;
+            std::string sql = "SELECT handled_time FROM _ WHERE (data_source='HandledAlarm')";
+            sql.append(" AND patient_id='");
+            sql.append(i->patient_id);
+            sql.append("' AND channel_id='");
+            sql.append(i->channel_id);
+            sql.append("' AND alarm_code='");
+            sql.append(i->alarm_code);
+            sql.append("'");
+            cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            for(auto& result: results)
+            {
+                uint64_t sec = result.valueAtIndex(0).asInt();
+                if(sec > i->sec)
                 {
-                    uint64_t sec = result.valueAtIndex(0).asInt();
-                    if(sec > i->sec)
-                    {
-                        common->md->mdsm.patient_alarm.erase(i);break;
-                        if(i == common->md->mdsm.patient_alarm.end()) break;
-                    }
+                    common->md->mdsm.patient_alarm.erase(i);break;
                 }
-                if(i == common->md->mdsm.patient_alarm.end()) break;
+            }
+            if(i == common->md->mdsm.patient_alarm.end()) break;
 
         }
         }
@@ -309,13 +312,12 @@ void Manager_MDSConnectivity::step()
                     if(sec > i->sec)
                     {
                         common->md->mdsm.technical_alarm.erase(i);break;
-                        if(i == common->md->mdsm.technical_alarm.end()) break;
                     }
                 }
                 if(i == common->md->mdsm.technical_alarm.end()) break;
             }
         }
-        //刪除過期警告
+        //
         common->monitor_page->update_MDS();
         }
 
