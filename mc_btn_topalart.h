@@ -5,6 +5,7 @@
 #include <QWidget>
 #include "Dialog_topalarm_mute.h"
 #include "Common.h"
+#include "Manager_Topalarm.h"
 
 class mc_btn_topalart : public QLabel
 {
@@ -23,7 +24,7 @@ public:
     uint64_t nanosec;
     Dialog_topalarm_mute mute;
     int mutetime;
-
+    void setalarm(bool is_patient_alarm,TOPAlarm alarm);
 signals:
     void clicked();
     void pressed();

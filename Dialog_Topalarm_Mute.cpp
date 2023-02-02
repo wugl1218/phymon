@@ -6,6 +6,7 @@ Dialog_topalarm_mute::Dialog_topalarm_mute(QWidget *parent) :
     ui(new Ui::Dialog_topalarm_mute)
 {
     ui->setupUi(this);
+    setWindowFlags(Qt::Popup);
 }
 
 Dialog_topalarm_mute::~Dialog_topalarm_mute()

@@ -230,7 +230,7 @@ void Manager_MDSConnectivity::step()
 
         if(common->md->mdsm.patient_alarm.size() >0)
         {
-        for(auto i=common->md->mdsm.patient_alarm.begin(); i!=common->md->mdsm.patient_alarm.end();++i)
+        for(auto i=common->md->mdsm.patient_alarm.begin(); i!=common->md->mdsm.patient_alarm.end();)
         {
             std::string querystr = "patient_id MATCH '";
             querystr.append(i->patient_id);
@@ -261,21 +261,24 @@ void Manager_MDSConnectivity::step()
             sql.append(i->alarm_code);
             sql.append("'");
             cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            bool is_erase=0;
             for(auto& result: results)
             {
                 uint64_t sec = result.valueAtIndex(0).asInt();
                 if(sec > i->sec)
                 {
-                    common->md->mdsm.patient_alarm.erase(i);break;
+                    i = common->md->mdsm.patient_alarm.erase(i);
+                    is_erase=1;break;
                 }
             }
+            if(!is_erase) ++i;
             if(i == common->md->mdsm.patient_alarm.end()) break;
 
         }
         }
         if(common->md->mdsm.technical_alarm.size() >0)
         {
-            for(auto i=common->md->mdsm.technical_alarm.begin(); i!=common->md->mdsm.technical_alarm.end();++i)
+            for(auto i=common->md->mdsm.technical_alarm.begin(); i!=common->md->mdsm.technical_alarm.end();)
             {
                 std::string querystr = "patient_id MATCH '";
                 querystr.append(i->patient_id);
@@ -306,14 +309,17 @@ void Manager_MDSConnectivity::step()
                 sql.append(i->alarm_code);
                 sql.append("'");
                 cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+                bool is_erase=0;
                 for(auto& result: results)
                 {
                     uint64_t sec = result.valueAtIndex(0).asInt();
                     if(sec > i->sec)
                     {
-                        common->md->mdsm.technical_alarm.erase(i);break;
+                        common->md->mdsm.technical_alarm.erase(i);
+                        is_erase=1;break;
                     }
                 }
+                if(!is_erase) ++i;
                 if(i == common->md->mdsm.technical_alarm.end()) break;
             }
         }

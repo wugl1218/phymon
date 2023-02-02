@@ -61,7 +61,7 @@ Tab_NS_Monitor::Tab_NS_Monitor(QWidget *parent) :
     ui->setupUi(this);
     mc_visualization_setting_item* e = new mc_visualization_setting_item(ui->scrollAreaWidgetContents);
     e->setGeometry(100, 50,500, 500);
-    e->show();
+    e->hide();
 }
 Tab_NS_Monitor::~Tab_NS_Monitor()
 {

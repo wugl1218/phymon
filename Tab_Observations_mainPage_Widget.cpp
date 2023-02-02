@@ -79,11 +79,19 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     connect(ui->legend, SIGNAL(on_series_select(int)), this, SLOT(on_series_pressed(int)));
     connect(ui->rt_chart1, SIGNAL(on_series_select(int)), this, SLOT(on_series_pressed(int)));
     connect(ui->rt_chart2, SIGNAL(on_series_select(int)), this, SLOT(on_series_pressed(int)));
-//    connect(ui->loop1, SIGNAL(on_press()), this, SLOT(loop_clicked()));
-//    connect(ui->loop2, SIGNAL(on_press()), this, SLOT(loop_clicked()));
+    connect(ui->loop1, SIGNAL(on_press()), this, SLOT(loop_clicked()));
+    connect(ui->loop2, SIGNAL(on_press()), this, SLOT(loop_clicked()));
     connect(ui->visualizetion, SIGNAL(on_press()), this, SLOT(visualizetion_clicked()));
     ui->visualization_show_btn->hide();
     ui->visualization_label->hide();
+    //fordebug
+    ui->visualizetion->hide();
+    ui->visualization_setting->hide();
+    ui->visualization_config_btn->hide();
+    ui->visualization_hide_btn->hide();
+    ui->visualization_new->hide();
+    set_checked(ui->cap_btn, 0);
+    set_checked(ui->ref_btn, 0);
 
     set_loop1_type(LOOP_PRESSURE_VOLUME);
     set_loop2_type(LOOP_VOLUME_FLOW);
@@ -115,31 +123,31 @@ void Tab_Observations_mainPage_Widget::loop_clicked()
     lsd.set_current_loops(loop1_type, loop2_type);
     auto hostRect = this->geometry();
     lsd.move(hostRect.center() - lsd.rect().center());
-//    if(is_ref)
-////        ui->ref_btn->setStyleSheet(common->css.Enabled_Checked_ButtonStyle);
-//    else
-////        ui->ref_btn->setStyleSheet(common->css.Enabled_unChecked_ButtonStyle);
-//    if(is_cap)
-////        ui->cap_btn->setStyleSheet(common->css.Enabled_Checked_ButtonStyle);
-//    else
-//        ui->cap_btn->setStyleSheet(common->css.Enabled_unChecked_ButtonStyle);
+    if(is_ref)
+        ui->ref_btn->setStyleSheet(common->css.Enabled_Checked_ButtonStyle);
+    else
+        ui->ref_btn->setStyleSheet(common->css.Enabled_unChecked_ButtonStyle);
+    if(is_cap)
+        ui->cap_btn->setStyleSheet(common->css.Enabled_Checked_ButtonStyle);
+    else
+        ui->cap_btn->setStyleSheet(common->css.Enabled_unChecked_ButtonStyle);
     lsd.exec();
-//    if (is_cap)
-//    {
-//        ui->cap_btn->setStyleSheet(common->css.Checked_ButtonStyle);
-//        if(is_ref)
-//            ui->ref_btn->setStyleSheet(common->css.Enabled_Checked_ButtonStyle);
-//        else
-//            ui->ref_btn->setStyleSheet(common->css.Enabled_unChecked_ButtonStyle);
-//    }
-//    else
-//    {
-//        ui->cap_btn->setStyleSheet(common->css.unChecked_ButtonStyle);
-//        if(is_ref)
-//            ui->ref_btn->setStyleSheet(common->css.Checked_ButtonStyle);
-//        else
-//            ui->ref_btn->setStyleSheet(common->css.unChecked_ButtonStyle);
-//    }
+    if (is_cap)
+    {
+        ui->cap_btn->setStyleSheet(common->css.Checked_ButtonStyle);
+        if(is_ref)
+            ui->ref_btn->setStyleSheet(common->css.Enabled_Checked_ButtonStyle);
+        else
+            ui->ref_btn->setStyleSheet(common->css.Enabled_unChecked_ButtonStyle);
+    }
+    else
+    {
+        ui->cap_btn->setStyleSheet(common->css.unChecked_ButtonStyle);
+        if(is_ref)
+            ui->ref_btn->setStyleSheet(common->css.Checked_ButtonStyle);
+        else
+            ui->ref_btn->setStyleSheet(common->css.unChecked_ButtonStyle);
+    }
     int l1;
     int l2;
     lsd.get_current_loops(&l1, &l2);
@@ -198,62 +206,62 @@ void Tab_Observations_mainPage_Widget::set_loop1_type(int type)
     loop1_type = type;
     if(type == LOOP_PRESSURE_VOLUME)
     {
-//        ui->loop1->set_view_range_max_x(30);
-//        ui->loop1->set_view_range_min_x(-5);
-//        ui->loop1->set_view_range_max_y(1000);
-//        ui->loop1->set_view_range_min_y(0);
-//        ui->loop1->set_x_label("Paw cmH2O");
-//        ui->loop1->set_y_label("Volume mL");
+        ui->loop1->set_view_range_max_x(30);
+        ui->loop1->set_view_range_min_x(-5);
+        ui->loop1->set_view_range_max_y(1000);
+        ui->loop1->set_view_range_min_y(0);
+        ui->loop1->set_x_label("Paw cmH2O");
+        ui->loop1->set_y_label("Volume mL");
         loop1_x_label=("MDC_PRESS_AWAY");
         loop1_y_label=("FOYA_MEASURED_VolumeInspirationBegan");
     }
     else if(type == LOOP_VOLUME_FLOW)
     {
-//        ui->loop1->set_view_range_max_x(1000);
-//        ui->loop1->set_view_range_min_x(0);
-//        ui->loop1->set_view_range_max_y(100);
-//        ui->loop1->set_view_range_min_y(-100);
-//        ui->loop1->set_x_label("Volume mL");
-//        ui->loop1->set_y_label("Flow L/min");
+        ui->loop1->set_view_range_max_x(1000);
+        ui->loop1->set_view_range_min_x(0);
+        ui->loop1->set_view_range_max_y(100);
+        ui->loop1->set_view_range_min_y(-100);
+        ui->loop1->set_x_label("Volume mL");
+        ui->loop1->set_y_label("Flow L/min");
         loop1_x_label=("FOYA_MEASURED_VolumeInspirationBegan");
         loop1_y_label=("MDC_Flow_AWAY");
     }
     else if(type == LOOP_FLOW_PRESSURE)
     {
-//        ui->loop1->set_view_range_max_x(100);
-//        ui->loop1->set_view_range_min_x(-100);
-//        ui->loop1->set_view_range_max_y(30.0);
-//        ui->loop1->set_view_range_min_y(-5);
-//        ui->loop1->set_x_label("Flow L/min");
-//        ui->loop1->set_y_label("Paw cmH2O");
+        ui->loop1->set_view_range_max_x(100);
+        ui->loop1->set_view_range_min_x(-100);
+        ui->loop1->set_view_range_max_y(30.0);
+        ui->loop1->set_view_range_min_y(-5);
+        ui->loop1->set_x_label("Flow L/min");
+        ui->loop1->set_y_label("Paw cmH2O");
         loop1_x_label=("MDC_Flow_AWAY");
         loop1_y_label=("MDC_PRESS_AWAY");
     }
     else if(type == LOOP_PTRACH_VOLUME)
     {
-//        ui->loop1->set_view_range_max_x(30);
-//        ui->loop1->set_view_range_min_x(-5);
-//        ui->loop1->set_view_range_max_y(1000);
-//        ui->loop1->set_view_range_min_y(0);
-//        ui->loop1->set_x_label("Ptrach cmH2O");
-//        ui->loop1->set_y_label("Volume mL");
+        ui->loop1->set_view_range_max_x(30);
+        ui->loop1->set_view_range_min_x(-5);
+        ui->loop1->set_view_range_max_y(1000);
+        ui->loop1->set_view_range_min_y(0);
+        ui->loop1->set_x_label("Ptrach cmH2O");
+        ui->loop1->set_y_label("Volume mL");
         loop1_x_label=("Ptrach");
         loop1_y_label=("FOYA_MEASURED_VolumeInspirationBegan");
     }
     else
     {
-//        ui->loop1->set_view_range_max_x(100);
-//        ui->loop1->set_view_range_min_x(-100);
-//        ui->loop1->set_view_range_max_y(30);
-//        ui->loop1->set_view_range_min_y(-5);
-//        ui->loop1->set_x_label("Flow L/min");
-//        ui->loop1->set_y_label("Ptrach cmH2O");
+        ui->loop1->set_view_range_max_x(100);
+        ui->loop1->set_view_range_min_x(-100);
+        ui->loop1->set_view_range_max_y(30);
+        ui->loop1->set_view_range_min_y(-5);
+        ui->loop1->set_x_label("Flow L/min");
+        ui->loop1->set_y_label("Ptrach cmH2O");
         loop1_x_label=("MDC_Flow_AWAY ");
         loop1_y_label=("Ptrach");
     }
-//    ui->loop1->clear_points();
-//    ui->loop1->clear_ref_points();
-//    load_loops(ui->loop1, type);
+    ui->loop1->clear_points();
+    ui->loop1->clear_ref_points();
+    load_loops(ui->loop1, type);
 }
 
 void Tab_Observations_mainPage_Widget::set_loop2_type(int type)
@@ -261,62 +269,62 @@ void Tab_Observations_mainPage_Widget::set_loop2_type(int type)
     loop2_type = type;
     if(type == LOOP_PRESSURE_VOLUME)
     {
-//        ui->loop2->set_view_range_max_x(30);
-//        ui->loop2->set_view_range_min_x(-5);
-//        ui->loop2->set_view_range_max_y(1000);
-//        ui->loop2->set_view_range_min_y(0);
-//        ui->loop2->set_x_label("Paw cmH2O");
-//        ui->loop2->set_y_label("Volume mL");
+        ui->loop2->set_view_range_max_x(30);
+        ui->loop2->set_view_range_min_x(-5);
+        ui->loop2->set_view_range_max_y(1000);
+        ui->loop2->set_view_range_min_y(0);
+        ui->loop2->set_x_label("Paw cmH2O");
+        ui->loop2->set_y_label("Volume mL");
         loop2_x_label=("MDC_PRESS_AWAY ");
         loop2_y_label=("FOYA_MEASURED_VolumeInspirationBegan");
     }
     else if(type == LOOP_VOLUME_FLOW)
     {
-//        ui->loop2->set_view_range_max_x(1000);
-//        ui->loop2->set_view_range_min_x(0);
-//        ui->loop2->set_view_range_max_y(100);
-//        ui->loop2->set_view_range_min_y(-100);
-//        ui->loop2->set_x_label("Volume mL");
-//        ui->loop2->set_y_label("Flow L/min");
+        ui->loop2->set_view_range_max_x(1000);
+        ui->loop2->set_view_range_min_x(0);
+        ui->loop2->set_view_range_max_y(100);
+        ui->loop2->set_view_range_min_y(-100);
+        ui->loop2->set_x_label("Volume mL");
+        ui->loop2->set_y_label("Flow L/min");
         loop2_x_label=("MDC_Flow_AWAY ");
         loop2_y_label=("FOYA_MEASURED_VolumeInspirationBegan");
     }
     else if(type == LOOP_FLOW_PRESSURE)
     {
-//        ui->loop2->set_view_range_max_x(100);
-//        ui->loop2->set_view_range_min_x(-100);
-//        ui->loop2->set_view_range_max_y(30.0);
-//        ui->loop2->set_view_range_min_y(-5);
-//        ui->loop2->set_x_label("Flow L/min");
-//        ui->loop2->set_y_label("Paw cmH2O");
+        ui->loop2->set_view_range_max_x(100);
+        ui->loop2->set_view_range_min_x(-100);
+        ui->loop2->set_view_range_max_y(30.0);
+        ui->loop2->set_view_range_min_y(-5);
+        ui->loop2->set_x_label("Flow L/min");
+        ui->loop2->set_y_label("Paw cmH2O");
         loop2_x_label=("MDC_Flow_AWAY ");
         loop2_y_label=("MDC_PRESS_AWAY");
     }
     else if(type == LOOP_PTRACH_VOLUME)
     {
-//        ui->loop2->set_view_range_max_x(30);
-//        ui->loop2->set_view_range_min_x(-5);
-//        ui->loop2->set_view_range_max_y(1000);
-//        ui->loop2->set_view_range_min_y(0);
-//        ui->loop2->set_x_label("Ptrach cmH2O");
-//        ui->loop2->set_y_label("Volume mL");
+        ui->loop2->set_view_range_max_x(30);
+        ui->loop2->set_view_range_min_x(-5);
+        ui->loop2->set_view_range_max_y(1000);
+        ui->loop2->set_view_range_min_y(0);
+        ui->loop2->set_x_label("Ptrach cmH2O");
+        ui->loop2->set_y_label("Volume mL");
         loop2_x_label=("Ptrach ");
         loop2_y_label=("FOYA_MEASURED_VolumeInspirationBegan");
     }
     else
     {
-//        ui->loop2->set_view_range_max_x(100);
-//        ui->loop2->set_view_range_min_x(-100);
-//        ui->loop2->set_view_range_max_y(30);
-//        ui->loop2->set_view_range_min_y(-5);
-//        ui->loop2->set_x_label("Flow L/min");
-//        ui->loop2->set_y_label("Ptrach cmH2O");
+        ui->loop2->set_view_range_max_x(100);
+        ui->loop2->set_view_range_min_x(-100);
+        ui->loop2->set_view_range_max_y(30);
+        ui->loop2->set_view_range_min_y(-5);
+        ui->loop2->set_x_label("Flow L/min");
+        ui->loop2->set_y_label("Ptrach cmH2O");
         loop2_x_label=("MDC_Flow_AWAY ");
         loop2_y_label=("Ptrach");
     }
-//    ui->loop2->clear_points();
-//    ui->loop2->clear_ref_points();
-//    load_loops(ui->loop2, type);
+    ui->loop2->clear_points();
+    ui->loop2->clear_ref_points();
+    load_loops(ui->loop2, type);
 }
 void Tab_Observations_mainPage_Widget::clear_points()
 {
@@ -328,10 +336,10 @@ void Tab_Observations_mainPage_Widget::clear_points()
     left_over_rtchart1_flow_vals.clear();
     left_over_rtchart2_vals.clear();
 
-//    ui->loop1->clear_points();
-//    ui->loop1->clear_ref_points();
-//    ui->loop2->clear_points();
-//    ui->loop2->clear_ref_points();
+    ui->loop1->clear_points();
+    ui->loop1->clear_ref_points();
+    ui->loop2->clear_points();
+    ui->loop2->clear_ref_points();
 /*    on_ref_btn_toggled(false);
     ui->ref_btn->setChecked(false);
     on_cap_btn_toggled(false);
@@ -742,7 +750,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
         {
             for(int i=0;i<(int)loop1_x.size();i++)
             {
-//                1->add_point(loop1_x[i], loop1_y[i]);
+                ui->loop1->add_point(loop1_x[i], loop1_y[i]);
                 loop_check_and_expand(1, loop1_x[i], loop1_y[i]);
                 if(loop1_x[i] > max_loop1_x)
                     max_loop1_x = loop1_x[i];
@@ -760,7 +768,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
             {
                 for(int k=0;k<loop_start;k++)
                 {
-//                    ui->loop1->add_point(loop1_x[k], loop1_y[k]);
+                    ui->loop1->add_point(loop1_x[k], loop1_y[k]);
                     loop_check_and_expand(1, loop1_x[k], loop1_y[k]);
                     if(loop1_x[k] > max_loop1_x)
                         max_loop1_x = loop1_x[k];
@@ -775,7 +783,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
                 uint32_t elapsed = Common::get_elapsed_time(now, show_time);
                 if(set_next_loop_as_ref && elapsed > 2000 && !delay_reference)
                 {
-//                    ui->loop1->save_points_as_ref();
+                    ui->loop1->save_points_as_ref();
                 }
                 if(set_next_loop_as_cap)
                 {
@@ -788,13 +796,13 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
             max_loop1_y = 0.0f;
             min_loop1_x = 0.0f;
             min_loop1_y = 0.0f;
-//            ui->loop1->clear_points();
+            ui->loop1->clear_points();
             int i=loop_start;
-//            ui->loop1->add_point(last_loop1_x, last_loop1_y);
+            ui->loop1->add_point(last_loop1_x, last_loop1_y);
             loop_check_and_expand(1, last_loop1_x, last_loop1_y);
             for(;i<(int)loop1_x.size();i++)
             {
-//                ui->loop1->add_point(loop1_x[i], loop1_y[i]);
+                ui->loop1->add_point(loop1_x[i], loop1_y[i]);
                 loop_check_and_expand(1, loop1_x[i], loop1_y[i]);
                 if(loop1_x[i] > max_loop1_x)
                     max_loop1_x = loop1_x[i];
@@ -817,7 +825,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
         {
             for(int i=0;i<(int)loop2_x.size();i++)
             {
-//                ui->loop2->add_point(loop2_x[i], loop2_y[i]);
+                ui->loop2->add_point(loop2_x[i], loop2_y[i]);
                 loop_check_and_expand(2, loop2_x[i], loop2_y[i]);
                 if(loop2_x[i] > max_loop2_x)
                     max_loop2_x = loop2_x[i];
@@ -835,7 +843,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
             {
                 for(int k=0;k<loop_start;k++)
                 {
-//                    ui->loop2->add_point(loop2_x[k], loop2_y[k]);
+                    ui->loop2->add_point(loop2_x[k], loop2_y[k]);
                     loop_check_and_expand(2, loop2_x[k], loop2_y[k]);
                     if(loop2_x[k] > max_loop2_x)
                         max_loop2_x = loop2_x[k];
@@ -849,7 +857,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
                 uint32_t now = Common::get_time_ms();
                 uint32_t elapsed = Common::get_elapsed_time(now, show_time);
                 if(set_next_loop_as_ref && elapsed > 2000 && !delay_reference)
-//                    ui->loop2->save_points_as_ref();
+                    ui->loop2->save_points_as_ref();
                 if(set_next_loop_as_cap)
                     goto finish;
             }
@@ -859,13 +867,13 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
             max_loop2_y = 0.0f;
             min_loop2_x = 0.0f;
             min_loop2_y = 0.0f;
-//            ui->loop2->clear_points();
+            ui->loop2->clear_points();
             int i=loop_start;
-//            ui->loop2->add_point(last_loop2_x, last_loop2_y);
+            ui->loop2->add_point(last_loop2_x, last_loop2_y);
             loop_check_and_expand(2, last_loop2_x, last_loop2_y);
             for(;i<(int)loop2_x.size();i++)
             {
-//                ui->loop2->add_point(loop2_x[i], loop2_y[i]);
+                ui->loop2->add_point(loop2_x[i], loop2_y[i]);
                 loop_check_and_expand(2, loop2_x[i], loop2_y[i]);
                 if(loop2_x[i] > max_loop2_x)
                     max_loop2_x = loop2_x[i];
@@ -906,202 +914,202 @@ finish:
 
 void Tab_Observations_mainPage_Widget::loop_check_and_expand(int loopnum, float x, float y)
 {
-//    if(loopnum == 1)
-//    {
-//        if(loop1_type == LOOP_PRESSURE_VOLUME)
-//        {
-//            if(ui->loop1->get_view_range_max_x() == 30.0 && x >= ui->loop1->get_view_range_max_x())
-//                ui->loop1->set_view_range_max_x(60.0);
-//            if(ui->loop1->get_view_range_max_y() == 1000.0 && y >= ui->loop1->get_view_range_max_y())
-//                ui->loop1->set_view_range_max_y(2000.0);
-//            else if(ui->loop1->get_view_range_max_y() == 500.0 && y >= ui->loop1->get_view_range_max_y())
-//                ui->loop1->set_view_range_max_y(1000.0);
-//            else if(ui->loop1->get_view_range_max_y() == 250.0 && y >= ui->loop1->get_view_range_max_y())
-//                ui->loop1->set_view_range_max_y(500.0);
-//        }
-//        else if(loop1_type == LOOP_VOLUME_FLOW)
-//        {
-//            if(ui->loop1->get_view_range_max_x() == 1000.0 && x >= 1000.0)
-//                ui->loop1->set_view_range_max_x(2000.0);
-//            else if(ui->loop1->get_view_range_max_x() == 500.0 && x >= 500.0)
-//                ui->loop1->set_view_range_max_x(1000.0);
-//            else if(ui->loop1->get_view_range_max_x() == 250.0 && x >= 250.0)
-//                ui->loop1->set_view_range_max_x(500.0);
-//            if(ui->loop1->get_view_range_max_y() == 100.0 && y >= 100.0)
-//            {
-//                ui->loop1->set_view_range_max_y(200.0);
-//                ui->loop1->set_view_range_min_y(-200.0);
-//            }
-//            if(ui->loop1->get_view_range_min_y() == -100.0 && y <= -100.0)
-//            {
-//                ui->loop1->set_view_range_max_y(200.0);
-//                ui->loop1->set_view_range_min_y(-200.0);
-//            }
-//        }
-//        else if(loop1_type == LOOP_FLOW_PRESSURE)
-//        {
-//            if(ui->loop1->get_view_range_max_x() == 100.0 && x >= 100.0)
-//            {
-//                ui->loop1->set_view_range_max_x(200.0);
-//                ui->loop1->set_view_range_min_x(-200.0);
-//            }
-//            if(ui->loop1->get_view_range_min_x() == -100.0 && x <= -100.0)
-//            {
-//                ui->loop1->set_view_range_max_x(200.0);
-//                ui->loop1->set_view_range_min_x(-200.0);
-//            }
-//            if(ui->loop1->get_view_range_max_y() == 30.0 && y >= 30.0)
-//                ui->loop1->set_view_range_max_y(60.0);
-//        }
-//    }
-//    else
-//    {
-//        if(loop2_type == LOOP_PRESSURE_VOLUME)
-//        {
-//            if(ui->loop2->get_view_range_max_x() == 30.0 && x >= ui->loop2->get_view_range_max_x())
-//                ui->loop2->set_view_range_max_x(60.0);
-//            if(ui->loop2->get_view_range_max_y() == 1000.0 && y >= ui->loop2->get_view_range_max_y())
-//                ui->loop2->set_view_range_max_y(2000.0);
-//            else if(ui->loop2->get_view_range_max_y() == 500.0 && y >= ui->loop2->get_view_range_max_y())
-//                ui->loop2->set_view_range_max_y(1000.0);
-//            else if(ui->loop2->get_view_range_max_y() == 250.0 && y >= ui->loop2->get_view_range_max_y())
-//                ui->loop2->set_view_range_max_y(500.0);
-//        }
-//        else if(loop2_type == LOOP_VOLUME_FLOW)
-//        {
-//            if(ui->loop2->get_view_range_max_x() == 1000.0 && x >= 1000.0)
-//                ui->loop2->set_view_range_max_x(2000.0);
-//            else if(ui->loop2->get_view_range_max_x() == 500.0 && x >= 500.0)
-//                ui->loop2->set_view_range_max_x(1000.0);
-//            else if(ui->loop2->get_view_range_max_x() == 250.0 && x >= 250.0)
-//                ui->loop2->set_view_range_max_x(500.0);
-//            if(ui->loop2->get_view_range_max_y() == 100.0 && y >= 100.0)
-//            {
-//                ui->loop2->set_view_range_max_y(200.0);
-//                ui->loop2->set_view_range_min_y(-200.0);
-//            }
-//            if(ui->loop2->get_view_range_min_y() == -100.0 && y <= -100.0)
-//            {
-//                ui->loop2->set_view_range_max_y(200.0);
-//                ui->loop2->set_view_range_min_y(-200.0);
-//            }
-//        }
-//        else if(loop2_type == LOOP_FLOW_PRESSURE)
-//        {
-//            if(ui->loop2->get_view_range_max_x() == 100.0 && x >= 100.0)
-//            {
-//                ui->loop2->set_view_range_max_x(200.0);
-//                ui->loop2->set_view_range_min_x(-200.0);
-//            }
-//            if(ui->loop2->get_view_range_min_x() == -100.0 && x <= -100.0)
-//            {
-//                ui->loop2->set_view_range_max_x(200.0);
-//                ui->loop2->set_view_range_min_x(-200.0);
-//            }
-//            if(ui->loop2->get_view_range_max_y() == 30.0 && y >= 30.0)
-//                ui->loop2->set_view_range_max_y(60.0);
-//        }
-//    }
+    if(loopnum == 1)
+    {
+        if(loop1_type == LOOP_PRESSURE_VOLUME)
+        {
+            if(ui->loop1->get_view_range_max_x() == 30.0 && x >= ui->loop1->get_view_range_max_x())
+                ui->loop1->set_view_range_max_x(60.0);
+            if(ui->loop1->get_view_range_max_y() == 1000.0 && y >= ui->loop1->get_view_range_max_y())
+                ui->loop1->set_view_range_max_y(2000.0);
+            else if(ui->loop1->get_view_range_max_y() == 500.0 && y >= ui->loop1->get_view_range_max_y())
+                ui->loop1->set_view_range_max_y(1000.0);
+            else if(ui->loop1->get_view_range_max_y() == 250.0 && y >= ui->loop1->get_view_range_max_y())
+                ui->loop1->set_view_range_max_y(500.0);
+        }
+        else if(loop1_type == LOOP_VOLUME_FLOW)
+        {
+            if(ui->loop1->get_view_range_max_x() == 1000.0 && x >= 1000.0)
+                ui->loop1->set_view_range_max_x(2000.0);
+            else if(ui->loop1->get_view_range_max_x() == 500.0 && x >= 500.0)
+                ui->loop1->set_view_range_max_x(1000.0);
+            else if(ui->loop1->get_view_range_max_x() == 250.0 && x >= 250.0)
+                ui->loop1->set_view_range_max_x(500.0);
+            if(ui->loop1->get_view_range_max_y() == 100.0 && y >= 100.0)
+            {
+                ui->loop1->set_view_range_max_y(200.0);
+                ui->loop1->set_view_range_min_y(-200.0);
+            }
+            if(ui->loop1->get_view_range_min_y() == -100.0 && y <= -100.0)
+            {
+                ui->loop1->set_view_range_max_y(200.0);
+                ui->loop1->set_view_range_min_y(-200.0);
+            }
+        }
+        else if(loop1_type == LOOP_FLOW_PRESSURE)
+        {
+            if(ui->loop1->get_view_range_max_x() == 100.0 && x >= 100.0)
+            {
+                ui->loop1->set_view_range_max_x(200.0);
+                ui->loop1->set_view_range_min_x(-200.0);
+            }
+            if(ui->loop1->get_view_range_min_x() == -100.0 && x <= -100.0)
+            {
+                ui->loop1->set_view_range_max_x(200.0);
+                ui->loop1->set_view_range_min_x(-200.0);
+            }
+            if(ui->loop1->get_view_range_max_y() == 30.0 && y >= 30.0)
+                ui->loop1->set_view_range_max_y(60.0);
+        }
+    }
+    else
+    {
+        if(loop2_type == LOOP_PRESSURE_VOLUME)
+        {
+            if(ui->loop2->get_view_range_max_x() == 30.0 && x >= ui->loop2->get_view_range_max_x())
+                ui->loop2->set_view_range_max_x(60.0);
+            if(ui->loop2->get_view_range_max_y() == 1000.0 && y >= ui->loop2->get_view_range_max_y())
+                ui->loop2->set_view_range_max_y(2000.0);
+            else if(ui->loop2->get_view_range_max_y() == 500.0 && y >= ui->loop2->get_view_range_max_y())
+                ui->loop2->set_view_range_max_y(1000.0);
+            else if(ui->loop2->get_view_range_max_y() == 250.0 && y >= ui->loop2->get_view_range_max_y())
+                ui->loop2->set_view_range_max_y(500.0);
+        }
+        else if(loop2_type == LOOP_VOLUME_FLOW)
+        {
+            if(ui->loop2->get_view_range_max_x() == 1000.0 && x >= 1000.0)
+                ui->loop2->set_view_range_max_x(2000.0);
+            else if(ui->loop2->get_view_range_max_x() == 500.0 && x >= 500.0)
+                ui->loop2->set_view_range_max_x(1000.0);
+            else if(ui->loop2->get_view_range_max_x() == 250.0 && x >= 250.0)
+                ui->loop2->set_view_range_max_x(500.0);
+            if(ui->loop2->get_view_range_max_y() == 100.0 && y >= 100.0)
+            {
+                ui->loop2->set_view_range_max_y(200.0);
+                ui->loop2->set_view_range_min_y(-200.0);
+            }
+            if(ui->loop2->get_view_range_min_y() == -100.0 && y <= -100.0)
+            {
+                ui->loop2->set_view_range_max_y(200.0);
+                ui->loop2->set_view_range_min_y(-200.0);
+            }
+        }
+        else if(loop2_type == LOOP_FLOW_PRESSURE)
+        {
+            if(ui->loop2->get_view_range_max_x() == 100.0 && x >= 100.0)
+            {
+                ui->loop2->set_view_range_max_x(200.0);
+                ui->loop2->set_view_range_min_x(-200.0);
+            }
+            if(ui->loop2->get_view_range_min_x() == -100.0 && x <= -100.0)
+            {
+                ui->loop2->set_view_range_max_x(200.0);
+                ui->loop2->set_view_range_min_x(-200.0);
+            }
+            if(ui->loop2->get_view_range_max_y() == 30.0 && y >= 30.0)
+                ui->loop2->set_view_range_max_y(60.0);
+        }
+    }
 }
 
 void Tab_Observations_mainPage_Widget::loop_check_and_shrink(int loopnum, float x, float y)
 {
-//    if(loopnum == 1)
-//    {
-//        if(loop1_type == LOOP_PRESSURE_VOLUME)
-//        {
-//            if(ui->loop1->get_view_range_max_x() == 60.0 && x < 30.0)
-//                ui->loop1->set_view_range_max_x(30.0);
-//            if(ui->loop1->get_view_range_max_y() == 2000.0 && y < 1000.0)
-//                ui->loop1->set_view_range_max_y(1000.0);
-//            //else if(ui->loop1->get_view_range_max_y() == 1000.0 && y < 500.0)
-//                //ui->loop1->set_view_range_max_y(500.0);
-//            //else if(ui->loop1->get_view_range_max_y() == 500.0 && y < 250.0)
-//                //ui->loop1->set_view_range_max_y(250.0);
-//        }
-//        else if(loop1_type == LOOP_VOLUME_FLOW)
-//        {
-//            if(ui->loop1->get_view_range_max_x() == 2000.0 && x < 1000.0)
-//                ui->loop1->set_view_range_max_x(1000.0);
-//            //else if(ui->loop1->get_view_range_max_x() == 1000.0 && x < 500.0)
-//                //ui->loop1->set_view_range_max_x(500.0);
-//            //else if(ui->loop1->get_view_range_max_x() == 500.0 && x < 250.0)
-//                //ui->loop1->set_view_range_max_x(250.0);
-//            if(ui->loop1->get_view_range_max_y() == 200.0 && y < 100.0)
-//            {
-//                ui->loop1->set_view_range_max_y(100.0);
-//                ui->loop1->set_view_range_min_y(-100.0);
-//            }
-//            if(ui->loop1->get_view_range_min_y() == -200.0 && y > -100.0)
-//            {
-//                ui->loop1->set_view_range_max_y(100.0);
-//                ui->loop1->set_view_range_min_y(-100.0);
-//            }
-//        }
-//        else if(loop1_type == LOOP_FLOW_PRESSURE)
-//        {
-//            if(ui->loop1->get_view_range_max_x() == 200.0 && x < 100.0)
-//            {
-//                ui->loop1->set_view_range_max_x(100.0);
-//                ui->loop1->set_view_range_min_x(-100.0);
-//            }
-//            if(ui->loop1->get_view_range_min_x() == -200.0 && x > -100.0)
-//            {
-//                ui->loop1->set_view_range_max_x(100.0);
-//                ui->loop1->set_view_range_min_x(-100.0);
-//            }
-//            if(ui->loop1->get_view_range_max_y() == 60.0 && y < 30.0)
-//                ui->loop1->set_view_range_max_y(30.0);
-//        }
-//    }
-//    else
-//    {
-//        if(loop2_type == LOOP_PRESSURE_VOLUME)
-//        {
-//            if(ui->loop2->get_view_range_max_x() == 60.0 && x < 30.0)
-//                ui->loop2->set_view_range_max_x(30.0);
-//            if(ui->loop2->get_view_range_max_y() == 2000.0 && y < 1000.0)
-//                ui->loop2->set_view_range_max_y(1000.0);
-//            //else if(ui->loop2->get_view_range_max_y() == 1000.0 && y < 500.0)
-//                //ui->loop2->set_view_range_max_y(500.0);
-//            //else if(ui->loop2->get_view_range_max_y() == 500.0 && y < 250.0)
-//                //ui->loop2->set_view_range_max_y(250.0);
-//        }
-//        else if(loop2_type == LOOP_VOLUME_FLOW)
-//        {
-//            if(ui->loop2->get_view_range_max_x() == 2000.0 && x < 1000.0)
-//                ui->loop2->set_view_range_max_x(1000.0);
-//            //else if(ui->loop2->get_view_range_max_x() == 1000.0 && x < 500.0)
-//                //ui->loop2->set_view_range_max_x(500.0);
-//            //else if(ui->loop2->get_view_range_max_x() == 500.0 && x < 250.0)
-//                //ui->loop2->set_view_range_max_x(250.0);
-//            if(ui->loop2->get_view_range_max_y() == 200.0 && y < 100.0)
-//            {
-//                ui->loop2->set_view_range_max_y(100.0);
-//                ui->loop2->set_view_range_min_y(-100.0);
-//            }
-//            if(ui->loop2->get_view_range_min_y() == -200.0 && y > -100.0)
-//            {
-//                ui->loop2->set_view_range_max_y(100.0);
-//                ui->loop2->set_view_range_min_y(-100.0);
-//            }
-//        }
-//        else if(loop2_type == LOOP_FLOW_PRESSURE)
-//        {
-//            if(ui->loop2->get_view_range_max_x() == 200.0 && x < 100.0)
-//            {
-//                ui->loop2->set_view_range_max_x(100.0);
-//                ui->loop2->set_view_range_min_x(-100.0);
-//            }
-//            if(ui->loop2->get_view_range_min_x() == -200.0 && x > -100.0)
-//            {
-//                ui->loop2->set_view_range_max_x(100.0);
-//                ui->loop2->set_view_range_min_x(-100.0);
-//            }
-//            if(ui->loop2->get_view_range_max_y() == 60.0 && y < 30.0)
-//                ui->loop2->set_view_range_max_y(30.0);
-//        }
-//    }
+    if(loopnum == 1)
+    {
+        if(loop1_type == LOOP_PRESSURE_VOLUME)
+        {
+            if(ui->loop1->get_view_range_max_x() == 60.0 && x < 30.0)
+                ui->loop1->set_view_range_max_x(30.0);
+            if(ui->loop1->get_view_range_max_y() == 2000.0 && y < 1000.0)
+                ui->loop1->set_view_range_max_y(1000.0);
+            //else if(ui->loop1->get_view_range_max_y() == 1000.0 && y < 500.0)
+                //ui->loop1->set_view_range_max_y(500.0);
+            //else if(ui->loop1->get_view_range_max_y() == 500.0 && y < 250.0)
+                //ui->loop1->set_view_range_max_y(250.0);
+        }
+        else if(loop1_type == LOOP_VOLUME_FLOW)
+        {
+            if(ui->loop1->get_view_range_max_x() == 2000.0 && x < 1000.0)
+                ui->loop1->set_view_range_max_x(1000.0);
+            //else if(ui->loop1->get_view_range_max_x() == 1000.0 && x < 500.0)
+                //ui->loop1->set_view_range_max_x(500.0);
+            //else if(ui->loop1->get_view_range_max_x() == 500.0 && x < 250.0)
+                //ui->loop1->set_view_range_max_x(250.0);
+            if(ui->loop1->get_view_range_max_y() == 200.0 && y < 100.0)
+            {
+                ui->loop1->set_view_range_max_y(100.0);
+                ui->loop1->set_view_range_min_y(-100.0);
+            }
+            if(ui->loop1->get_view_range_min_y() == -200.0 && y > -100.0)
+            {
+                ui->loop1->set_view_range_max_y(100.0);
+                ui->loop1->set_view_range_min_y(-100.0);
+            }
+        }
+        else if(loop1_type == LOOP_FLOW_PRESSURE)
+        {
+            if(ui->loop1->get_view_range_max_x() == 200.0 && x < 100.0)
+            {
+                ui->loop1->set_view_range_max_x(100.0);
+                ui->loop1->set_view_range_min_x(-100.0);
+            }
+            if(ui->loop1->get_view_range_min_x() == -200.0 && x > -100.0)
+            {
+                ui->loop1->set_view_range_max_x(100.0);
+                ui->loop1->set_view_range_min_x(-100.0);
+            }
+            if(ui->loop1->get_view_range_max_y() == 60.0 && y < 30.0)
+                ui->loop1->set_view_range_max_y(30.0);
+        }
+    }
+    else
+    {
+        if(loop2_type == LOOP_PRESSURE_VOLUME)
+        {
+            if(ui->loop2->get_view_range_max_x() == 60.0 && x < 30.0)
+                ui->loop2->set_view_range_max_x(30.0);
+            if(ui->loop2->get_view_range_max_y() == 2000.0 && y < 1000.0)
+                ui->loop2->set_view_range_max_y(1000.0);
+            //else if(ui->loop2->get_view_range_max_y() == 1000.0 && y < 500.0)
+                //ui->loop2->set_view_range_max_y(500.0);
+            //else if(ui->loop2->get_view_range_max_y() == 500.0 && y < 250.0)
+                //ui->loop2->set_view_range_max_y(250.0);
+        }
+        else if(loop2_type == LOOP_VOLUME_FLOW)
+        {
+            if(ui->loop2->get_view_range_max_x() == 2000.0 && x < 1000.0)
+                ui->loop2->set_view_range_max_x(1000.0);
+            //else if(ui->loop2->get_view_range_max_x() == 1000.0 && x < 500.0)
+                //ui->loop2->set_view_range_max_x(500.0);
+            //else if(ui->loop2->get_view_range_max_x() == 500.0 && x < 250.0)
+                //ui->loop2->set_view_range_max_x(250.0);
+            if(ui->loop2->get_view_range_max_y() == 200.0 && y < 100.0)
+            {
+                ui->loop2->set_view_range_max_y(100.0);
+                ui->loop2->set_view_range_min_y(-100.0);
+            }
+            if(ui->loop2->get_view_range_min_y() == -200.0 && y > -100.0)
+            {
+                ui->loop2->set_view_range_max_y(100.0);
+                ui->loop2->set_view_range_min_y(-100.0);
+            }
+        }
+        else if(loop2_type == LOOP_FLOW_PRESSURE)
+        {
+            if(ui->loop2->get_view_range_max_x() == 200.0 && x < 100.0)
+            {
+                ui->loop2->set_view_range_max_x(100.0);
+                ui->loop2->set_view_range_min_x(-100.0);
+            }
+            if(ui->loop2->get_view_range_min_x() == -200.0 && x > -100.0)
+            {
+                ui->loop2->set_view_range_max_x(100.0);
+                ui->loop2->set_view_range_min_x(-100.0);
+            }
+            if(ui->loop2->get_view_range_max_y() == 60.0 && y < 30.0)
+                ui->loop2->set_view_range_max_y(30.0);
+        }
+    }
 }
 
 void Tab_Observations_mainPage_Widget::set_checked(QWidget* w, uint8_t checked)
@@ -1232,8 +1240,8 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                 QTableWidgetItem* item1 = new QTableWidgetItem(tempbuf);
                 table_widgets[table_index]->setItem(row, 0, item0);
                 table_widgets[table_index]->setItem(row, 1, item1);
- //               table_widgets[table_index]->item(row, 1)->setFont(QFont("Arial[Mono]",48));
- //               table_widgets[table_index]->setRowHeight(row,80);
+//                table_widgets[table_index]->item(row, 1)->setFont(QFont("Arial[Mono]",48));
+//                table_widgets[table_index]->setRowHeight(row,80);
                 if(row % 2 ==1)
                     {
                     item0->setBackground(QBrush(QColor(11, 42, 78)));
@@ -1307,16 +1315,16 @@ void Tab_Observations_mainPage_Widget::on_ref_btn_toggled(bool checked)
     if(checked)
     {
         set_next_loop_as_ref = 1;
-//        set_checked(ui->ref_btn, 1);
+        set_checked(ui->ref_btn, 1);
         is_ref =1;
 
     }
     else
     {
-//        set_checked(ui->ref_btn, 0);
+        set_checked(ui->ref_btn, 0);
         set_next_loop_as_ref = 0;
-//        ui->loop1->clear_ref_points();
-//        ui->loop2->clear_ref_points();
+        ui->loop1->clear_ref_points();
+        ui->loop2->clear_ref_points();
         is_ref =0;
         ref_loop_snapshot.clear();
     }
@@ -1330,12 +1338,12 @@ void Tab_Observations_mainPage_Widget::on_cap_btn_toggled(bool checked)
     {
 
         set_next_loop_as_cap = 1;
-//        set_checked(ui->cap_btn, 1);
-//        ui->ref_btn->setEnabled(false);
-//        if(is_ref)
-//            ui->ref_btn->setStyleSheet(common->css.Enabled_Checked_ButtonStyle);
-//        else
-//            ui->ref_btn->setStyleSheet(common->css.Enabled_unChecked_ButtonStyle);
+        set_checked(ui->cap_btn, 1);
+        ui->ref_btn->setEnabled(false);
+        if(is_ref)
+            ui->ref_btn->setStyleSheet(common->css.Enabled_Checked_ButtonStyle);
+        else
+            ui->ref_btn->setStyleSheet(common->css.Enabled_unChecked_ButtonStyle);
         is_cap =1;
 
 
@@ -1369,16 +1377,16 @@ void Tab_Observations_mainPage_Widget::on_cap_btn_toggled(bool checked)
     }
     else
     {
-//        ui->ref_btn->setEnabled(true);
-//        set_checked(ui->cap_btn, 0);
+        ui->ref_btn->setEnabled(true);
+        set_checked(ui->cap_btn, 0);
         set_next_loop_as_cap = 0;
         captured = 0;
-//        ui->loop1->clear_points();
-//        ui->loop2->clear_points();
-//        if(is_ref)
-//            ui->ref_btn->setStyleSheet(common->css.Checked_ButtonStyle);
-//        else
-//            ui->ref_btn->setStyleSheet(common->css.unChecked_ButtonStyle);
+        ui->loop1->clear_points();
+        ui->loop2->clear_points();
+        if(is_ref)
+            ui->ref_btn->setStyleSheet(common->css.Checked_ButtonStyle);
+        else
+            ui->ref_btn->setStyleSheet(common->css.unChecked_ButtonStyle);
         is_cap =0;
         cap_loop_snapshot.clear();
     }

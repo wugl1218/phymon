@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>700</height>
+    <height>887</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -50,7 +50,7 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,13,0,0">
+    <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,13,0,0,0">
      <property name="spacing">
       <number>0</number>
      </property>
@@ -334,6 +334,147 @@ color:rgb(255, 255, 255);</string>
              <family>Arial</family>
              <pointsize>18</pointsize>
             </font>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,3,1">
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="mc_loop" name="loop1" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>250</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="mc_loop" name="loop2" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>250</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="btnpanel" stretch="1,1">
+         <property name="leftMargin">
+          <number>20</number>
+         </property>
+         <property name="rightMargin">
+          <number>30</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="ref_btn">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Arial [Mono]</family>
+             <pointsize>20</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {   
+font-style:&quot;Arial&quot;;
+color:rgb(255, 255, 255);
+background-color: rgb(8, 98, 202);
+ border-style: solid;
+ border-width:1px;
+ border-radius:20px;
+ border-color:  rgb(11, 42, 78);
+border:2px groove gray;
+padding:20px 17px;
+ border: none;}
+QPushButton:checked{
+ background-color: rgb(11, 42, 78);
+ };</string>
+           </property>
+           <property name="text">
+            <string>Reference</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="cap_btn">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Arial [Mono]</family>
+             <pointsize>20</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {   
+font-style:&quot;Arial&quot;;
+color:rgb(255, 255, 255);
+background-color: rgb(8, 98, 202);
+ border-style: solid;
+ border-width:1px;
+ border-radius:20px;
+ border-color:  rgb(11, 42, 78);
+border:2px groove gray;
+padding:20px 17px;
+ border: none;}
+QPushButton:checked{
+ background-color: rgb(11, 42, 78);
+ };
+</string>
+           </property>
+           <property name="text">
+            <string>Capture</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -773,7 +914,7 @@ color:rgb(255, 255, 255);</string>
           <x>0</x>
           <y>0</y>
           <width>188</width>
-          <height>696</height>
+          <height>883</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -1446,12 +1587,6 @@ QScrollBar::sub-line:vertical{
  </widget>
  <customwidgets>
   <customwidget>
-   <class>mc_visualization</class>
-   <extends>QWidget</extends>
-   <header>mc_visualization.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>mc_chart</class>
    <extends>QWidget</extends>
    <header>mc_chart.h</header>
@@ -1460,6 +1595,18 @@ QScrollBar::sub-line:vertical{
    <class>mc_legend</class>
    <extends>QWidget</extends>
    <header>mc_legend.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>mc_loop</class>
+   <extends>QWidget</extends>
+   <header>mc_loop.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>mc_visualization</class>
+   <extends>QWidget</extends>
+   <header>mc_visualization.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
