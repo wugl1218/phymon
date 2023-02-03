@@ -3,6 +3,7 @@
 
 #include <map>
 #include "Common.h"
+#include "MainDialog.h"
 
 class TOPAlarm
 {
@@ -27,7 +28,7 @@ public:
     std::multimap<int,TOPAlarm,std::greater<int>> top_technical_alarm;
     void init();
     void step();
-
+    void topalarm(mc_btn_topalart *label );
 };
 
 #endif // MANAGER_TOPALARM_H
