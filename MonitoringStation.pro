@@ -58,7 +58,7 @@ SOURCES += \
     mc_selection_entry.cpp \
     mc_visualization.cpp \
     mc_visualization_setting.cpp \
-    mc_visualization_setting_item.cpp
+    mc_visualization_setting_item.cpp \
     mc_wavepanel.cpp \
     mc_wavepanel_add.cpp \
     mc_wavepanel_item.cpp
@@ -108,7 +108,7 @@ HEADERS += \
     mc_selection_entry.h \
     mc_visualization.h \
     mc_visualization_setting.h \
-    mc_visualization_setting_item.h
+    mc_visualization_setting_item.h \
     mc_wavepanel.h \
     mc_wavepanel_add.h \
     mc_wavepanel_item.h

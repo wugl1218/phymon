@@ -35,6 +35,9 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             sample.value<std::string>("alarm_description", alarm_description);
             sample.value<std::string>("alarm_priority", alarm_priority);
             sample.value<std::string>("alarm_state", "handled");
+            sample.value<std::string>("model", model);
+            sample.value<std::uint64_t>("sec", sec);
+            sample.value<std::uint64_t>("nanosec", nanosec);
             common->topalarm_writer.write(sample);
 
             std::string Uid ="";
@@ -106,6 +109,9 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             sample.value<std::string>("alarm_description", alarm_description);
             sample.value<std::string>("alarm_priority", alarm_priority);
             sample.value<std::string>("alarm_state", "handled");
+            sample.value<std::string>("model", model);
+            sample.value<std::uint64_t>("sec", sec);
+            sample.value<std::uint64_t>("nanosec", nanosec);
             common->techalert_writer.write(sample);
 
             std::string Uid ="";
@@ -175,7 +181,8 @@ void mc_btn_topalart::mouseReleaseEvent(QMouseEvent *event)
 }
 
 void mc_btn_topalart::setalarm(bool is_patient_alarm,TOPAlarm alarm)
-{
+{    this->sec=alarm.sec;
+
     this->is_patient_alarm=is_patient_alarm;
     this->alarm_description=alarm.alarm_description;
     this->alarm_priority=alarm.alarm_priority;

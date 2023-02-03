@@ -1,4 +1,5 @@
 #include "Manager_Topalarm.h"
+#include "MainDialog.h"
 
 
 void Manager_Topalarm::init()
@@ -9,11 +10,18 @@ void Manager_Topalarm::init()
     common->md->ui->topalarm_label_2->setText("");
     common->md->ui->topalarm_label_3->setText("");
     common->md->ui->topalarm_label_4->setText("");
+
+    UI_name <<common->md->ui->topalarm_label_1
+            <<common->md->ui->topalarm_label_2
+            <<common->md->ui->topalarm_label_3
+            <<common->md->ui->topalarm_label_4;
 }
 void Manager_Topalarm::step()
 { 
-
     Common* common = Common::instance();
+
+    for(auto it=common->md->dm.devices.begin();it !=common->md->dm.devices.end() ;++it)
+
     if(common->md->dm.devices.size()>=4)
         common->md->ui->topalarm_label_4->show();
     else
@@ -29,10 +37,10 @@ void Manager_Topalarm::step()
     else
         common->md->ui->topalarm_label_2->hide();
 
-
     if(common->patient_id.size()==0)
         {
-        common->md->ui->topalarm_label_1->setText("");
+        for(auto i :UI_name)
+            i->setText("");
         common->md->efx->stop();
         return;
         }
@@ -46,7 +54,8 @@ void Manager_Topalarm::step()
     qDebug()<<"Manager_Topalarm";
         fflog_out(common->log,"Manager_Topalarm");
         last_query_time = current_time;
-        topalarm(common->md->ui->topalarm_label_1);
+        for(int i =0;i+1<common->md->dm.devices.size();i++)
+            topalarm(UI_name[i]);
     }
 
 }
