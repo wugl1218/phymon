@@ -26,6 +26,7 @@ SOURCES += \
     Dialog_release.cpp \
     Dialog_visualization_config.cpp \
     Dialog_visualization_selection.cpp \
+    Dialog_wave_selection.cpp \
     MainDialog.cpp \
     Manager_Device.cpp \
     Manager_MDSConnectivity.cpp \
@@ -55,7 +56,10 @@ SOURCES += \
     mc_navigation.cpp \
     mc_selection_entry.cpp \
     mc_visualizetion.cpp \
-    mc_visualizetion_setting.cpp
+    mc_visualizetion_setting.cpp \
+    mc_wavepanel.cpp \
+    mc_wavepanel_add.cpp \
+    mc_wavepanel_item.cpp
 
 HEADERS += \
     BarcodeDaemon.h \
@@ -71,6 +75,7 @@ HEADERS += \
     Dialog_release.h \
     Dialog_visualization_config.h \
     Dialog_visualization_selection.h \
+    Dialog_wave_selection.h \
     MainDialog.h \
     Manager_Device.h \
     Manager_MDSConnectivity.h \
@@ -99,7 +104,10 @@ HEADERS += \
     mc_navigation.h \
     mc_selection_entry.h \
     mc_visualizetion.h \
-    mc_visualizetion_setting.h
+    mc_visualizetion_setting.h \
+    mc_wavepanel.h \
+    mc_wavepanel_add.h \
+    mc_wavepanel_item.h
 
 FORMS += \
     Dialog_forcerelease.ui \
@@ -110,6 +118,7 @@ FORMS += \
     Dialog_release.ui \
     Dialog_visualization_config.ui \
     Dialog_visualization_selection.ui \
+    Dialog_wave_selection.ui \
     MainDialog.ui \
     Tab_Devices_Widget.ui \
     Tab_Domaininput.ui \

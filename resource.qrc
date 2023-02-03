@@ -29,6 +29,11 @@
         <file>Network.png</file>
         <file>big_down_arrow.png</file>
         <file>big_up_arrow.png</file>
+        <file>top_left_corner.png</file>
+        <file>controls_btn1.png</file>
+        <file>controls_btn0.png</file>
+        <file>minus_icon.png</file>
+        <file>add_icon.png</file>
     </qresource>
     <qresource prefix="/">
         <file>wav/warning.wav</file>

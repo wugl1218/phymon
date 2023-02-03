@@ -32,7 +32,6 @@ void Manager_MDSConnectivity::init()
 }
 void Manager_MDSConnectivity::step()
 {
-    return;
     Common* common = Common::instance();
     uint32_t current_time1 = Common::get_time_ms();
     if(Common::get_elapsed_time(current_time1, last_query_time1) > 60000)

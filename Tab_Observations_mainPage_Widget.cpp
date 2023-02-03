@@ -26,14 +26,6 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     update_timer.start(1000);
     connect(&chart_update_timer, SIGNAL(timeout()), this, SLOT(chart_update_triggered()));
     chart_update_timer.start(50);
-    tables[0] = ui->device1_groupBox;
-    tables[1] = ui->device2_groupBox;
-    tables[2] = ui->device3_groupBox;
-    tables[3] = ui->device4_groupBox;
-    table_widgets[0] = ui->device1_tableWidget;
-    table_widgets[1] = ui->device2_tableWidget;
-    table_widgets[2] = ui->device3_tableWidget;
-    table_widgets[3] = ui->device4_tableWidget;
     set_next_loop_as_ref = 0;
     set_next_loop_as_cap = 0;
     captured = 0;
@@ -44,11 +36,6 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     ui->loop2->hide();
     ui->cap_btn->hide();
     ui->ref_btn->hide();
-
-    ui->device1_tableWidget->setColumnWidth(0, Device_TableWidget_WIDTH);
-    ui->device2_tableWidget->setColumnWidth(0, Device_TableWidget_WIDTH);
-    ui->device3_tableWidget->setColumnWidth(0, Device_TableWidget_WIDTH);
-    ui->device4_tableWidget->setColumnWidth(0, Device_TableWidget_WIDTH);
 
     ui->rt_chart1->set_axis_visible(1);
     ui->rt_chart1->set_selection_width(40);
@@ -1123,10 +1110,9 @@ void Tab_Observations_mainPage_Widget::update_triggered()
     Common* common = Common::instance();
     if(active)
     {
-        for(int i=0;i<4;i++)
-            tables[i]->hide();
         if(common->patient_id.size() == 0)
             return;
+        /*
         //if(common->device_checkstate.size() == 0)
             common->populate_device_checkstate();
         //if(common->item_checkstate.size() == 0)
@@ -1140,8 +1126,6 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                 table_index++;
                 continue;
             }
-            tables[table_index]->show();
-            tables[table_index]->setTitle(it->second.channel_id.c_str());
             std::string querystr = "vmd_id MATCH '";
             querystr.append(common->vmd_id);
             querystr.append("' AND patient_id MATCH '");
@@ -1248,6 +1232,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             }
             table_index++;
         }
+        */
     }
 }
 
@@ -1270,10 +1255,11 @@ void Tab_Observations_mainPage_Widget::mouseMoveEvent(QMouseEvent *event)
 
 void Tab_Observations_mainPage_Widget::mousePressEvent(QMouseEvent *event)
 {
+    /*
     if(childAt(event->pos()) == ui->scrollAreaWidgetContents)
     {
         emit changeToMetricItemsDisplayConfigPage();
-    }
+    }*/
     event->setAccepted(false);
 }
 
@@ -1282,6 +1268,7 @@ void Tab_Observations_mainPage_Widget::mouseReleaseEvent(QMouseEvent *event)
     event->setAccepted(false);
 }
 
+/*
 void Tab_Observations_mainPage_Widget::on_device1_tableWidget_cellClicked(int row, int column)
 {
     emit changeToMetricItemsDisplayConfigPage();
@@ -1304,7 +1291,7 @@ void Tab_Observations_mainPage_Widget::on_device4_tableWidget_cellClicked(int ro
 {
     emit changeToMetricItemsDisplayConfigPage();
 }
-
+*/
 
 void Tab_Observations_mainPage_Widget::on_ref_btn_toggled(bool checked)
 {
