@@ -8,7 +8,7 @@
 #include "Tab_Observations_mainPage_Widget.h"
 #include "ui_Tab_Observations_mainPage_Widget.h"
 #include "Tab_Mapping_Widget.h"
-#include "ui_MappingTab_Widget.h"
+#include "ui_Tab_Mapping_Widget.h"
 #include "Tab_Utilities_alarmHistoryPage_Widget.h"
 #include "ui_Tab_Utilities_alarmHistoryPage_Widget.h"
 #include "ui_Tab_Utilities_exporterPage_Widget.h"

@@ -27,6 +27,7 @@ SOURCES += \
     Dialog_release.cpp \
     Dialog_visualization_config.cpp \
     Dialog_visualization_selection.cpp \
+    Dialog_wave_selection.cpp \
     MainDialog.cpp \
     Manager_Device.cpp \
     Manager_MDSConnectivity.cpp \
@@ -58,6 +59,9 @@ SOURCES += \
     mc_visualization.cpp \
     mc_visualization_setting.cpp \
     mc_visualization_setting_item.cpp
+    mc_wavepanel.cpp \
+    mc_wavepanel_add.cpp \
+    mc_wavepanel_item.cpp
 
 HEADERS += \
     BarcodeDaemon.h \
@@ -74,6 +78,7 @@ HEADERS += \
     Dialog_release.h \
     Dialog_visualization_config.h \
     Dialog_visualization_selection.h \
+    Dialog_wave_selection.h \
     MainDialog.h \
     Manager_Device.h \
     Manager_MDSConnectivity.h \
@@ -104,6 +109,9 @@ HEADERS += \
     mc_visualization.h \
     mc_visualization_setting.h \
     mc_visualization_setting_item.h
+    mc_wavepanel.h \
+    mc_wavepanel_add.h \
+    mc_wavepanel_item.h
 
 FORMS += \
     Dialog_forcerelease.ui \
@@ -115,6 +123,7 @@ FORMS += \
     Dialog_topalarm_mute.ui \
     Dialog_visualization_config.ui \
     Dialog_visualization_selection.ui \
+    Dialog_wave_selection.ui \
     MainDialog.ui \
     Tab_Devices_Widget.ui \
     Tab_Domaininput.ui \

@@ -525,10 +525,11 @@ common->alarm_page->ui->queryResult_tableWidget->clearContents();
 common->alarm_page_2->ui->queryResult_tableWidget->clearContents();
 common->alarm_page->ui->queryResult_tableWidget->setRowCount(0);
 common->alarm_page_2->ui->queryResult_tableWidget->setRowCount(0);
+/*
 common->observation_main_page->ui->device1_tableWidget->clearContents();
 common->observation_main_page->ui->device2_tableWidget->clearContents();
 common->observation_main_page->ui->device3_tableWidget->clearContents();
-common->observation_main_page->ui->device4_tableWidget->clearContents();
+common->observation_main_page->ui->device4_tableWidget->clearContents();*/
 common->exporter_page->ui->log_textBrowser->setText("");
 common->exporter_page->ui->fileName_label->setText("");
 common->exporter_page->ui->send_pushButton->setEnabled(false);
