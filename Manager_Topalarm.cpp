@@ -1,4 +1,5 @@
 #include "Manager_Topalarm.h"
+#include "MainDialog.h"
 
 
 void Manager_Topalarm::init()
@@ -9,6 +10,10 @@ void Manager_Topalarm::init()
     common->md->ui->topalarm_label_2->setText("");
     common->md->ui->topalarm_label_3->setText("");
     common->md->ui->topalarm_label_4->setText("");
+    UI_name <<common->md->ui->topalarm_label_1
+            <<common->md->ui->topalarm_label_2
+            <<common->md->ui->topalarm_label_3
+            <<common->md->ui->topalarm_label_4;
 }
 void Manager_Topalarm::step()
 { 
@@ -32,7 +37,8 @@ void Manager_Topalarm::step()
 
     if(common->patient_id.size()==0)
         {
-        common->md->ui->topalarm_label_1->setText("");
+        for(auto i :UI_name)
+            i->setText("");
         common->md->efx->stop();
         return;
         }
@@ -43,10 +49,11 @@ void Manager_Topalarm::step()
     uint32_t current_time = Common::get_time_ms();
     if(Common::get_elapsed_time(current_time, last_query_time) > (uint32_t)common->Alarmloop_interval*1000)
     {
-    qDebug()<<"Manager_Topalarm";
+        qDebug()<<"Manager_Topalarm";
         fflog_out(common->log,"Manager_Topalarm");
         last_query_time = current_time;
-        topalarm(common->md->ui->topalarm_label_1);
+        for(int i =0;i<common->md->dm.devices.size();++i)
+            topalarm(UI_name[i]);
     }
 
 }
@@ -233,6 +240,7 @@ void Manager_Topalarm::topalarm(mc_btn_topalart *label )
             sql.append("'");
             cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
             bool is_erase=0;
+            qDebug()<<"top_technical_alarm.size="<<top_technical_alarm.size();
             for(auto& result: results)
             {
                 if(i == top_technical_alarm.end()||top_technical_alarm.size()==0) break;

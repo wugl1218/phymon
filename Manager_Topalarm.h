@@ -3,7 +3,7 @@
 
 #include <map>
 #include "Common.h"
-#include "MainDialog.h"
+class mc_btn_topalart;
 
 class TOPAlarm
 {
@@ -29,6 +29,8 @@ public:
     void init();
     void step();
     void topalarm(mc_btn_topalart *label );
+    QList <mc_btn_topalart *> UI_name;
+
 };
 
 #endif // MANAGER_TOPALARM_H

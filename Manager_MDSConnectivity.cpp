@@ -252,13 +252,13 @@ void Manager_MDSConnectivity::step()
                 if(i == common->md->mdsm.patient_alarm.end()) break;
             }
             std::string dummy;
-            std::string sql = "SELECT handled_time FROM _ WHERE (data_source='HandledAlarm')";
+            std::string sql = "SELECT handled_time FROM _ WHERE data_source='HandledAlarm'";
             sql.append(" AND patient_id='");
             sql.append(i->patient_id);
             sql.append("' AND channel_id='");
             sql.append(i->channel_id);
-            sql.append("' AND alarm_code='");
-            sql.append(i->alarm_code);
+            sql.append("' AND alarm_description='");
+            sql.append(i->alarm_description);
             sql.append("'");
             cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
             bool is_erase=0;
@@ -300,13 +300,13 @@ void Manager_MDSConnectivity::step()
                     if(i == common->md->mdsm.technical_alarm.end()) break;
                     }
                 std::string dummy;
-                std::string sql = "SELECT handled_time FROM _ WHERE (data_source='HandledAlarm')";
+                std::string sql = "SELECT handled_time FROM _ WHERE data_source='HandledAlarm'";
                 sql.append(" AND patient_id='");
                 sql.append(i->patient_id);
                 sql.append("' AND channel_id='");
                 sql.append(i->channel_id);
-                sql.append("' AND alarm_code='");
-                sql.append(i->alarm_code);
+                sql.append("' AND alarm_description='");
+                sql.append(i->alarm_description);
                 sql.append("'");
                 cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
                 bool is_erase=0;

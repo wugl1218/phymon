@@ -35,7 +35,12 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             sample.value<std::string>("alarm_description", alarm_description);
             sample.value<std::string>("alarm_priority", alarm_priority);
             sample.value<std::string>("alarm_state", "handled");
-            common->topalarm_writer.write(sample);
+            sample.value<std::string>("model", model);
+            rti::core::xtypes::LoanedDynamicData loaned_member = sample.loan_value("source_timestamp");
+            loaned_member.get().value("sec", (int32_t)sec);
+            loaned_member.get().value("nanosec", (uint32_t)nanosec);
+            loaned_member.return_loan();
+            common->techalert_writer.write(sample);
 
             std::string Uid ="";
             std::string dummy;
@@ -81,7 +86,7 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             d1.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d1.GetAllocator()), d1.GetAllocator());
             d1.AddMember("vmd_id", rapidjson::Value().SetString(common->vmd_id.c_str(), d1.GetAllocator()), d1.GetAllocator());
             d1.AddMember("alarm_code", rapidjson::Value().SetString(alarm_code.c_str(), d1.GetAllocator()), d1.GetAllocator());
-            d1.AddMember("alarm_description", rapidjson::Value().SetString(alarm_priority.c_str(), d1.GetAllocator()), d1.GetAllocator());
+            d1.AddMember("alarm_description", rapidjson::Value().SetString(alarm_description.c_str(), d1.GetAllocator()), d1.GetAllocator());
             d1.AddMember("alarm_priority", rapidjson::Value().SetString(alarm_priority.c_str(), d1.GetAllocator()), d1.GetAllocator());
             d1.AddMember("alarm_state", rapidjson::Value().SetString("handled", d1.GetAllocator()), d1.GetAllocator());
             d1.AddMember("source_timestamp", val, d1.GetAllocator());
@@ -106,6 +111,11 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             sample.value<std::string>("alarm_description", alarm_description);
             sample.value<std::string>("alarm_priority", alarm_priority);
             sample.value<std::string>("alarm_state", "handled");
+            sample.value<std::string>("model", model);
+            rti::core::xtypes::LoanedDynamicData loaned_member = sample.loan_value("source_timestamp");
+            loaned_member.get().value("sec", (int32_t)sec);
+            loaned_member.get().value("nanosec", (uint32_t)nanosec);
+            loaned_member.return_loan();
             common->techalert_writer.write(sample);
 
             std::string Uid ="";
@@ -129,7 +139,7 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("vmd_id", rapidjson::Value().SetString(common->vmd_id.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("alarm_code", rapidjson::Value().SetString(alarm_code.c_str(), d.GetAllocator()), d.GetAllocator());
-            d.AddMember("alarm_description", rapidjson::Value().SetString(alarm_priority.c_str(), d.GetAllocator()), d.GetAllocator());
+            d.AddMember("alarm_description", rapidjson::Value().SetString(alarm_description.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("alarm_priority", rapidjson::Value().SetString(alarm_priority.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("alarm_state", rapidjson::Value().SetString("handled", d.GetAllocator()), d.GetAllocator());
             d.AddMember("handled_time",time(NULL)+mutetime*60, d.GetAllocator());

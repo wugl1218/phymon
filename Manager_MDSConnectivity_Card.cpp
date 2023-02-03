@@ -288,7 +288,7 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             title_pen.setColor(QColor(61, 102, 128));
             value_pen.setColor(QColor(11, 42, 78));
             circle->setStyleSheet("background:rgb(252, 233, 79);color:rgb(248, 208, 4);");
-            //circle->show();
+            circle->show();
             title->setText(QString::fromStdString(i->alarm_description));
             title->setWordWrap(true);
             is_patient_alarm = 1;
@@ -305,7 +305,7 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             title_pen.setColor(QColor(61, 102, 128));
             value_pen.setColor(QColor(11, 42, 78));
             circle->setStyleSheet("background:rgb(252, 233, 79);color:rgb(248, 208, 4);");
-            //circle->show();
+            circle->show();
             title->setText(QString::fromStdString(i->alarm_description));
             title->setWordWrap(true);
             is_patient_alarm = 0;
