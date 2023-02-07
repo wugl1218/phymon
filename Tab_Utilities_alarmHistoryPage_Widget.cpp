@@ -18,8 +18,10 @@ Tab_Utilities_alarmHistoryPage_Widget::Tab_Utilities_alarmHistoryPage_Widget(QWi
 
     if  (common->alarm_page == NULL)
         common->alarm_page = this;
-    else
+    else if(common->alarm_page != NULL && common->alarm_page_2 == NULL)
         common->alarm_page_2 = this;
+    else if(common->alarm_page_3 == NULL)
+        common->alarm_page_3 = this;
 
     ui->setupUi(this);
     ui->deviceTemplate_pushButton->hide();
@@ -128,17 +130,19 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
             orderstr.append(",alarm_no");
         }
         QJsonArray array;
-        if(is_technical)
-            array=common->Restful_API_Orderby(timebuf,timebuf1,"TechnicalAlert",devices[dev_index]->property("model").value<QString>().toStdString(),orderstr);
-        else
+        if(is_technical == 0)
             array=common->Restful_API_Orderby(timebuf,timebuf1,"PatientAlert",devices[dev_index]->property("model").value<QString>().toStdString(),orderstr);
+        else if (is_technical == 1)
+            array=common->Restful_API_Orderby(timebuf,timebuf1,"TechnicalAlert",devices[dev_index]->property("model").value<QString>().toStdString(),orderstr);
+        else if (is_technical == 2)
+            array=common->Restful_API_Orderby(timebuf,timebuf1,"PatientAlert' OR data_source='TechnicalAlert",devices[dev_index]->property("model").value<QString>().toStdString(),orderstr);
         int row=0;
         //philo
         char buf[128];
         char sumbuf[128];
         sprintf(buf, "%u", (uint32_t)start_time);
         sprintf(sumbuf, "%u", (uint32_t)start_time);
-        time_t old_timestamp,old_timestamp_2,sum,old_sum =0;
+        time_t old_timestamp,sum,old_sum =0;
         int dur_index=1,old_dur_index; //philo
         for (int j=0; j<array.count();++j)
         {
@@ -184,7 +188,6 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
 
                     {
                     sum+= old_timestamp - timestamp;
-                    old_sum=sum;
                     }
             }
             else
@@ -205,7 +208,6 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
                 {
                     ui->queryResult_tableWidget->removeRow(--row);
                     ui->queryResult_tableWidget->item(row,3)->setText(sumbuf);
-                    old_timestamp_2=old_timestamp;
                     old_timestamp = timestamp,old_dur_index = dur_index;
                     row++;
                     continue;
@@ -237,7 +239,6 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
                     ui->queryResult_tableWidget->item(row,3)->setText(sumbuf);
             }
 
-            old_timestamp_2=old_timestamp;
             old_timestamp = timestamp,old_dur_index = dur_index;
             row++;
         }
@@ -262,12 +263,14 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
     else
     {
         std::string dummy;
-        std::string sql = "SELECT alarm_no,source_timestamp.sec,alarm_description FROM _ WHERE data_source='";
-        if(is_technical)
-            sql.append("TechnicalAlert");
-        else
+        std::string sql = "SELECT alarm_no,source_timestamp.sec,alarm_description FROM _ WHERE (data_source='";
+        if(is_technical ==0)
             sql.append("PatientAlert");
-        sql.append("' AND model='");
+        else if(is_technical ==1)
+            sql.append("TechnicalAlert");
+        else if(is_technical ==2)
+            sql.append("TechnicalAlert' OR data_source='PatientAlert");
+        sql.append("') AND model='");
         sql.append(devices[dev_index]->property("model").value<QString>().toStdString());
         sql.append("' AND vmd_id='");
         sql.append(common->vmd_id);
@@ -288,6 +291,8 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
         char buf[128];
         sprintf(buf, "%u", (uint32_t)start_time);
         sql.append(buf);
+        if(is_technical ==2)
+            sql.append(" AND alarm_state != ''"); //bug 記得修改==
         sql.append(" ORDER BY ");
         if(order == 0)
         {
@@ -300,12 +305,13 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
             sql.append(",source_timestamp.sec DESC");
             sql.append(",alarm_no");
             }
+        qDebug()<<QString::fromStdString(sql);
         cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
         int row=0;
         //philo
         char sumbuf[128];
         sprintf(sumbuf, "%u", (uint32_t)start_time);
-        time_t old_timestamp,old_timestamp_2,sum,old_sum =0;
+        time_t old_timestamp,sum =0;
         int dur_index=1,old_dur_index; //philo
         for(auto& result: results)
         {
@@ -346,7 +352,6 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
 
                     {
                     sum+= old_timestamp - timestamp;
-                    old_sum=sum;
                     }
             }
             else
@@ -367,7 +372,6 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
                 {
                     ui->queryResult_tableWidget->removeRow(--row);
                     ui->queryResult_tableWidget->item(row,3)->setText(sumbuf);
-                    old_timestamp_2=old_timestamp;
                     old_timestamp = timestamp,old_dur_index = dur_index;
                     row++;
                     continue;
@@ -399,7 +403,6 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
                     ui->queryResult_tableWidget->item(row,3)->setText(sumbuf);
             }
 
-            old_timestamp_2=old_timestamp;
             old_timestamp = timestamp,old_dur_index = dur_index;
             row++;
         }
@@ -427,3 +430,37 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_orderType_comboBox_currentIndexCh
 {
     order = index;
 }
+
+void Tab_Utilities_alarmHistoryPage_Widget::on_pushButton_clicked()
+{
+    Common* common = Common::instance();
+
+    rapidjson::Document d;
+    d.SetObject();
+    d.AddMember("data_source", "TechnicalAlert", d.GetAllocator());
+    d.AddMember("alarm_no", "nanosec", d.GetAllocator());
+    d.AddMember("channel_id", "nanosec", d.GetAllocator());
+    d.AddMember("patient_id", "nanosec", d.GetAllocator());
+    d.AddMember("vmd_id", "nanosec", d.GetAllocator());
+    d.AddMember("alarm_code", "nanosec", d.GetAllocator());
+    d.AddMember("alarm_description", "nanosec", d.GetAllocator());
+    d.AddMember("alarm_priority", "5", d.GetAllocator());
+    d.AddMember("alarm_state", "nanosec", d.GetAllocator());
+    rapidjson::Value val;
+    val.SetObject();
+    val.AddMember("sec", 1675496651, d.GetAllocator());
+    val.AddMember("nanosec",900507238, d.GetAllocator());
+    d.AddMember("source_timestamp", val, d.GetAllocator());
+      rapidjson::Value val1;
+    val1.SetObject();
+    val1.AddMember("sec", time(0), d.GetAllocator());
+    d.AddMember("check_timestamp", val1, d.GetAllocator());
+      rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    d.Accept(writer);
+    std::string dummy;
+    std::string Uid = "";
+    common->cbl->saveMutableDocument(common->db, buffer.GetString(),Uid , dummy);
+    qDebug()<<QString::fromStdString(dummy);
+}
+

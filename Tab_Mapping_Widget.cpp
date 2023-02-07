@@ -399,8 +399,6 @@ void Tab_Mapping_Widget::perform_release(std::string employeeID)
         common->md->ui->main_stackedWidget->setCurrentIndex(0);
         common->vmd_id.clear();
         }
-    common->md->is_alarmSound_index=true;
-
 }
 
 void Tab_Mapping_Widget::force_release()
@@ -501,7 +499,6 @@ void Tab_Mapping_Widget::force_return()
     common->bed_id.clear();
     common->vmd_id.clear();
     common->exporter_page->handle_stop();
-    common->md->is_alarmSound_index=true;
     selected_patient = -1;
     common->monitor_page->selected_patient = -1;
     for(int i=0;i<(int)cards.size();i++)
@@ -523,8 +520,11 @@ Common* common = Common::instance();
 common->observation_main_page->clear_points();
 common->alarm_page->ui->queryResult_tableWidget->clearContents();
 common->alarm_page_2->ui->queryResult_tableWidget->clearContents();
+common->alarm_page_3->ui->queryResult_tableWidget->clearContents();
 common->alarm_page->ui->queryResult_tableWidget->setRowCount(0);
 common->alarm_page_2->ui->queryResult_tableWidget->setRowCount(0);
+common->alarm_page_3->ui->queryResult_tableWidget->setRowCount(0);
+
 common->observation_main_page->ui->device1_tableWidget->clearContents();
 common->observation_main_page->ui->device2_tableWidget->clearContents();
 common->observation_main_page->ui->device3_tableWidget->clearContents();

@@ -73,6 +73,7 @@ void Manager_Device::step()
         common->devices_page->update_devices(&devices);
         common->alarm_page->update_devices(&devices);
         common->alarm_page_2->update_devices(&devices);
+        common->alarm_page_3->update_devices(&devices);
         common->device_settings_page->update_devices();
         common->mapping_tab->update_devices();
         if (devices.size()==0) //philo 11/25

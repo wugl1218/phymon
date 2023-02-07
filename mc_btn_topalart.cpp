@@ -8,6 +8,43 @@
 
 mc_btn_topalart::mc_btn_topalart(QWidget *parent): QLabel(parent)
 {
+    circle = new QLabel(this);
+    circle->hide();
+    QPixmap *pixmap = new QPixmap(":/icons/yellowcircle.png");
+    pixmap->scaled(circle->size(), Qt::KeepAspectRatio);
+    circle->setScaledContents(true);
+    circle->setPixmap(*pixmap);
+    circle->installEventFilter(this);
+}
+
+bool mc_btn_topalart::eventFilter(QObject *watched, QEvent *event)
+{
+    Common* common = Common::instance();
+    if(circle == watched) {
+            if(QEvent::MouseButtonPress == event->type()) {            //鼠标點擊
+                QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event); // 事件转换
+                if(mouseEvent->button() == Qt::LeftButton)
+                {
+                    circle->hide();
+                    dds::core::xtypes::DynamicData sample(common->useractions_type);
+                    sample.value<std::string>("patient_id", common->patient_id);
+                    if(common->is_server)
+                        sample.value<std::string>("function_id", "NS");
+                    else
+                        sample.value<std::string>("function_id", "BS");
+                    sample.value<std::string>("user_id", "attendance");
+                    sample.value<std::string>("action", "checkbtn");
+                    rti::core::xtypes::LoanedDynamicData loaned_member = sample.loan_value("exec_timestamp");
+                    loaned_member.get().value("sec", (int32_t)time(0));
+                    loaned_member.get().value("nanosec", (uint32_t)time(0)*1000);
+                    loaned_member.return_loan();
+                    common->useractions_writer.write(sample);
+                    return true;
+                }
+                return true;
+            }
+        }
+    return QWidget::eventFilter(watched, event);
 }
 
 void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
@@ -15,14 +52,14 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
     Common* common = Common::instance();
     if(alarm_description=="")return;
     emit clicked();
-   /* if(common->is_server)
+    if(common->is_server)
     {
         common->msg.setText("Please go to bed side for muting");
         common->msg.exec();
         return;
-    }*/
-    mute.exec();
-    mutetime= mute.get_mutetime();
+    }
+    common->md->mute.exec();
+    mutetime= common->md->mute.get_mutetime();
     if(is_patient_alarm)
         {
             dds::core::xtypes::DynamicData sample(common->topalarm_type);
@@ -64,9 +101,9 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("vmd_id", rapidjson::Value().SetString(common->vmd_id.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("alarm_code", rapidjson::Value().SetString(alarm_code.c_str(), d.GetAllocator()), d.GetAllocator());
-            d.AddMember("alarm_description", rapidjson::Value().SetString(alarm_priority.c_str(), d.GetAllocator()), d.GetAllocator());
+            d.AddMember("alarm_description", rapidjson::Value().SetString(alarm_description.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("alarm_priority", rapidjson::Value().SetString(alarm_priority.c_str(), d.GetAllocator()), d.GetAllocator());
-            d.AddMember("alarm_state", rapidjson::Value().SetString("handled", d.GetAllocator()), d.GetAllocator());
+            d.AddMember("alarm_state", "handled", d.GetAllocator());
             d.AddMember("handled_time",time(NULL)+mutetime*60, d.GetAllocator());
             rapidjson::Value val;
             val.SetObject();
@@ -77,7 +114,7 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
             d.Accept(writer);
             common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), Uid, dummy);
-
+            /* 不寫LDB
             rapidjson::Document d1;
             d1.SetObject();
             d1.AddMember("data_source", "PatientAlert", d1.GetAllocator());
@@ -88,17 +125,17 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             d1.AddMember("alarm_code", rapidjson::Value().SetString(alarm_code.c_str(), d1.GetAllocator()), d1.GetAllocator());
             d1.AddMember("alarm_description", rapidjson::Value().SetString(alarm_description.c_str(), d1.GetAllocator()), d1.GetAllocator());
             d1.AddMember("alarm_priority", rapidjson::Value().SetString(alarm_priority.c_str(), d1.GetAllocator()), d1.GetAllocator());
-            d1.AddMember("alarm_state", rapidjson::Value().SetString("handled", d1.GetAllocator()), d1.GetAllocator());
+            d1.AddMember("alarm_state", "handled", d.GetAllocator());
             d1.AddMember("source_timestamp", val, d1.GetAllocator());
             rapidjson::Value val1;
             val1.SetObject();
             val1.AddMember("sec", time(0), d1.GetAllocator());
             val1.AddMember("nanosec", time(0)*1000, d1.GetAllocator());
-            d1.AddMember("click_timestamp", val1, d1.GetAllocator());
+            d1.AddMember("check_timestamp", val1, d1.GetAllocator());
             rapidjson::StringBuffer buffer1;
             rapidjson::Writer<rapidjson::StringBuffer> writer1(buffer1);
             d1.Accept(writer1);
-            //common->cbl->saveMutableDocument(common->db, buffer1.GetString(), Uid, dummy);
+            common->cbl->saveMutableDocument(common->db, buffer1.GetString(), Uid, dummy);*/
         }
     else
         {
@@ -141,7 +178,7 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             d.AddMember("alarm_code", rapidjson::Value().SetString(alarm_code.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("alarm_description", rapidjson::Value().SetString(alarm_description.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("alarm_priority", rapidjson::Value().SetString(alarm_priority.c_str(), d.GetAllocator()), d.GetAllocator());
-            d.AddMember("alarm_state", rapidjson::Value().SetString("handled", d.GetAllocator()), d.GetAllocator());
+            d.AddMember("alarm_state","handled", d.GetAllocator());
             d.AddMember("handled_time",time(NULL)+mutetime*60, d.GetAllocator());
             rapidjson::Value val;
             val.SetObject();
@@ -152,7 +189,7 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
             d.Accept(writer);
             common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), Uid, dummy);
-
+            /* 不寫LDB
             rapidjson::Document d1;
             d1.SetObject();
             d1.AddMember("data_source", "TechnicalAlert", d1.GetAllocator());
@@ -161,21 +198,26 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             d1.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d1.GetAllocator()), d1.GetAllocator());
             d1.AddMember("vmd_id", rapidjson::Value().SetString(common->vmd_id.c_str(), d1.GetAllocator()), d1.GetAllocator());
             d1.AddMember("alarm_code", rapidjson::Value().SetString(alarm_code.c_str(), d1.GetAllocator()), d1.GetAllocator());
-            d1.AddMember("alarm_description", rapidjson::Value().SetString(alarm_priority.c_str(), d1.GetAllocator()), d1.GetAllocator());
+            d1.AddMember("alarm_description", rapidjson::Value().SetString(alarm_description.c_str(), d1.GetAllocator()), d1.GetAllocator());
             d1.AddMember("alarm_priority", rapidjson::Value().SetString(alarm_priority.c_str(), d1.GetAllocator()), d1.GetAllocator());
-            d1.AddMember("alarm_state", rapidjson::Value().SetString("handled", d1.GetAllocator()), d1.GetAllocator());
+            d1.AddMember("alarm_state", "handled", d.GetAllocator());
             d1.AddMember("source_timestamp", val, d1.GetAllocator());
             rapidjson::Value val1;
             val1.SetObject();
             val1.AddMember("sec", time(0), d1.GetAllocator());
             val1.AddMember("nanosec", time(0)*1000, d1.GetAllocator());
-            d1.AddMember("click_timestamp", val1, d1.GetAllocator());
+            d1.AddMember("check_timestamp", val1, d1.GetAllocator());
             rapidjson::StringBuffer buffer1;
             rapidjson::Writer<rapidjson::StringBuffer> writer1(buffer1);
             d1.Accept(writer1);
-            //common->cbl->saveMutableDocument(common->db, buffer1.GetString(), Uid, dummy);
+            common->cbl->saveMutableDocument(common->db, buffer1.GetString(), Uid, dummy);*/
         }
     alarm_description="";
+  /*  for(auto i :common->md->ta.UI_name)
+        {
+        i->update();
+        i->setText(""); //此處要修改成個別空白
+        }*/
     emit pressed();
 }
 
@@ -196,4 +238,13 @@ void mc_btn_topalart::setalarm(bool is_patient_alarm,TOPAlarm alarm)
     this->alarm_state=alarm.alarm_state;;
     this->sec=alarm.sec;
     this->nanosec=alarm.nanosec;
+}
+void mc_btn_topalart::set_mute_sheet(bool mute)
+{
+    Common* common = Common::instance();
+    if(mute)
+        this->setStyleSheet(common->css.topalarm_mute_background);
+    else
+        this->setStyleSheet(common->css.topalarm_background);
+
 }

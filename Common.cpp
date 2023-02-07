@@ -57,7 +57,8 @@ Common::Common(MainDialog* m)
     button_hold_state_duration1 = d["ButtonHoldStateDuration1"].GetUint();
     button_hold_tick_interval_slow = d["ButtonHoldTickIntervalSlow"].GetUint();
     button_hold_tick_interval_fast = d["ButtonHoldTickIntervalFast"].GetUint();
-    log_path = d["LogPath"].GetString();;
+    log_path = d["LogPath"].GetString();
+    Ping_url =d["PingIP"].GetString();
 
     rti::config::Verbosity verbosity = static_cast<rti::config::Verbosity::inner_enum>(0);
     // Starting RTI DDS...
@@ -178,6 +179,7 @@ void Common::init_dds(int domain_id)
     useractions_type = dds->getTypeObject("common::UserActions");
     useractions_topic = dds->getTopic("TP_UserActions", useractions_type, "");
     useractions_writer = dds->getWriter(useractions_topic, "VMD_Library::profile::dwUserActions");
+    useractions_reader = dds->getReader(useractions_topic, "VMD_Library::profile::drUserActions");
 
     observation_type = dds->getTypeObject("dds_collector::Observation");
     observation_topic = dds->getTopic("TP_Observation", observation_type, "");

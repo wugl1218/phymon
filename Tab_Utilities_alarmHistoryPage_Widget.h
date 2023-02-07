@@ -19,7 +19,7 @@ class Tab_Utilities_alarmHistoryPage_Widget : public QWidget
 public:
     int dev_index;
     int order;
-    bool is_technical =1;
+    int is_technical;
     uint8_t index_u8;//philo
     Ui::Tab_Utilities_alarmHistoryPage_Widget *ui;
     explicit Tab_Utilities_alarmHistoryPage_Widget(QWidget *parent = nullptr);
@@ -35,6 +35,7 @@ private slots:
     void on_query_pushButton_clicked();
     void on_orderType_comboBox_currentIndexChanged(int index);
     void on_DatecomboBox_currentIndexChanged(int index);
+    void on_pushButton_clicked();
 };
 
 #endif // TAB_UTILITIES_ALARMHISTORYPAGE_WIDGET_H

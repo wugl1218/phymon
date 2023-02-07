@@ -44,4 +44,7 @@ void Dialog_topalarm_mute::on_mutebtn4_clicked()
     mutetime = 10;
     close();
 }
+void Dialog_topalarm_mute::mousePressEvent(QMouseEvent *event)
+{
+}
 

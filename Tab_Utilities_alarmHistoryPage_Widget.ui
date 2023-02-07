@@ -428,6 +428,13 @@ color:rgb(255, 255, 255);
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>PushButton</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>

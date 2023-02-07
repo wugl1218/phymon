@@ -83,7 +83,7 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         d.AddMember("patient_id", rapidjson::Value().SetString(i->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("vmd_id", rapidjson::Value().SetString(vmd.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("alarm_code", rapidjson::Value().SetString(i->alarm_code.c_str(), d.GetAllocator()), d.GetAllocator());
-                        d.AddMember("alarm_description", rapidjson::Value().SetString(i->alarm_priority.c_str(), d.GetAllocator()), d.GetAllocator());
+                        d.AddMember("alarm_description", rapidjson::Value().SetString(i->alarm_description.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("alarm_priority", rapidjson::Value().SetString(i->alarm_priority.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("alarm_state", rapidjson::Value().SetString("handled", d.GetAllocator()), d.GetAllocator());
                         d.AddMember("handled_time",time(NULL), d.GetAllocator());
@@ -137,7 +137,7 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         d.AddMember("patient_id", rapidjson::Value().SetString(i->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("vmd_id", rapidjson::Value().SetString(vmd.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("alarm_code", rapidjson::Value().SetString(i->alarm_code.c_str(), d.GetAllocator()), d.GetAllocator());
-                        d.AddMember("alarm_description", rapidjson::Value().SetString(i->alarm_priority.c_str(), d.GetAllocator()), d.GetAllocator());
+                        d.AddMember("alarm_description", rapidjson::Value().SetString(i->alarm_description.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("alarm_priority", rapidjson::Value().SetString(i->alarm_priority.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("alarm_state", rapidjson::Value().SetString("handled", d.GetAllocator()), d.GetAllocator());
                         d.AddMember("handled_time",time(NULL), d.GetAllocator());
@@ -288,7 +288,8 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             title_pen.setColor(QColor(61, 102, 128));
             value_pen.setColor(QColor(11, 42, 78));
             circle->setStyleSheet("background:rgb(252, 233, 79);color:rgb(248, 208, 4);");
-            circle->show();
+            //circle->show();
+            circle_time=time(0);
             title->setText(QString::fromStdString(i->alarm_description));
             title->setWordWrap(true);
             is_patient_alarm = 1;
@@ -305,7 +306,8 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             title_pen.setColor(QColor(61, 102, 128));
             value_pen.setColor(QColor(11, 42, 78));
             circle->setStyleSheet("background:rgb(252, 233, 79);color:rgb(248, 208, 4);");
-            circle->show();
+            //circle->show();
+            circle_time=time(0);
             title->setText(QString::fromStdString(i->alarm_description));
             title->setWordWrap(true);
             is_patient_alarm = 0;
@@ -314,11 +316,23 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             break;
         }
     else
+    {
         painter.setBrush(QColor(11, 42, 78));
+        QPixmap *pixmap = new QPixmap(":/icons/yellowcircle.png");
+        pixmap->scaled(circle->size(), Qt::KeepAspectRatio);
+        circle->setScaledContents(true);
+        circle->setPixmap(*pixmap);
+        title->hide();
+        if(circle_time!=0)
+            circle->show();
+    }
     painter.drawRect(0,0,width(),height());
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    if(circle_time!=0)
+    {
 
+    }
 
 
 
@@ -397,7 +411,6 @@ void Manager_MDSConnectivity_Card::mousePressEvent(QMouseEvent *event)
         {
         emit clicked();
         }
-
 }
 
 void Manager_MDSConnectivity_Card::mouseReleaseEvent(QMouseEvent *event)

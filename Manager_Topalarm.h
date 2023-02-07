@@ -28,8 +28,10 @@ public:
     std::multimap<int,TOPAlarm,std::greater<int>> top_technical_alarm;
     void init();
     void step();
-    void topalarm(mc_btn_topalart *label );
+    void topalarm(mc_btn_topalart *label ,Device devices);
+    void UI_set(mc_btn_topalart *label ,Device devices);
     QList <mc_btn_topalart *> UI_name;
+    bool manager_is_mute=1;
 
 };
 
