@@ -253,18 +253,22 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
         circle->setStyleSheet("background:rgb(200,37,37);color:rgb(248, 208, 4);");
         circle->show();
         is_Equipment_alarm =1;
-        if(devcon_samples.length() > 0)
-            {
+        if(devcon_samples.length() == 1)
+        {
             title->setText("Medical Equipment \nDisconnection");
             common->msg.setText("Please click \nMedical Equipment");
 
-            }
+        }
         else if (devcon_samples.length() == 0)
-            {
+        {
             title->setText("MetaCares Box Error");
             common->msg.setText("Please click \nMetaCares Box");
-
-            }
+        }
+        else
+        {
+            title->setText("Devices connecting...");
+            common->msg.setText("Please wait");
+        }
         Show_pen=0;
         title->setWordWrap(true);
     }

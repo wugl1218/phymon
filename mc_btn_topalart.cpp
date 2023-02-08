@@ -54,7 +54,7 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
     emit clicked();
     if(common->is_server)
     {
-        common->msg.setText("Please go to bed side for muting");
+        common->msg.setText("TO mute please at bed side");
         common->msg.exec();
         return;
     }
@@ -67,7 +67,6 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             sample.value<std::string>("channel_id", channel_id);
             sample.value<std::string>("patient_id", common->patient_id);
             sample.value<std::string>("vmd_id", common->vmd_id);
-            sample.value<std::string>("model", model);
             sample.value<std::string>("alarm_code", alarm_code);
             sample.value<std::string>("alarm_description", alarm_description);
             sample.value<std::string>("alarm_priority", alarm_priority);
@@ -77,7 +76,7 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             loaned_member.get().value("sec", (int32_t)sec);
             loaned_member.get().value("nanosec", (uint32_t)nanosec);
             loaned_member.return_loan();
-            common->techalert_writer.write(sample);
+            common->topalarm_writer.write(sample);
 
             std::string Uid ="";
             std::string dummy;
@@ -86,8 +85,8 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             sql.append(common->patient_id);
             sql.append("' AND channel_id='");
             sql.append(channel_id);
-            sql.append("' AND alarm_no='");
-            sql.append(alarm_no);
+            sql.append("' AND alarm_code='");
+            sql.append(alarm_code);
             sql.append("'");
             cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
             for(auto& result: results)
@@ -212,12 +211,6 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             d1.Accept(writer1);
             common->cbl->saveMutableDocument(common->db, buffer1.GetString(), Uid, dummy);*/
         }
-    alarm_description="";
-  /*  for(auto i :common->md->ta.UI_name)
-        {
-        i->update();
-        i->setText(""); //此處要修改成個別空白
-        }*/
     emit pressed();
 }
 
