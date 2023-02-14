@@ -1296,10 +1296,12 @@ void Tab_Observations_mainPage_Widget::on_device4_tableWidget_cellClicked(int ro
 
 void Tab_Observations_mainPage_Widget::on_ref_btn_toggled(bool checked)
 {
+    Common* common = Common::instance();
     if(checked)
     {
         set_next_loop_as_ref = 1;
         set_checked(ui->ref_btn, 1);
+        ui->ref_btn->setStyleSheet(common->css.Checked_ButtonStyle);
         is_ref =1;
 
     }
@@ -1309,6 +1311,7 @@ void Tab_Observations_mainPage_Widget::on_ref_btn_toggled(bool checked)
         set_next_loop_as_ref = 0;
         ui->loop1->clear_ref_points();
         ui->loop2->clear_ref_points();
+        ui->ref_btn->setStyleSheet(common->css.unChecked_ButtonStyle);
         is_ref =0;
         ref_loop_snapshot.clear();
     }
