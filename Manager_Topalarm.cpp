@@ -44,7 +44,7 @@ void Manager_Topalarm::step()
     bool is_null =1;
     for(auto i :UI_name)
     {
-        if(i->text()!="")
+        if(i->text()!="" ||common->md->dm.devices.size()==0)
             is_null=0;
     }
     if(is_null||manager_is_mute)
@@ -53,7 +53,7 @@ void Manager_Topalarm::step()
     if(Common::get_elapsed_time(current_time, last_query_time) > (uint32_t)common->Alarmloop_interval*1000)
     {
         qDebug()<<"Manager_Topalarm";
-        fflog_out(common->log,"Manager_Topalarm");
+        fflog_out(common->log,"Info :: Manager_Topalarm");
         last_query_time = current_time;
         manager_is_mute=1;
         for(int i =0;i<common->md->dm.devices.size();++i)
@@ -66,8 +66,7 @@ void Manager_Topalarm::step()
        if(!manager_is_mute)
            common->md->efx->play();
        else
-           common->md->efx->stop();
-
+           common->md->efx->stop();        
     }
 }
 void Manager_Topalarm::topalarm(mc_btn_topalart *label ,Device devices)
@@ -211,8 +210,13 @@ void Manager_Topalarm::topalarm(mc_btn_topalart *label ,Device devices)
             sql.append("' AND alarm_description='");
             sql.append(i->second.alarm_description);
             sql.append("'");
-            cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-            bool is_results=0;
+        cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        while (dummy!="IP200")
+            {
+            results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            qDebug()<<QString::fromStdString(dummy);
+            fflog_out(common->log,dummy.c_str());
+            }               bool is_results=0;
             for(auto& result: results)
             {
                 is_results=1;
@@ -273,8 +277,13 @@ void Manager_Topalarm::topalarm(mc_btn_topalart *label ,Device devices)
             sql.append("' AND alarm_code='");
             sql.append(i->second.alarm_code);
             sql.append("'");
-            cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-            bool is_results=0;
+        cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        while (dummy!="IP200")
+            {
+            results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            qDebug()<<QString::fromStdString(dummy);
+            fflog_out(common->log,dummy.c_str());
+            }               bool is_results=0;
             for(auto& result: results)
             {
                 is_results=1;
@@ -306,7 +315,7 @@ void Manager_Topalarm::topalarm(mc_btn_topalart *label ,Device devices)
         if(!is_erase) ++i;
         if(i == top_technical_alarm.end()||top_technical_alarm.size()==0) break;
     }
-    //這裡新增不同設備判斷排序方式
+    //這裡新增不同設備判斷排序方式 目前依據標頭檔中 map定義排序 由大到小
 
 
 }
@@ -323,6 +332,7 @@ void Manager_Topalarm::UI_set(mc_btn_topalart *label ,Device devices)
         label->setText(msg.c_str());
         label->setalarm(1,i->second);
         label->circle->show();
+        label->is_check=0;
         label->circle->setGeometry(label->width()-45,label->height()/2-21,42,42);
         label->circle_time=i->second.sec;
         std::string dummy;
@@ -335,7 +345,12 @@ void Manager_Topalarm::UI_set(mc_btn_topalart *label ,Device devices)
         sql.append(i->second.alarm_code);
         sql.append("'");
         cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-        bool is_results=0;
+        while (dummy!="IP200")
+            {
+            results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            qDebug()<<QString::fromStdString(dummy);
+            fflog_out(common->log,dummy.c_str());
+            }           bool is_results=0;
         for(auto& result: results)
         {
             is_results=1;
@@ -368,6 +383,7 @@ void Manager_Topalarm::UI_set(mc_btn_topalart *label ,Device devices)
         label->setText(msg.c_str());
         label->setalarm(0,i->second);
         label->circle->show();
+        label->is_check=0;
         label->circle->setGeometry(label->width()-45,label->height()/2-21,42,42);
         label->circle_time=i->second.sec;
         std::string dummy;
@@ -380,7 +396,12 @@ void Manager_Topalarm::UI_set(mc_btn_topalart *label ,Device devices)
         sql.append(i->second.alarm_code);
         sql.append("'");
         cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-        bool is_results=0;
+        while (dummy!="IP200")
+            {
+            results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            qDebug()<<QString::fromStdString(dummy);
+            fflog_out(common->log,dummy.c_str());
+            }        bool is_results=0;
         for(auto& result: results)
         {
             is_results=1;
@@ -410,10 +431,12 @@ void Manager_Topalarm::UI_set(mc_btn_topalart *label ,Device devices)
         label->set_mute_sheet(0);
     }
     std::string querystr = "action MATCH '";
-    querystr.append("checkbtn");
+    querystr.append("check");
     querystr.append("' AND patient_id MATCH '");
     querystr.append(common->patient_id);
-    querystr.append("' AND exec_timestamp.sec > ");
+    querystr.append("' AND user_id MATCH '");
+    querystr.append(devices.model);
+    querystr.append("' AND exec_timestamp.sec > ");    
     querystr.append(QString::number(label->circle_time).toStdString());
     dds::sub::cond::QueryCondition useractions_cond(
                 dds::sub::Query(common->useractions_reader, querystr),
@@ -422,6 +445,35 @@ void Manager_Topalarm::UI_set(mc_btn_topalart *label ,Device devices)
                 dds::sub::status::ViewState::any(),
                 dds::sub::status::InstanceState::alive()));
     dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> useractions_samples = common->useractions_reader.select().condition(useractions_cond).read();
-     for (auto sample :useractions_samples)
-         label->circle->hide();
+    for (auto sample :useractions_samples)
+    {
+        label->circle->hide();
+        label->is_check=1;
+        bool is_allcheck=1;
+        for(int i =0;i<common->md->dm.devices.size();++i)
+        {
+            if(!UI_name[i]->is_check)
+                is_allcheck=0;
+        }
+        if(is_allcheck)
+        {
+            dds::core::xtypes::DynamicData sample(common->useractions_type);
+            sample.value<std::string>("user_id", "matecares");
+            sample.value<std::string>("patient_id", common->patient_id);
+            if(common->is_server)
+                sample.value<std::string>("function_id", "header_alarm_NS");
+            else
+                sample.value<std::string>("function_id", "header_alarm_BS");
+            sample.value<std::string>("action", "checkALL");
+            sample.value<std::string>("exec_code", "IM000");
+            sample.value<std::string>("exec_msg", "checkALL");
+            rti::core::xtypes::LoanedDynamicData loaned_member = sample.loan_value("exec_timestamp");
+            struct timespec ts;
+            clock_gettime(CLOCK_REALTIME, &ts);
+            loaned_member.get().value("sec", (int32_t)ts.tv_sec);
+            loaned_member.get().value("nanosec", (uint32_t)ts.tv_nsec);
+            loaned_member.return_loan();
+            common->useractions_writer.write(sample);
+        }
+    }
 }

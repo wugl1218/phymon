@@ -71,8 +71,13 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         sql.append("' AND alarm_code='");
                         sql.append(i->alarm_code);
                         sql.append("'");
-                        cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-                        for(auto& result: results)
+        cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        while (dummy!="IP200")
+            {
+            results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            qDebug()<<QString::fromStdString(dummy);
+            fflog_out(common->log,dummy.c_str());
+            }                           for(auto& result: results)
                             Uid = result.valueAtIndex(0).asstring();
 
                         rapidjson::Document d;
@@ -125,8 +130,13 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         sql.append(i->alarm_code);
                         sql.append("'");
 
-                        cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-                        for(auto& result: results)
+        cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        while (dummy!="IP200")
+            {
+            results = common->cbl-> queryDocuments(common->display_items_db, sql, dummy);
+            qDebug()<<QString::fromStdString(dummy);
+            fflog_out(common->log,dummy.c_str());
+            }                           for(auto& result: results)
                             Uid = result.valueAtIndex(0).asstring();
 
                         rapidjson::Document d;
@@ -162,7 +172,6 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                 point.rx() = 0;
                 point.ry() = 230;
                 title->move(point);
-
                 title->raise();//显示最顶层
                 return true;
             }
@@ -187,7 +196,7 @@ void Manager_MDSConnectivity_Card::update_but()
 {
     if(id == "") return;
     CustomButton *releasebtn = new CustomButton(this);
-    releasebtn->setGeometry(310,250,60,60);
+    releasebtn->setGeometry(width()-41,height()-41,60,60);
     if(male)
         releasebtn->set_is_male(1);
     else
@@ -198,7 +207,6 @@ void Manager_MDSConnectivity_Card::update_but()
 void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
 {
     Common* common = Common::instance();
-
     QPainter painter(this);
     QPen bed_pen(QColor(255,255,255));
     QPen title_pen(QColor(170,170,170));
@@ -207,12 +215,17 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
     QFont title_font ;
     QFont value_font ;
     bool Show_pen =1;
-    bed_font.setPixelSize(36);
+    bed_font.setPixelSize(32);
     bed_font.setFamily("Arial [Mono]");
-    title_font.setPixelSize(32);
+    title_font.setPixelSize(28);
     title_font.setFamily("Arial [Mono]");
-    value_font.setPixelSize(76);
+    value_font.setPixelSize(72);
     value_font.setFamily("Arial [Mono]");
+    int title_left_x =7;
+    int title_right_x =235;
+    int title_above_y =70;
+    int title_under_y =220;
+    int title_value_interval=58;
     if(id == "")
         {
 
@@ -230,7 +243,12 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
     sql.append(id);
     sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
     cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-    for(auto& result: results)
+    while (dummy!="IP200")
+        {
+        results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        qDebug()<<QString::fromStdString(dummy);
+        fflog_out(common->log,dummy.c_str());
+        }       for(auto& result: results)
     {
         uint8_t checked = result.valueAtIndex(0).asUnsigned();
         if (checked)
@@ -335,7 +353,23 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
     if(circle_time!=0)
     {
-
+        std::string querystr = "action MATCH '";
+        querystr.append("checkALL");
+        querystr.append("' AND patient_id MATCH '");
+        querystr.append(id);
+/*多設備四個燈號皆取消要在想        querystr.append("' AND user_id MATCH '");
+        querystr.append(devices.model);*/
+        querystr.append("' AND exec_timestamp.sec > ");
+        querystr.append(QString::number(circle_time).toStdString());
+        dds::sub::cond::QueryCondition useractions_cond(
+                    dds::sub::Query(common->useractions_reader, querystr),
+                    dds::sub::status::DataState(
+                    dds::sub::status::SampleState::not_read(),
+                    dds::sub::status::ViewState::any(),
+                    dds::sub::status::InstanceState::alive()));
+        dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> useractions_samples = common->useractions_reader.select().condition(useractions_cond).read();
+         for (auto sample :useractions_samples)
+             circle->hide();
     }
 
 
@@ -352,20 +386,20 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
     {
         painter.setFont(title_font);
         painter.setPen(title_pen);
-        Common::draw_text(painter, 7, 90, Qt::AlignLeft | Qt::AlignVCenter, "RR (1/min)");
-        Common::draw_text(painter, 235, 90, Qt::AlignLeft | Qt::AlignVCenter, "I:E");
-        Common::draw_text(painter, 7, 230, Qt::AlignLeft | Qt::AlignVCenter, "MV (L/min)");
-        Common::draw_text(painter, 235, 230, Qt::AlignLeft | Qt::AlignVCenter, "VT (mL)");
+        Common::draw_text(painter, title_left_x, title_above_y, Qt::AlignLeft | Qt::AlignVCenter, "RR (1/min)");
+        Common::draw_text(painter, title_right_x, title_above_y, Qt::AlignLeft | Qt::AlignVCenter, "I:E");
+        Common::draw_text(painter, title_left_x, title_under_y, Qt::AlignLeft | Qt::AlignVCenter, "MV (L/min)");
+        Common::draw_text(painter, title_right_x, title_under_y, Qt::AlignLeft | Qt::AlignVCenter, "VT (mL)");
         painter.setFont(value_font);
         painter.setPen(value_pen);
         if(RR!="")
-        Common::draw_text(painter, 7, 148, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(RR));
+        Common::draw_text(painter, title_left_x, title_above_y+title_value_interval, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(RR));
         if(MV!="")
-        Common::draw_text(painter, 235, 148, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(IE));
+        Common::draw_text(painter, title_right_x, title_above_y+title_value_interval, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(IE));
         if(IE!="")
-        Common::draw_text(painter, 7, 288, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(MV));
+        Common::draw_text(painter, title_left_x, title_under_y+title_value_interval, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(MV));
         if(VT!="")
-        Common::draw_text(painter, 235, 288, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(VT));
+        Common::draw_text(painter, title_right_x, title_under_y+title_value_interval, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(VT));
     }
 
 

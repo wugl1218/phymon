@@ -27,16 +27,20 @@ bool mc_btn_topalart::eventFilter(QObject *watched, QEvent *event)
                 {
                     circle->hide();
                     dds::core::xtypes::DynamicData sample(common->useractions_type);
+                    sample.value<std::string>("user_id", "matecares");
                     sample.value<std::string>("patient_id", common->patient_id);
                     if(common->is_server)
-                        sample.value<std::string>("function_id", "NS");
+                        sample.value<std::string>("function_id", "header_alarm_NS");
                     else
-                        sample.value<std::string>("function_id", "BS");
-                    sample.value<std::string>("user_id", "attendance");
-                    sample.value<std::string>("action", "checkbtn");
+                        sample.value<std::string>("function_id", "header_alarm_BS");
+                    sample.value<std::string>("action", "check");
+                    sample.value<std::string>("exec_code", "IM000");
+                    sample.value<std::string>("exec_msg", "check");
                     rti::core::xtypes::LoanedDynamicData loaned_member = sample.loan_value("exec_timestamp");
-                    loaned_member.get().value("sec", (int32_t)time(0));
-                    loaned_member.get().value("nanosec", (uint32_t)time(0)*1000);
+                    struct timespec ts;
+                    clock_gettime(CLOCK_REALTIME, &ts);
+                    loaned_member.get().value("sec", (int32_t)ts.tv_sec);
+                    loaned_member.get().value("nanosec", (uint32_t)ts.tv_nsec);
                     loaned_member.return_loan();
                     common->useractions_writer.write(sample);
                     return true;
@@ -54,7 +58,7 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
     emit clicked();
     if(common->is_server)
     {
-        common->msg.setText("TO mute please at bed side");
+        common->msg.setText("Please mute alarm at bed side");
         common->msg.exec();
         return;
     }
@@ -88,8 +92,13 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             sql.append("' AND alarm_code='");
             sql.append(alarm_code);
             sql.append("'");
-            cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-            for(auto& result: results)
+            cbl::ResultSet results= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            while (dummy!="IP200")
+                {
+                results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+                qDebug()<<QString::fromStdString(dummy);
+                fflog_out(common->log,dummy.c_str());
+                }            for(auto& result: results)
                 Uid = result.valueAtIndex(0).asstring();
 
             rapidjson::Document d;
@@ -164,7 +173,13 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             sql.append("' AND alarm_code='");
             sql.append(alarm_code);
             sql.append("'");
-            cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            cbl::ResultSet results= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            while (dummy!="IP200")
+                {
+                results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+                qDebug()<<QString::fromStdString(dummy);
+                fflog_out(common->log,dummy.c_str());
+                }
             for(auto& result: results)
                 Uid = result.valueAtIndex(0).asstring();
             rapidjson::Document d;

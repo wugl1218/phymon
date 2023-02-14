@@ -28,7 +28,7 @@ void Manager_Device::step()
     if(Common::get_elapsed_time(current_time, last_query_time) > (uint32_t)common->devices_query_interval*1000)
     {
      qDebug()<<"Manager_Device";
-        fflog_out(common->log,"Manager_Device");
+        fflog_out(common->log,"Info :: Manager_Device");
         last_query_time = current_time;
         devices.clear();
         dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->devcon_reader.select().condition(cond).read();

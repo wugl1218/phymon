@@ -37,7 +37,7 @@ void Thread_network::run()
     while(1)
     {
        qDebug()<<"Thread_network";
-        fflog_out(common->log,"Thread_network");
+        fflog_out(common->log,"Info :: Thread_network");
         foyaCouchbaseReplicator();
         if(common->is_server)
             QThread::currentThread()->msleep(common->Network_Interval*1000);

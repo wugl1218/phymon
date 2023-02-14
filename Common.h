@@ -139,6 +139,7 @@ public:
     fflog_t* log;
     QJsonArray Restful_API(char queryStartTime[64] , char queryEndTime[64], std::string dataSource);
     QJsonArray Restful_API_Orderby(char queryStartTime[64] , char queryEndTime[64], std::string dataSource, std::string model, std::string orderStr);
+    QJsonArray Restful_API_Alarm(char queryStartTime[64] , char queryEndTime[64], std::string dataSource, std::string model, std::string orderStr);
 
     dds::domain::DomainParticipant participant = nullptr;
     dds::pub::Publisher publisher = nullptr;

@@ -131,11 +131,11 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
         }
         QJsonArray array;
         if(is_technical == 0)
-            array=common->Restful_API_Orderby(timebuf,timebuf1,"PatientAlert",devices[dev_index]->property("model").value<QString>().toStdString(),orderstr);
+            array=common->Restful_API_Alarm(timebuf,timebuf1,"PatientAlert",devices[dev_index]->property("model").value<QString>().toStdString(),orderstr);
         else if (is_technical == 1)
-            array=common->Restful_API_Orderby(timebuf,timebuf1,"TechnicalAlert",devices[dev_index]->property("model").value<QString>().toStdString(),orderstr);
+            array=common->Restful_API_Alarm(timebuf,timebuf1,"TechnicalAlert",devices[dev_index]->property("model").value<QString>().toStdString(),orderstr);
         else if (is_technical == 2)
-            array=common->Restful_API_Orderby(timebuf,timebuf1,"PatientAlert' OR data_source='TechnicalAlert",devices[dev_index]->property("model").value<QString>().toStdString(),orderstr);
+            array=common->Restful_API_Alarm(timebuf,timebuf1,"PatientAlert' OR data_source='TechnicalAlert",devices[dev_index]->property("model").value<QString>().toStdString(),orderstr);
         int row=0;
         //philo
         char buf[128];
@@ -306,7 +306,13 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
             sql.append(",alarm_no");
             }
         qDebug()<<QString::fromStdString(sql);
-        cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
+        cbl::ResultSet results= common->cbl->queryDocuments(common->db, sql, dummy);
+        while (dummy!="IP200")
+            {
+            results = common->cbl->queryDocuments(common->db, sql, dummy);
+            qDebug()<<QString::fromStdString(dummy);
+            fflog_out(common->log,dummy.c_str());
+            }
         int row=0;
         //philo
         char sumbuf[128];
@@ -430,37 +436,3 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_orderType_comboBox_currentIndexCh
 {
     order = index;
 }
-
-void Tab_Utilities_alarmHistoryPage_Widget::on_pushButton_clicked()
-{
-    Common* common = Common::instance();
-
-    rapidjson::Document d;
-    d.SetObject();
-    d.AddMember("data_source", "TechnicalAlert", d.GetAllocator());
-    d.AddMember("alarm_no", "nanosec", d.GetAllocator());
-    d.AddMember("channel_id", "nanosec", d.GetAllocator());
-    d.AddMember("patient_id", "nanosec", d.GetAllocator());
-    d.AddMember("vmd_id", "nanosec", d.GetAllocator());
-    d.AddMember("alarm_code", "nanosec", d.GetAllocator());
-    d.AddMember("alarm_description", "nanosec", d.GetAllocator());
-    d.AddMember("alarm_priority", "5", d.GetAllocator());
-    d.AddMember("alarm_state", "nanosec", d.GetAllocator());
-    rapidjson::Value val;
-    val.SetObject();
-    val.AddMember("sec", 1675496651, d.GetAllocator());
-    val.AddMember("nanosec",900507238, d.GetAllocator());
-    d.AddMember("source_timestamp", val, d.GetAllocator());
-      rapidjson::Value val1;
-    val1.SetObject();
-    val1.AddMember("sec", time(0), d.GetAllocator());
-    d.AddMember("check_timestamp", val1, d.GetAllocator());
-      rapidjson::StringBuffer buffer;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-    d.Accept(writer);
-    std::string dummy;
-    std::string Uid = "";
-    common->cbl->saveMutableDocument(common->db, buffer.GetString(),Uid , dummy);
-    qDebug()<<QString::fromStdString(dummy);
-}
-

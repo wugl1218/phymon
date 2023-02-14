@@ -35,7 +35,6 @@ private slots:
     void on_query_pushButton_clicked();
     void on_orderType_comboBox_currentIndexChanged(int index);
     void on_DatecomboBox_currentIndexChanged(int index);
-    void on_pushButton_clicked();
 };
 
 #endif // TAB_UTILITIES_ALARMHISTORYPAGE_WIDGET_H

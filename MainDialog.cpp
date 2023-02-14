@@ -165,6 +165,12 @@ void MainDialog::db_clean()
     sql.append(" AND expired=1");
     sql.append(" AND meta().expiration IS NOT VALUED");
     cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+    while (dummy!="IP200")
+        {
+        results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        qDebug()<<QString::fromStdString(dummy);
+        fflog_out(common->log,dummy.c_str());
+        }
     for(auto& result: results)
     {
         std::string id = result.valueAtIndex(0).asstring();

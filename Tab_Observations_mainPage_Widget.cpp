@@ -357,11 +357,8 @@ void Tab_Observations_mainPage_Widget::on_series_pressed(int series_index)
         fit = common->md->dm.devices.find("Savina 300");
         if(fit == common->md->dm.devices.end())
             return;
-        else
-            CapturedIssues_model="Savina 300";
     }
-    else
-        CapturedIssues_model="Savina";
+    CapturedIssues_channel_id=fit->second.channel_id;
     model = fit->first;
     common->history_model = model;
     if(sender() == ui->legend)
@@ -422,11 +419,8 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
         fit = common->md->dm.devices.find("Savina 300");
         if(fit == common->md->dm.devices.end())
             return;
-        else
-            CapturedIssues_model="Savina 300";
     }
-    else
-        CapturedIssues_model="Savina";
+    CapturedIssues_channel_id=fit->second.channel_id;
     model = fit->first;
     int loop_start = -1;
     std::vector<float> loop1_x;
@@ -1349,7 +1343,7 @@ void Tab_Observations_mainPage_Widget::on_cap_btn_toggled(bool checked)
 
         dds::core::xtypes::DynamicData sample(common->CapturedIssues_type);
         sample.value<std::string>("patient_id", common->patient_id);
-        sample.value<std::string>("model", CapturedIssues_model);
+        sample.value<std::string>("channel_id", CapturedIssues_channel_id);
         rti::core::xtypes::LoanedDynamicData point_member = sample.loan_value("captured_point");
         point_member.get().value("x_mdc_code", loop1_x_label);
         point_member.get().value("y_mdc_code", loop1_y_label);
@@ -1364,7 +1358,7 @@ void Tab_Observations_mainPage_Widget::on_cap_btn_toggled(bool checked)
 
         dds::core::xtypes::DynamicData sample1(common->CapturedIssues_type);
         sample1.value<std::string>("patient_id", common->patient_id);
-        sample1.value<std::string>("model", CapturedIssues_model);
+        sample1.value<std::string>("channel_id", CapturedIssues_channel_id);
         rti::core::xtypes::LoanedDynamicData point_member1 = sample1.loan_value("captured_point");
         point_member1.get().value("x_mdc_code", loop2_x_label);
         point_member1.get().value("y_mdc_code", loop2_y_label);

@@ -90,7 +90,13 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::update_devices()
         std::string sql = "SELECT model,checked FROM _ WHERE data_source='NumericDeviceSelection' AND patient_id='";
         sql.append(common->patient_id);
         sql.append("' AND meta(_).expiration IS NOT VALUED and expired=0");
-        cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        cbl::ResultSet results= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        while (dummy!="IP200")
+            {
+            results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            qDebug()<<QString::fromStdString(dummy);
+            fflog_out(common->log,dummy.c_str());
+            }
         for(auto& result: results)
         {
             std::string model = result.valueAtIndex(0).asstring();
@@ -162,7 +168,13 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::update_devices()
             sql.append("' AND patient_id='");
             sql.append(common->patient_id);
             sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
-            cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            cbl::ResultSet results2= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            while (dummy!="IP200")
+                {
+                results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+                qDebug()<<QString::fromStdString(dummy);
+                fflog_out(common->log,dummy.c_str());
+                }
             for(auto& result: results2)
             {
                 std::string item = result.valueAtIndex(0).asstring();
@@ -527,7 +539,13 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
     sql.append(common->patient_id);
     sql.append("' AND expired=0");
     sql.append(" AND meta().expiration IS NOT VALUED");
-    cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+    cbl::ResultSet results= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+    while (dummy!="IP200")
+        {
+        results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        qDebug()<<QString::fromStdString(dummy);
+        fflog_out(common->log,dummy.c_str());
+        }
     for(auto& result: results)
     {
         std::string id = result.valueAtIndex(0).asstring();
@@ -538,7 +556,7 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
 
         rapidjson::Document d;
         d.SetObject();
-        d.AddMember("data_source", "NumericDeviceSelection", d.GetAllocator());
+        d.AddMember("data_source", "WaveDeviceSelection", d.GetAllocator());
         d.AddMember("model", rapidjson::Value().SetString(model.c_str(), d.GetAllocator()), d.GetAllocator());
         d.AddMember("checked", checked, d.GetAllocator());
         d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
@@ -563,7 +581,13 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
     sql.append(common->patient_id);
     sql.append("' AND expired=0");
     sql.append(" AND meta().expiration IS NOT VALUED");
-    cbl::ResultSet resultsx = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+    cbl::ResultSet resultsx= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+    while (dummy!="IP200")
+        {
+        resultsx = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        qDebug()<<QString::fromStdString(dummy);
+        fflog_out(common->log,dummy.c_str());
+        }
     for(auto& result: resultsx)
     {
         std::string id = result.valueAtIndex(0).asstring();

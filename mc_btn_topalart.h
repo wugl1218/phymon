@@ -28,6 +28,7 @@ public:
     QLabel *circle;
     uint64_t circle_time;
     void set_mute_sheet(bool mute);
+    bool is_check;
 signals:
     void clicked();
     void pressed();

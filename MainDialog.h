@@ -41,8 +41,7 @@ public:
     Manager_MDSConnectivity mdsm;
     Tab_NS_Monitor monitor;
     //NetworkManager nm;
-    Dialog_jsontext jt;
-    Dialog_topalarm_mute mute;
+        Dialog_topalarm_mute mute;
     Dialog_network nd;
     Thread_network* network;
     //topalarm
