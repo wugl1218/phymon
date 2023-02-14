@@ -37,8 +37,8 @@ public:
     std::map<std::string, MDSConnectivity> mdsconnectivity;
     QList<Alarm> patient_alarm;
     QList<Alarm> technical_alarm;
-    dds::sub::cond::QueryCondition* patient_alarm_cond;
-    dds::sub::cond::QueryCondition* technical_alarm_cond;
+//    dds::sub::cond::QueryCondition* patient_alarm_cond;
+//    dds::sub::cond::QueryCondition* technical_alarm_cond;
     void init();
     void step();
     int time_running =0;

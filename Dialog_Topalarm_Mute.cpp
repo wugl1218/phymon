@@ -20,7 +20,7 @@ int Dialog_topalarm_mute::get_mutetime()
 
 void Dialog_topalarm_mute::on_mutebtn1_clicked()
 {
-    mutetime = 0;
+    mutetime = -1;
     close();
 }
 
@@ -43,5 +43,8 @@ void Dialog_topalarm_mute::on_mutebtn4_clicked()
 {
     mutetime = 10;
     close();
+}
+void Dialog_topalarm_mute::mousePressEvent(QMouseEvent *event)
+{
 }
 

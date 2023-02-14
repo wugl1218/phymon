@@ -480,7 +480,7 @@ QPushButton:pressed{border-image: url(:/icons/X1.png);}</string>
    <item>
     <widget class="QStackedWidget" name="main_stackedWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="monitor">
       <layout class="QGridLayout" name="gridLayout">

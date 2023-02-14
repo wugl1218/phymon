@@ -18,12 +18,6 @@
 #include "Common.h"
 #include "mc_visualization_setting_item.h"
 
-
-
-#define CARD_SPACING 30
-#define CARD_WIDTH 351
-#define CARD_HEIGHT 291
-
 void Tab_NS_Monitor::init()
 {
     Common* common = Common::instance();
@@ -40,7 +34,12 @@ void Tab_NS_Monitor::init()
             QJsonObject jsonAppConfig = common->RetrieveJson(("../config/setbed.json"));
              Bed_size = jsonAppConfig["bed_size"].toString();
              Set_bed = jsonAppConfig["bed_id"].toArray();
-
+             Card_spacing= jsonAppConfig["Card_spacing"].toInt();
+             Card_width= jsonAppConfig["Card_width"].toInt();
+             Card_height= jsonAppConfig["Card_height"].toInt();
+//              Card_spacing= 25;
+//              Card_width= 351;
+//              Card_height= 236;
         }
         else
         {
@@ -170,11 +169,10 @@ void Tab_NS_Monitor::update_MDS()
             //以上收集real-time資料
         }
 
-
         Manager_MDSConnectivity_Card *card = new Manager_MDSConnectivity_Card(ui->scrollAreaWidgetContents);
-        card->setGeometry(CARD_SPACING+(CARD_WIDTH+CARD_SPACING)*c,
-                          CARD_SPACING+(CARD_HEIGHT+CARD_SPACING)*r,
-                          CARD_WIDTH, CARD_HEIGHT);
+        card->setGeometry(Card_spacing+(Card_width+Card_spacing)*c,
+                                       (Card_height+Card_spacing)*r,
+                          Card_width, Card_height);
         std::string querystr3 = "patient_id MATCH '";
         querystr3.append(it->second.patient_id);
         querystr3.append("'");
@@ -294,6 +292,12 @@ void Tab_NS_Monitor::on_itemSelectionChanged()
     sql.append(common->vmd_id);
     sql.append("'");
     cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
+    while (dummy!="IP200")
+        {
+        results = common->cbl->queryDocuments(common->db, sql, dummy);
+        qDebug()<<QString::fromStdString(dummy);
+        fflog_out(common->log,dummy.c_str());
+        }
     for(auto& result: results)
     {
         std::string id = result.valueAtIndex(0).asstring();
@@ -308,7 +312,13 @@ void Tab_NS_Monitor::on_itemSelectionChanged()
     std::string sql1 = "SELECT checked FROM _ WHERE data_source='NumericDeviceSelection' AND patient_id='";
     sql1.append(common->patient_id);
     sql1.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
-    cbl::ResultSet results1 = common->cbl->queryDocuments(common->display_items_db, sql1, dummy1);
+    cbl::ResultSet results1 = common->cbl->queryDocuments(common->display_items_db, sql1, dummy);;
+    while (dummy!="IP200")
+        {
+        results1 = common->cbl->queryDocuments(common->display_items_db, sql1, dummy);
+        qDebug()<<QString::fromStdString(dummy);
+        fflog_out(common->log,dummy.c_str());
+        }
     for(auto& result: results1)
     {
         uint8_t checked = result.valueAtIndex(0).asUnsigned();
@@ -320,82 +330,4 @@ void Tab_NS_Monitor::on_itemSelectionChanged()
     }
     common->md->ui->nav->repaint();
 }
-/*
-void Tab_NS_Monitor::on_pushButton_clicked()
-{ //Restful_API樣板
-
-    Common* common = Common::instance();
-    //  QJsonArray array =common->Restful_API("1673057096","1673057098","RTObservation");
-    qDebug()<<"=========1111===========";
-    // URL
-    QString restfulUrl = "http://";
-    restfulUrl.append(QString::fromStdString(common->restful_API_url));
-    restfulUrl.append("/Common/VmdSync/getRTObservationData");
-    // 構造請求
-    QNetworkRequest request;
-    request.setUrl(QUrl(restfulUrl));
-    request.setRawHeader("API-Key", "dm1kX3N5bmM=");
-    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-    // 發送請求
-    QByteArray post_index ="patientId=3642587";
-    //post_index.append(common->patient_id);
-    post_index.append("&mdcCode=MDC_PRESS_AWAY");
-    //post_index.append(common->history_mdccode);
-    post_index.append("&channelId=Savina");
-    //post_index.append(common->history_model);
-    post_index.append("&queryStartTime=1673057096");
-    post_index.append("&queryEndTime=1673057098");
-   // post_index.append("&dataSource=RTObservation");
-    QNetworkReply *pReplay = manager->post(request,post_index);
-    // 開啟一個局部的事件循環，等待響應結束，退出
-    QEventLoop eventLoop;
-    QObject::connect(manager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
-    eventLoop.exec();
-    // 獲取響應信息
-    QByteArray bytes = pReplay->readAll();
-    qDebug() << "====================bytes";
-    QJsonParseError jsonParseError;
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes, &jsonParseError);
-    qDebug() << jsonParseError.errorString();
-    QJsonObject json = jsonDoc.object();
-    QJsonArray array =json["row"].toArray();
-    for (int i=0; i<array.count();++i)
-    {
-        QJsonValue value = array.at(i).toObject();
-        QJsonValue source_timestamp =value["source_timestamp"];
-        uint32_t sec = source_timestamp["sec"].toInteger();
-        QJsonArray values = value["values"].toArray();
-        qDebug() << "sec="<<sec;
-        qDebug() << "values="<<values;
-        qDebug() << "====================";
-
-/*        switch(value.type()) //測試 QJsonValue資料型態
-        {
-        case QJsonValue::Bool:
-            qDebug() << value.toBool();
-            break;
-        case QJsonValue::Double:
-            qDebug() << value.toDouble();
-            break;
-        case QJsonValue::String:
-            qDebug() << value.toString();
-            break;
-        case QJsonValue::Null:
-            qDebug() << " ";
-            break;
-        case QJsonValue::Array:
-            //转化为数组
-            qDebug() << value.toArray();
-            break;
-        case QJsonValue::Object:
-            qDebug() <<value.toObject();
-            break;
-
-        default:
-            qDebug() << "未知类型";
-        }
-    }
-    pReplay->deleteLater();
-}*/
-
 

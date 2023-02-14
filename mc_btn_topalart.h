@@ -3,7 +3,6 @@
 
 #include <QLabel>
 #include <QWidget>
-#include "Dialog_topalarm_mute.h"
 #include "Common.h"
 #include "Manager_Topalarm.h"
 
@@ -22,9 +21,14 @@ public:
     std::string alarm_state;
     uint64_t sec;
     uint64_t nanosec;
-    Dialog_topalarm_mute mute;
     int mutetime;
+    bool is_mute;
     void setalarm(bool is_patient_alarm,TOPAlarm alarm);
+    bool eventFilter(QObject *watched, QEvent *event);
+    QLabel *circle;
+    uint64_t circle_time;
+    void set_mute_sheet(bool mute);
+    bool is_check;
 signals:
     void clicked();
     void pressed();

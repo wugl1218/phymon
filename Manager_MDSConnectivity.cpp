@@ -44,20 +44,21 @@ void Manager_MDSConnectivity::step()
     if(!common->is_server)
     {
         if(common->patient_id.size()==0)     return;
-        uint32_t current_time = Common::get_time_ms();//bs 防呆重複綁定同一個病人
-        std::string querystr = "patient_id MATCH '";
-            querystr.append(common->patient_id);
-            querystr.append("'");
-        dds::sub::cond::QueryCondition cond(
-                    dds::sub::Query(common->mdsm_reader, querystr),
-                    dds::sub::status::DataState(
-                    dds::sub::status::SampleState::any(),
-                    dds::sub::status::ViewState::any(),
-                    dds::sub::status::InstanceState::alive()));
-        dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->mdsm_reader.select().condition(cond).read();
+        uint32_t current_time = Common::get_time_ms();
+        //bs 防呆重複綁定同一個病人
         if(Common::get_elapsed_time(current_time, last_query_time) > (uint32_t)common->patients_query_interval*5000)
             {
             last_query_time = current_time;
+            std::string querystr = "patient_id MATCH '";
+                querystr.append(common->patient_id);
+                querystr.append("'");
+            dds::sub::cond::QueryCondition cond(
+                        dds::sub::Query(common->mdsm_reader, querystr),
+                        dds::sub::status::DataState(
+                        dds::sub::status::SampleState::any(),
+                        dds::sub::status::ViewState::any(),
+                        dds::sub::status::InstanceState::alive()));
+            dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->mdsm_reader.select().condition(cond).read();
             if(samples.length()>1)
                 {
                 common->mapping_tab->hide_windows();
@@ -69,18 +70,41 @@ void Manager_MDSConnectivity::step()
                 common->md->ui->nav->set_current_tab(0);
                 common->mapping_tab->perform_release(employeeID);
                 }
+            //重複寫入MDSConnetctinity 防止NS找不到
+            dds::core::xtypes::DynamicData sample(common->mds_type);
+            sample.value<std::string>("patient_id", common->patient_id);
+            sample.value<std::string>("vmd_id", common->vmd_id);
+            sample.value<std::string>("room_id", common->room_id);
+            sample.value<std::string>("bed_id", common->bed_id);
+            common->mds_writer.write(sample);
             }
         return;
     }
     if(common->patient_id.size()>0)     return;
     mdsconnectivity.clear();
+
     uint32_t current_time = Common::get_time_ms();
     if(Common::get_elapsed_time(current_time, last_query_time) > (uint32_t)common->MDSloop_interval*1000)
         {
+
         common->observation_puller.start(true);
-    qDebug()<<"Manager_MDSConnectivity";
-        fflog_out(common->log,"Manager_MDSConnectivity");
+        qDebug()<<"Manager_MDSConnectivity";
+        fflog_out(common->log,"Info :: Manager_MDSConnectivity");
         last_query_time = current_time;
+        std::string querystr3 = "alarm_state MATCH '' AND source_timestamp.sec > ";
+                querystr3.append(QString::number(time(NULL)-6).toStdString());
+        dds::sub::cond::QueryCondition patient_alarm_cond(
+                    dds::sub::Query(common->topalarm_reader, querystr3),
+                    dds::sub::status::DataState(
+                    dds::sub::status::SampleState::any(),//not_read
+                    dds::sub::status::ViewState::any(),
+                    dds::sub::status::InstanceState::alive()));
+        dds::sub::cond::QueryCondition technical_alarm_cond(
+                    dds::sub::Query(common->topalarm_reader_2, querystr3),
+                    dds::sub::status::DataState(
+                    dds::sub::status::SampleState::any(),//not_read
+                    dds::sub::status::ViewState::any(),
+                    dds::sub::status::InstanceState::alive()));
         dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->mdsm_reader.select().condition(*cond).read();
         for(auto& sample : samples)//MDS
             if(sample.info().valid())
@@ -125,9 +149,8 @@ void Manager_MDSConnectivity::step()
         cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
         std::string sql1 = "SELECT meta().id,alarm_no,channel_id,vmd_id,patient_id,alarm_code,alarm_description,alarm_priority,alarm_state,source_timestamp.sec,source_timestamp.nanosec FROM _ WHERE data_source='NumericDeviceSelection'";
         cbl::ResultSet results1 = common->cbl->queryDocuments(common->display_items_db, sql1, dummy);*/
-
-        dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> topalarm_samples = common->topalarm_reader.select().condition(*common->md->mdsm.patient_alarm_cond).read();
-        dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> topalarm_samples2 = common->topalarm_reader_2.select().condition(*common->md->mdsm.technical_alarm_cond).read();
+        dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> topalarm_samples = common->topalarm_reader.select().condition(patient_alarm_cond).read();
+        dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> topalarm_samples2 = common->topalarm_reader_2.select().condition(technical_alarm_cond).read();
         for (auto sample :topalarm_samples)
         {
             Alarm alarm;
@@ -170,7 +193,6 @@ void Manager_MDSConnectivity::step()
             if(!is_exist)
                 common->md->mdsm.patient_alarm.push_back(alarm);
         }
-
         for (auto sample :topalarm_samples2)
         {
             Alarm alarm;
@@ -230,56 +252,7 @@ void Manager_MDSConnectivity::step()
         cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql2, dummy); */
         uint64_t m=time(NULL)-6;
         if(common->md->mdsm.patient_alarm.size() >0)
-        {
-        for(auto i=common->md->mdsm.patient_alarm.begin(); i!=common->md->mdsm.patient_alarm.end();)
-        {
-            std::string querystr = "patient_id MATCH '";
-            querystr.append(i->patient_id);
-            querystr.append("' AND channel_id MATCH '");
-            querystr.append(i->channel_id);
-            querystr.append("' AND alarm_code MATCH '");
-            querystr.append(i->alarm_code);
-            querystr.append("' AND alarm_state MATCH ''");
-            dds::sub::cond::QueryCondition cond2(
-                        dds::sub::Query(common->topalarm_reader, querystr),
-                        dds::sub::status::DataState(
-                        dds::sub::status::SampleState::any(),
-                        dds::sub::status::ViewState::any(),
-                        dds::sub::status::InstanceState::alive()));
-            dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> patient_samples = common->topalarm_reader.select().condition(cond2).read();
-            if(patient_samples.length() == 0)
-            {
-                common->md->mdsm.patient_alarm.erase(i); break;
-                if(i == common->md->mdsm.patient_alarm.end()) break;
-            }
-            std::string dummy;
-            std::string sql = "SELECT handled_time FROM _ WHERE (data_source='HandledAlarm')";
-            sql.append(" AND patient_id='");
-            sql.append(i->patient_id);
-            sql.append("' AND channel_id='");
-            sql.append(i->channel_id);
-            sql.append("' AND alarm_code='");
-            sql.append(i->alarm_code);
-            sql.append("'");
-            cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-            bool is_erase=0;
-            for(auto& result: results)
-            {
-                uint64_t sec = result.valueAtIndex(0).asInt();
-                if(m> i->sec||sec > i->sec)
-                {
-                    i = common->md->mdsm.patient_alarm.erase(i);
-                    is_erase=1;break;
-                }
-            }
-            if(!is_erase) ++i;
-            if(i == common->md->mdsm.patient_alarm.end()) break;
-
-        }
-        }
-        if(common->md->mdsm.technical_alarm.size() >0)
-        {
-            for(auto i=common->md->mdsm.technical_alarm.begin(); i!=common->md->mdsm.technical_alarm.end();)
+            for(auto i=common->md->mdsm.patient_alarm.begin(); i!=common->md->mdsm.patient_alarm.end();)
             {
                 std::string querystr = "patient_id MATCH '";
                 querystr.append(i->patient_id);
@@ -287,21 +260,27 @@ void Manager_MDSConnectivity::step()
                 querystr.append(i->channel_id);
                 querystr.append("' AND alarm_code MATCH '");
                 querystr.append(i->alarm_code);
-                querystr.append("' AND alarm_state MATCH ''");
+                querystr.append("'");
+//                querystr.append("' AND alarm_state MATCH ''");
+
                 dds::sub::cond::QueryCondition cond2(
-                            dds::sub::Query(common->topalarm_reader_2, querystr),
+                            dds::sub::Query(common->topalarm_reader, querystr),
                             dds::sub::status::DataState(
                             dds::sub::status::SampleState::any(),
                             dds::sub::status::ViewState::any(),
                             dds::sub::status::InstanceState::alive()));
-                dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> patient_samples = common->topalarm_reader_2.select().condition(cond2).read();
-                if(patient_samples.length() == 0)
-                    {
-                    common->md->mdsm.technical_alarm.erase(i);break;
-                    if(i == common->md->mdsm.technical_alarm.end()) break;
+                dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> patient_samples = common->topalarm_reader.select().condition(cond2).read();
+                bool is_erase=0;
+
+                if(patient_samples.length() == 0||m> i->sec)
+                {
+                    i =common->md->mdsm.patient_alarm.erase(i);
+                    is_erase=1;break;
+                    if(i == common->md->mdsm.patient_alarm.end()) break;
                     }
+                if(i == common->md->mdsm.patient_alarm.end()) break;
                 std::string dummy;
-                std::string sql = "SELECT handled_time FROM _ WHERE (data_source='HandledAlarm')";
+                std::string sql = "SELECT handled_time FROM _ WHERE data_source='HandledAlarm'";
                 sql.append(" AND patient_id='");
                 sql.append(i->patient_id);
                 sql.append("' AND channel_id='");
@@ -310,20 +289,79 @@ void Manager_MDSConnectivity::step()
                 sql.append(i->alarm_code);
                 sql.append("'");
                 cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+                while (dummy!="IP200")
+                    {
+                    results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+                    qDebug()<<QString::fromStdString(dummy);
+                    fflog_out(common->log,dummy.c_str());
+                    }
+                for(auto& result: results)
+                {
+                    uint64_t sec = result.valueAtIndex(0).asInt();
+                    if(sec > i->sec)
+                    {
+                        i = common->md->mdsm.patient_alarm.erase(i);
+                        is_erase=1;break;
+                    }
+                }
+                if(!is_erase) ++i;
+                if(i == common->md->mdsm.patient_alarm.end()) break;
+
+            }
+        if(common->md->mdsm.technical_alarm.size() >0)
+            for(auto i=common->md->mdsm.technical_alarm.begin(); i!=common->md->mdsm.technical_alarm.end();)
+            {
+                std::string querystr = "patient_id MATCH '";
+                querystr.append(i->patient_id);
+                querystr.append("' AND channel_id MATCH '");
+                querystr.append(i->channel_id);
+                querystr.append("' AND alarm_code MATCH '");
+                querystr.append(i->alarm_code);
+                querystr.append("'");
+ //               querystr.append("' AND alarm_state MATCH ''");
+                dds::sub::cond::QueryCondition cond2(
+                            dds::sub::Query(common->topalarm_reader_2, querystr),
+                            dds::sub::status::DataState(
+                            dds::sub::status::SampleState::any(),
+                            dds::sub::status::ViewState::any(),
+                            dds::sub::status::InstanceState::alive()));
+                dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> patient_samples = common->topalarm_reader_2.select().condition(cond2).read();
                 bool is_erase=0;
+                if(patient_samples.length() == 0 ||m> i->sec)
+                    {
+                    i = common->md->mdsm.technical_alarm.erase(i);
+                    is_erase=1;break;
+                    if(i == common->md->mdsm.technical_alarm.end()) break;
+                    }
+                if(i == common->md->mdsm.technical_alarm.end()) break;
+                std::string dummy;
+                std::string sql = "SELECT handled_time FROM _ WHERE data_source='HandledAlarm'";
+                sql.append(" AND patient_id='");
+                sql.append(i->patient_id);
+                sql.append("' AND channel_id='");
+                sql.append(i->channel_id);
+                sql.append("' AND alarm_code='");
+                sql.append(i->alarm_code);
+                sql.append("'");
+                cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+                while (dummy!="IP200")
+                    {
+                    results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+                    qDebug()<<QString::fromStdString(dummy);
+                    fflog_out(common->log,dummy.c_str());
+                    }
                 for(auto& result: results)
                 {
                     uint64_t sec = result.valueAtIndex(0).asInt();
                     if(m> i->sec||sec > i->sec)
                     {
-                        common->md->mdsm.technical_alarm.erase(i);
+                       i = common->md->mdsm.technical_alarm.erase(i);
                         is_erase=1;break;
                     }
                 }
                 if(!is_erase) ++i;
                 if(i == common->md->mdsm.technical_alarm.end()) break;
             }
-        }
         //
         common->monitor_page->update_MDS();
         }
