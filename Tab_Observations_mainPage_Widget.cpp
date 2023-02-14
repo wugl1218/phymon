@@ -80,6 +80,7 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     set_checked(ui->cap_btn, 0);
     set_checked(ui->ref_btn, 0);
 
+
     set_loop1_type(LOOP_PRESSURE_VOLUME);
     set_loop2_type(LOOP_VOLUME_FLOW);
     last_flow_val = 0.0f;
