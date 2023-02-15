@@ -306,10 +306,10 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
             sql.append(",alarm_no");
             }
         qDebug()<<QString::fromStdString(sql);
-        cbl::ResultSet results= common->cbl->queryDocuments(common->db, sql, dummy);
+        cbl::ResultSet results= common->cbl->queryDocuments(common->alarm_db, sql, dummy);
         while (dummy!="IP200")
             {
-            results = common->cbl->queryDocuments(common->db, sql, dummy);
+            results = common->cbl->queryDocuments(common->alarm_db, sql, dummy);
             qDebug()<<QString::fromStdString(dummy);
             fflog_out(common->log,dummy.c_str());
             }

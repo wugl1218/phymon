@@ -170,7 +170,7 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                 title->show();
                 QPoint point = circle->pos();
                 point.rx() = 0;
-                point.ry() = 230;
+                point.ry() = 236-65;
                 title->move(point);
                 title->raise();//显示最顶层
                 return true;

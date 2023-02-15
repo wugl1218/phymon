@@ -462,7 +462,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
             uint64_t t = ((uint64_t)sec)*1000 + ((uint64_t)nsec)/1000000;
             std::vector<float> vals;
             data.get_values("values", vals);
-            for(int i=0;i<(int)vals.size();i++)
+            for(int i=0;i<(int)vals.size();i++) //這段處理loop
             {
                 if(last_flow_val <= 0.0f && vals[i] > 0.0f)
                     loop_start = i;
@@ -537,7 +537,13 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
             }
         }
     }
-
+/*    uint32_t current_time1 = Common::get_time_ms();
+    if(Common::get_elapsed_time(current_time1, last_query_time1) > 1000)
+    {
+        last_query_time1 = current_time1;
+        ++time_running;
+    }
+    if(time_running>10);*/
     querystr = "vmd_id MATCH '";
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");
@@ -1429,5 +1435,76 @@ void Tab_Observations_mainPage_Widget::on_visualization_new_clicked()
     qDebug()<<ui->visualizetion->visualizetionlist.size();
     ui->visualizetion->update();
 
+}
+/
+void Tab_Observations_mainPage_Widget::mc_char1(std::string model,std::string mdc_code)
+{
+    Common* common = Common::instance();
+    if(common->patient_id.size() == 0)
+        return;
+    std::string querystr = "vmd_id MATCH '";
+    querystr.append(common->vmd_id);
+    querystr.append("' AND patient_id MATCH '");
+    querystr.append(common->patient_id);
+    querystr.append("' AND model MATCH '");
+    querystr.append(model);
+    querystr.append("' AND mdc_code MATCH '");
+    querystr.append(mdc_code);
+    querystr.append("'");
+    dds::sub::cond::QueryCondition qcond2(
+                dds::sub::Query(common->rtobservation_reader, querystr),
+                dds::sub::status::DataState(
+                dds::sub::status::SampleState::any(),
+                dds::sub::status::ViewState::any(),
+                dds::sub::status::InstanceState::alive()));
+    dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples2 = common->rtobservation_reader.select().condition(qcond2).take();
+    if(samples2.length() == 0)
+        return;
+    for(auto& sample : samples2)
+    {
+        if(sample.info().valid())
+        {
+            dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
+            rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
+            int32_t sec = loaned_member.get().value<int32_t>("sec");
+            uint32_t nsec = loaned_member.get().value<uint32_t>("nanosec");
+            loaned_member.return_loan();
+            time_t now = time(NULL);
+            now -= 3;
+            if(sec < now)
+                continue;
+            uint64_t t = ((uint64_t)sec)*1000 + ((uint64_t)nsec)/1000000;
+            std::vector<float> vals;
+            data.get_values("values", vals);
+
+            if(left_over_rtchart1_flow_vals.size() > 0)
+            {
+                if(t-last_rtchart1_flow_time < LINE_BREAK_DELTA)
+                {
+                    double delta = (t-last_rtchart1_flow_time)/((double)left_over_rtchart1_flow_vals.size()+1);
+                    for(int i=0;i<(int)left_over_rtchart1_flow_vals.size();i++)
+                    {
+                        ui->rt_chart1->add_point(1, last_rtchart1_flow_time+delta*(i+1), left_over_rtchart1_flow_vals[i]);
+                    }
+                }
+                left_over_rtchart1_flow_vals.clear();
+            }
+            if(t > ui->rt_chart1->get_view_range_max_x())
+            {
+                ui->rt_chart1->set_view_range_max_x(t);
+                ui->rt_chart1->set_view_range_min_x(t-30*1000);
+            }
+            if(vals.size() > 0)
+            {
+                ui->rt_chart1->add_point(1, t, vals[0]);
+                if(vals.size() > 1)
+                {
+                    vals.erase(vals.begin());
+                    left_over_rtchart1_flow_vals = vals;
+                    last_rtchart1_flow_time = t;
+                }
+            }
+        }
+    }
 }
 

@@ -103,6 +103,7 @@ public:
     std::string bed_id;
     std::string room_id;
     cbl::Database db;
+    cbl::Database alarm_db;
     cbl::Replicator observation_puller;
     cbl::Replicator display_items_pusher;
     cbl::Replicator display_items_puller;
