@@ -1,6 +1,9 @@
 #ifndef TAB_OBSERVATIONS_MAINPAGE_WIDGET_H
 #define TAB_OBSERVATIONS_MAINPAGE_WIDGET_H
 
+#include "dds/core/corefwd.hpp"
+#include "dds/sub/TDataReader.hpp"
+#include "mc_chart.h"
 #include "mc_loop.h"
 #include "qgroupbox.h"
 #include "qtablewidget.h"
@@ -10,7 +13,6 @@
 #include <QAbstractButton>
 #include "Dialog_loopselection.h"
 #include "Dialog_visualization_config.h"
-
 class mc_loop_entry
 {
 public:
@@ -46,6 +48,12 @@ private:
     QTimer update_timer;
     QTimer chart_update_timer;
     uint8_t active;
+    QList<std::vector<float>> rtchart1_wave_list;
+    QList<std::vector<float>> rtchart2_wave_list;
+
+//    std::vector<float> left_over_rtchart_2_vals[21];
+//    <uint64_t> last_rtchart_1_time;
+//    QList <uint64_t> last_rtchart_2_time;
     std::vector<float> left_over_rtchart1_paw_vals;
     uint64_t last_rtchart1_paw_time;
     std::vector<float> left_over_rtchart1_flow_vals;
@@ -87,6 +95,7 @@ private:
     void set_checked(QWidget* w, uint8_t checked);
     void loop_check_and_expand(int loopnum, float x, float y);
     void loop_check_and_shrink(int loopnum, float x, float y);
+    void add_wave_to_chart(int series_index, std::string model, std::string mdc_code, dds::sub::DataReader<dds::core::xtypes::DynamicData> reader, mc_chart *chart, QList<std::vector<float> > wave_list);
 
 private slots:
     void update_triggered();

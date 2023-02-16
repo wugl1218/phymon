@@ -72,11 +72,11 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         sql.append(i->alarm_code);
                         sql.append("'");
         cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-        while (dummy!="IP200")
+        int error=0;while (dummy!="IP200"&&error<5)
             {
             results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
             qDebug()<<QString::fromStdString(dummy);
-            fflog_out(common->log,dummy.c_str());
+            fflog_out(common->log,dummy.c_str());error++;
             }                           for(auto& result: results)
                             Uid = result.valueAtIndex(0).asstring();
 
@@ -131,11 +131,11 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         sql.append("'");
 
         cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-        while (dummy!="IP200")
+        int error=0;while (dummy!="IP200"&&error<5)
             {
             results = common->cbl-> queryDocuments(common->display_items_db, sql, dummy);
             qDebug()<<QString::fromStdString(dummy);
-            fflog_out(common->log,dummy.c_str());
+            fflog_out(common->log,dummy.c_str());error++;
             }                           for(auto& result: results)
                             Uid = result.valueAtIndex(0).asstring();
 
@@ -170,7 +170,7 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                 title->show();
                 QPoint point = circle->pos();
                 point.rx() = 0;
-                point.ry() = 230;
+                point.ry() = 236-65;
                 title->move(point);
                 title->raise();//显示最顶层
                 return true;
@@ -243,11 +243,11 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
     sql.append(id);
     sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
     cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-    while (dummy!="IP200")
+    int error=0;while (dummy!="IP200"&&error<5)
         {
         results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
         qDebug()<<QString::fromStdString(dummy);
-        fflog_out(common->log,dummy.c_str());
+        fflog_out(common->log,dummy.c_str());error++;
         }       for(auto& result: results)
     {
         uint8_t checked = result.valueAtIndex(0).asUnsigned();

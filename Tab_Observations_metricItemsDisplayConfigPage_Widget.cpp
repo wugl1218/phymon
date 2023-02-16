@@ -91,11 +91,11 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::update_devices()
         sql.append(common->patient_id);
         sql.append("' AND meta(_).expiration IS NOT VALUED and expired=0");
         cbl::ResultSet results= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-        while (dummy!="IP200")
+        int error=0;while (dummy!="IP200"&&error<5)
             {
             results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
             qDebug()<<QString::fromStdString(dummy);
-            fflog_out(common->log,dummy.c_str());
+            fflog_out(common->log,dummy.c_str());error++;
             }
         for(auto& result: results)
         {
@@ -169,11 +169,11 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::update_devices()
             sql.append(common->patient_id);
             sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
             cbl::ResultSet results2= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-            while (dummy!="IP200")
+            int error=0;while (dummy!="IP200"&&error<5)
                 {
                 results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
                 qDebug()<<QString::fromStdString(dummy);
-                fflog_out(common->log,dummy.c_str());
+                fflog_out(common->log,dummy.c_str());error++;
                 }
             for(auto& result: results2)
             {
@@ -540,11 +540,11 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
     sql.append("' AND expired=0");
     sql.append(" AND meta().expiration IS NOT VALUED");
     cbl::ResultSet results= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-    while (dummy!="IP200")
+    int error=0;while (dummy!="IP200"&&error<5)
         {
         results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
         qDebug()<<QString::fromStdString(dummy);
-        fflog_out(common->log,dummy.c_str());
+        fflog_out(common->log,dummy.c_str());error++;
         }
     for(auto& result: results)
     {
@@ -582,11 +582,11 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
     sql.append("' AND expired=0");
     sql.append(" AND meta().expiration IS NOT VALUED");
     cbl::ResultSet resultsx= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-    while (dummy!="IP200")
+    error=0;while (dummy!="IP200"&&error<5)
         {
         resultsx = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
         qDebug()<<QString::fromStdString(dummy);
-        fflog_out(common->log,dummy.c_str());
+        fflog_out(common->log,dummy.c_str());error++;
         }
     for(auto& result: resultsx)
     {

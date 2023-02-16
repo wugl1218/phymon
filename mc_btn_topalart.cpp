@@ -93,11 +93,11 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             sql.append(alarm_code);
             sql.append("'");
             cbl::ResultSet results= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-            while (dummy!="IP200")
+            int error=0;while (dummy!="IP200"&&error<5)
                 {
                 results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
                 qDebug()<<QString::fromStdString(dummy);
-                fflog_out(common->log,dummy.c_str());
+                fflog_out(common->log,dummy.c_str());error++;
                 }            for(auto& result: results)
                 Uid = result.valueAtIndex(0).asstring();
 
@@ -174,11 +174,11 @@ void mc_btn_topalart::mousePressEvent(QMouseEvent *event)
             sql.append(alarm_code);
             sql.append("'");
             cbl::ResultSet results= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-            while (dummy!="IP200")
+            int error=0;while (dummy!="IP200"&&error<5)
                 {
                 results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
                 qDebug()<<QString::fromStdString(dummy);
-                fflog_out(common->log,dummy.c_str());
+                fflog_out(common->log,dummy.c_str());error++;
                 }
             for(auto& result: results)
                 Uid = result.valueAtIndex(0).asstring();

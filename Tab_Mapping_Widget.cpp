@@ -290,11 +290,11 @@ void Tab_Mapping_Widget::on_itemSelectionChanged()
     sql.append(common->vmd_id);
     sql.append("'");
     cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
-    while (dummy!="IP200")
+    int error=0;while (dummy!="IP200"&&error<5)
         {
         results = common->cbl->queryDocuments(common->db, sql, dummy);
         qDebug()<<QString::fromStdString(dummy);
-        fflog_out(common->log,dummy.c_str());
+        fflog_out(common->log,dummy.c_str());error++;
         }
     for(auto& result: results)
     {
@@ -368,11 +368,11 @@ void Tab_Mapping_Widget::perform_release(std::string employeeID)
     sql.append(common->vmd_id);
     sql.append("'");
     cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
-    while (dummy!="IP200")
+    int error=0;while (dummy!="IP200"&&error<5)
         {
         results = common->cbl->queryDocuments(common->db, sql, dummy);
         qDebug()<<QString::fromStdString(dummy);
-        fflog_out(common->log,dummy.c_str());
+        fflog_out(common->log,dummy.c_str());error++;
         }
     for(auto& result: results)
     {

@@ -307,11 +307,11 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_query_pushButton_clicked()
             }
         qDebug()<<QString::fromStdString(sql);
         cbl::ResultSet results= common->cbl->queryDocuments(common->db, sql, dummy);
-        while (dummy!="IP200")
+        int error=0;while (dummy!="IP200"&&error<5)
             {
             results = common->cbl->queryDocuments(common->db, sql, dummy);
             qDebug()<<QString::fromStdString(dummy);
-            fflog_out(common->log,dummy.c_str());
+            fflog_out(common->log,dummy.c_str());error++;
             }
         int row=0;
         //philo

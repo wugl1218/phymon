@@ -80,6 +80,16 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     set_checked(ui->cap_btn, 0);
     set_checked(ui->ref_btn, 0);
 
+ /*   for(int i=0;i<20;++i)
+    {
+        std::vector<float> left_over_rtchart1_paw_vals;
+        left_over_rtchart_1_vals<<left_over_rtchart1_paw_vals;
+        left_over_rtchart_2_vals<<left_over_rtchart1_paw_vals;
+        last_rtchart_1_time<<0;
+        last_rtchart_2_time<<0;
+
+    }*/
+
 
     set_loop1_type(LOOP_PRESSURE_VOLUME);
     set_loop2_type(LOOP_VOLUME_FLOW);
@@ -97,6 +107,13 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     max_loop2_y = 0.0f;
     min_loop2_x = 0.0f;
     min_loop2_y = 0.0f;
+    for(int t =0;t<21;++t)
+        {
+        qDebug()<<"++++++++++++++++++";
+        std::vector<float> vals;
+        rtchart1_wave_list<<vals;
+        rtchart2_wave_list<<vals;
+    }
 }
 
 void Tab_Observations_mainPage_Widget::visualizetion_clicked()
@@ -398,7 +415,7 @@ Tab_Observations_mainPage_Widget::~Tab_Observations_mainPage_Widget()
 void Tab_Observations_mainPage_Widget::chart_update_triggered()
 {
     Common* common = Common::instance();
-    if(common->patient_id.size() == 0)
+/*    if(common->patient_id.size() == 0)
         return;
     std::string model;
     auto fit = common->md->dm.devices.find("Savina");
@@ -417,7 +434,6 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
     std::vector<float> loop2_y;
     std::vector<mc_loop_entry> next_loop_snapshot;
     int snap_start = 0;
-
     std::string querystr = "vmd_id MATCH '";
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");
@@ -441,13 +457,11 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
             dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
             rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
             int32_t sec = loaned_member.get().value<int32_t>("sec");
-            uint32_t nsec = loaned_member.get().value<uint32_t>("nanosec");
             loaned_member.return_loan();
             time_t now = time(NULL);
             now -= 3;
             if(sec < now)
                 continue;
-            uint64_t t = ((uint64_t)sec)*1000 + ((uint64_t)nsec)/1000000;
             std::vector<float> vals;
             data.get_values("values", vals);
             for(int i=0;i<(int)vals.size();i++)
@@ -496,31 +510,11 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
                 loop2_y = vals;
             else if(loop2_type == LOOP_FLOW_PRESSURE)
                 loop2_x = vals;
-            if(left_over_rtchart1_flow_vals.size() > 0)
-            {
-                if(t-last_rtchart1_flow_time < LINE_BREAK_DELTA)
-                {
-                    double delta = (t-last_rtchart1_flow_time)/((double)left_over_rtchart1_flow_vals.size()+1);
-                    for(int i=0;i<(int)left_over_rtchart1_flow_vals.size();i++)
-                    {
-                        ui->rt_chart1->add_point(1, last_rtchart1_flow_time+delta*(i+1), left_over_rtchart1_flow_vals[i]);
-                    }
-                }
-                left_over_rtchart1_flow_vals.clear();
-            }
-            if(t > ui->rt_chart1->get_view_range_max_x())
-            {
-                ui->rt_chart1->set_view_range_max_x(t);
-                ui->rt_chart1->set_view_range_min_x(t-30*1000);
-            }
             if(vals.size() > 0)
             {
-                ui->rt_chart1->add_point(1, t, vals[0]);
                 if(vals.size() > 1)
                 {
                     vals.erase(vals.begin());
-                    left_over_rtchart1_flow_vals = vals;
-                    last_rtchart1_flow_time = t;
                 }
             }
         }
@@ -540,6 +534,8 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
                 dds::sub::status::ViewState::any(),
                 dds::sub::status::InstanceState::alive()));
     dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->rtobservation_reader.select().condition(qcond).take();
+    qDebug()<<QString::fromStdString(querystr);
+
     for(auto& sample : samples)
     {
         if(sample.info().valid())
@@ -547,13 +543,11 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
             dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
             rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
             int32_t sec = loaned_member.get().value<int32_t>("sec");
-            uint32_t nsec = loaned_member.get().value<uint32_t>("nanosec");
             loaned_member.return_loan();
             time_t now = time(NULL);
             now -= 3;
             if(sec < now)
                 continue;
-            uint64_t t = ((uint64_t)sec)*1000 + ((uint64_t)nsec)/1000000;
             std::vector<float> vals;
             data.get_values("values", vals);
             if(loop_start != -1)
@@ -594,31 +588,11 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
                 loop2_x = vals;
             else if(loop2_type == LOOP_FLOW_PRESSURE)
                 loop2_y = vals;
-            if(left_over_rtchart1_paw_vals.size() > 0)
-            {
-                if(t-last_rtchart1_paw_time < LINE_BREAK_DELTA)
-                {
-                    double delta = (t-last_rtchart1_paw_time)/((double)left_over_rtchart1_paw_vals.size()+1);
-                    for(int i=0;i<(int)left_over_rtchart1_paw_vals.size();i++)
-                    {
-                        ui->rt_chart1->add_point(0, last_rtchart1_paw_time+delta*(i+1), left_over_rtchart1_paw_vals[i]);
-                    }
-                }
-                left_over_rtchart1_paw_vals.clear();
-            }
-            if(t > ui->rt_chart1->get_view_range_max_x())
-            {
-                ui->rt_chart1->set_view_range_max_x(t);
-                ui->rt_chart1->set_view_range_min_x(t-30*1000);
-            }
             if(vals.size() > 0)
             {
-                ui->rt_chart1->add_point(0, t, vals[0]);
                 if(vals.size() > 1)
                 {
                     vals.erase(vals.begin());
-                    left_over_rtchart1_paw_vals = vals;
-                    last_rtchart1_paw_time = t;
                 }
             }
         }
@@ -645,13 +619,11 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
             dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
             rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
             int32_t sec = loaned_member.get().value<int32_t>("sec");
-            uint32_t nsec = loaned_member.get().value<uint32_t>("nanosec");
             loaned_member.return_loan();
             time_t now = time(NULL);
             now -= 3;
             if(sec < now)
                 continue;
-            uint64_t t = ((uint64_t)sec)*1000 + ((uint64_t)nsec)/1000000;
             std::vector<float> vals;
             data.get_values("values", vals);
             if(loop_start != -1)
@@ -692,38 +664,21 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
                 loop2_y = vals;
             else if(loop2_type == LOOP_VOLUME_FLOW)
                 loop2_x = vals;
-            if(left_over_rtchart2_vals.size() > 0)
-            {
-                if(t-last_rtchart2_time < LINE_BREAK_DELTA)
-                {
-                    double delta = (t-last_rtchart2_time)/((double)left_over_rtchart2_vals.size()+1);
-                    for(int i=0;i<(int)left_over_rtchart2_vals.size();i++)
-                    {
-                        ui->rt_chart2->add_point(0, last_rtchart2_time+delta*(i+1), left_over_rtchart2_vals[i]);
-                    }
-                }
-                left_over_rtchart2_vals.clear();
-            }
-            if(t > ui->rt_chart2->get_view_range_max_x())
-            {
-                ui->rt_chart2->set_view_range_max_x(t);
-                ui->rt_chart2->set_view_range_min_x(t-30*1000);
-            }
             if(vals.size() > 0)
             {
-                ui->rt_chart2->add_point(0, t, vals[0]);
                 if(vals.size() > 1)
                 {
                     vals.erase(vals.begin());
-                    left_over_rtchart2_vals = vals;
-                    last_rtchart2_time = t;
                 }
             }
         }
-    }
+    }*/
+    add_wave_to_chart(0,"Savina","MDC_PRESS_AWAY",common->rtobservation_reader,ui->rt_chart1,rtchart1_wave_list);
+    add_wave_to_chart(1,"Savina","MDC_FLOW_AWAY",common->rtobservation_reader,ui->rt_chart1,rtchart1_wave_list);
+    add_wave_to_chart(0,"Savina","FOYA_MEASURED_VolumeInspirationBegan",common->rtobservation_reader,ui->rt_chart2,rtchart2_wave_list);
     ui->rt_chart1->trim_left();
     ui->rt_chart2->trim_left();
-
+/*
     if(captured)
         return;
     if(loop1_x.size() > 0 && loop1_y.size() > 0 && loop1_type != LOOP_PTRACH_VOLUME && loop1_type != LOOP_FLOW_PTRACH)
@@ -891,7 +846,7 @@ finish:
         }
         set_next_loop_as_cap = 0;
         loop_snapshot = next_loop_snapshot;
-    }
+    }*/
 }
 
 void Tab_Observations_mainPage_Widget::loop_check_and_expand(int loopnum, float x, float y)
@@ -1420,4 +1375,587 @@ void Tab_Observations_mainPage_Widget::on_visualization_new_clicked()
     ui->visualizetion->update();
 
 }
+//0215
+void Tab_Observations_mainPage_Widget::add_wave_to_chart(int series_index,std::string model,std::string mdc_code,
+                                                         dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
+                                                         mc_chart* chart,QList<std::vector<float>> wave_list)
+{
+    Common* common = Common::instance();
+    if(common->patient_id.size() == 0)
+        return;
+    std::string querystr = "vmd_id MATCH '";
+    querystr.append(common->vmd_id);
+    querystr.append("' AND patient_id MATCH '");
+    querystr.append(common->patient_id);
+    querystr.append("' AND model MATCH '");
+    querystr.append(model);
+    querystr.append("' AND mdc_code MATCH '");
+    querystr.append(mdc_code);
+    querystr.append("'");
+    dds::sub::cond::QueryCondition qcond(
+                dds::sub::Query(reader, querystr),
+                dds::sub::status::DataState(
+                dds::sub::status::SampleState::any(),
+                dds::sub::status::ViewState::any(),
+                dds::sub::status::InstanceState::alive()));
+    dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples2 = reader.select().condition(qcond).take();
+    if(samples2.length() == 0)
+        return;
 
+    for(auto& sample : samples2)
+    {
+        if(sample.info().valid())
+        {
+            dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
+            rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
+            int32_t sec = loaned_member.get().value<int32_t>("sec");
+            uint32_t nsec = loaned_member.get().value<uint32_t>("nanosec");
+            loaned_member.return_loan();
+            time_t now = time(NULL);
+            now -= 3;
+            if(sec < now)
+                continue;
+            uint64_t t = ((uint64_t)sec)*1000 + ((uint64_t)nsec)/1000000;
+            std::vector<float> vals;
+            qDebug()<<"0-0";
+            int q=series_index;
+            auto left_over_rtchart_vals =wave_list[q];
+            data.get_values("values", vals);
+            qDebug()<<"0";
+            if(left_over_rtchart_vals.size() > 0)
+            {
+                if(t-last_rtchart1_flow_time < LINE_BREAK_DELTA)
+                {
+                    qDebug()<<"1-1";
+                    double delta = (t-last_rtchart1_flow_time)/((double)left_over_rtchart_vals.size()+1);
+                    for(int i=0;i<(int)left_over_rtchart_vals.size();i++)
+                    {
+                        qDebug()<<"1-2";
+                        chart->add_point(series_index, last_rtchart1_flow_time+delta*(i+1), left_over_rtchart_vals[i]);
+                    }
+                }
+                left_over_rtchart_vals.clear();
+                wave_list[q]=left_over_rtchart_vals;
+            }
+            qDebug()<<"0-1";
+            if(t > chart->get_view_range_max_x())
+            {
+                chart->set_view_range_max_x(t);
+                chart->set_view_range_min_x(t-30*1000);
+            }
+            qDebug()<<"0-2";
+            if(vals.size() > 0)
+            {
+
+                chart->add_point(series_index, t, vals[0]);
+                if(vals.size() > 1)
+                {
+                    qDebug()<<"2";
+                    vals.erase(vals.begin());
+                    left_over_rtchart_vals = vals;
+                    wave_list[q]=left_over_rtchart_vals;
+                    last_rtchart1_flow_time = t;
+                }
+            }
+        }
+    }
+}
+/*
+void Tab_Observations_mainPage_Widget::chart_update_triggered()
+{
+    Common* common = Common::instance();
+    if(common->patient_id.size() == 0)
+        return;
+    std::string model;
+    auto fit = common->md->dm.devices.find("Savina");
+    if(fit == common->md->dm.devices.end())
+    {
+        fit = common->md->dm.devices.find("Savina 300");
+        if(fit == common->md->dm.devices.end())
+            return;
+    }
+    CapturedIssues_channel_id=fit->second.channel_id;
+    model = fit->first;
+    int loop_start = -1;
+    std::vector<float> loop1_x;
+    std::vector<float> loop1_y;
+    std::vector<float> loop2_x;
+    std::vector<float> loop2_y;
+    std::vector<mc_loop_entry> next_loop_snapshot;
+    int snap_start = 0;
+
+    std::string querystr = "vmd_id MATCH '";
+    querystr.append(common->vmd_id);
+    querystr.append("' AND patient_id MATCH '");
+    querystr.append(common->patient_id);
+    querystr.append("' AND model MATCH '");
+    querystr.append(model);
+    querystr.append("' AND mdc_code MATCH 'MDC_FLOW_AWAY'");
+    dds::sub::cond::QueryCondition qcond2(
+                dds::sub::Query(common->rtobservation_reader, querystr),
+                dds::sub::status::DataState(
+                dds::sub::status::SampleState::any(),
+                dds::sub::status::ViewState::any(),
+                dds::sub::status::InstanceState::alive()));
+    dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples2 = common->rtobservation_reader.select().condition(qcond2).take();
+    if(samples2.length() == 0)
+        return;
+    for(auto& sample : samples2)
+    {
+        if(sample.info().valid())
+        {
+            dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
+            rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
+            int32_t sec = loaned_member.get().value<int32_t>("sec");
+            uint32_t nsec = loaned_member.get().value<uint32_t>("nanosec");
+            loaned_member.return_loan();
+            time_t now = time(NULL);
+            now -= 3;
+            if(sec < now)
+                continue;
+            uint64_t t = ((uint64_t)sec)*1000 + ((uint64_t)nsec)/1000000;
+            std::vector<float> vals;
+            data.get_values("values", vals);
+            for(int i=0;i<(int)vals.size();i++)
+            {
+                if(last_flow_val <= 0.0f && vals[i] > 0.0f)
+                    loop_start = i;
+                last_flow_val = vals[i];
+            }
+            if(loop_start != -1)
+            {
+                snap_start = loop_snapshot.size();
+                for(int i=0;i<loop_start;i++)
+                {
+                    mc_loop_entry e;
+                    e.flow = vals[i];
+                    e.press = 0.0f;
+                    e.vol = 0.0f;
+                    loop_snapshot.push_back(e);
+                }
+                for(int i=loop_start;i<(int)vals.size();i++)
+                {
+                    mc_loop_entry e;
+                    e.flow = vals[i];
+                    e.press = 0.0f;
+                    e.vol = 0.0f;
+                    next_loop_snapshot.push_back(e);
+                }
+            }
+            else
+            {
+                snap_start = loop_snapshot.size();
+                for(int i=0;i<(int)vals.size();i++)
+                {
+                    mc_loop_entry e;
+                    e.flow = vals[i];
+                    e.press = 0.0f;
+                    e.vol = 0.0f;
+                    loop_snapshot.push_back(e);
+                }
+            }
+            if(loop1_type == LOOP_VOLUME_FLOW)
+                loop1_y = vals;
+            else if(loop1_type == LOOP_FLOW_PRESSURE)
+                loop1_x = vals;
+            if(loop2_type == LOOP_VOLUME_FLOW)
+                loop2_y = vals;
+            else if(loop2_type == LOOP_FLOW_PRESSURE)
+                loop2_x = vals;
+            if(left_over_rtchart1_flow_vals.size() > 0)
+            {
+                if(t-last_rtchart1_flow_time < LINE_BREAK_DELTA)
+                {
+                    double delta = (t-last_rtchart1_flow_time)/((double)left_over_rtchart1_flow_vals.size()+1);
+                    for(int i=0;i<(int)left_over_rtchart1_flow_vals.size();i++)
+                    {
+                        ui->rt_chart1->add_point(1, last_rtchart1_flow_time+delta*(i+1), left_over_rtchart1_flow_vals[i]);
+                    }
+                }
+                left_over_rtchart1_flow_vals.clear();
+            }
+            if(t > ui->rt_chart1->get_view_range_max_x())
+            {
+                ui->rt_chart1->set_view_range_max_x(t);
+                ui->rt_chart1->set_view_range_min_x(t-30*1000);
+            }
+            if(vals.size() > 0)
+            {
+                ui->rt_chart1->add_point(1, t, vals[0]);
+                if(vals.size() > 1)
+                {
+                    vals.erase(vals.begin());
+                    left_over_rtchart1_flow_vals = vals;
+                    last_rtchart1_flow_time = t;
+                }
+            }
+        }
+    }
+
+    querystr = "vmd_id MATCH '";
+    querystr.append(common->vmd_id);
+    querystr.append("' AND patient_id MATCH '");
+    querystr.append(common->patient_id);
+    querystr.append("' AND model MATCH '");
+    querystr.append(model);
+    querystr.append("' AND mdc_code MATCH 'MDC_PRESS_AWAY'");
+    dds::sub::cond::QueryCondition qcond(
+                dds::sub::Query(common->rtobservation_reader, querystr),
+                dds::sub::status::DataState(
+                dds::sub::status::SampleState::any(),
+                dds::sub::status::ViewState::any(),
+                dds::sub::status::InstanceState::alive()));
+    dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->rtobservation_reader.select().condition(qcond).take();
+    for(auto& sample : samples)
+    {
+        if(sample.info().valid())
+        {
+            dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
+            rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
+            int32_t sec = loaned_member.get().value<int32_t>("sec");
+            uint32_t nsec = loaned_member.get().value<uint32_t>("nanosec");
+            loaned_member.return_loan();
+            time_t now = time(NULL);
+            now -= 3;
+            if(sec < now)
+                continue;
+            uint64_t t = ((uint64_t)sec)*1000 + ((uint64_t)nsec)/1000000;
+            std::vector<float> vals;
+            data.get_values("values", vals);
+            if(loop_start != -1)
+            {
+                if(loop_start < (int)vals.size())
+                {
+                    if((int)loop_snapshot.size() - snap_start >= loop_start)
+                    {
+                        for(int i=0;i<loop_start;i++)
+                        {
+                            loop_snapshot[i+snap_start].press = vals[i];
+                        }
+                    }
+                    if((int)next_loop_snapshot.size() >= (int)vals.size() - loop_start)
+                    {
+                        for(int i=loop_start;i<(int)vals.size();i++)
+                        {
+                            next_loop_snapshot[i-loop_start].press = vals[i];
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if((int)loop_snapshot.size() - snap_start >= (int)vals.size())
+                {
+                    for(int i=0;i<(int)vals.size();i++)
+                    {
+                        loop_snapshot[i+snap_start].press = vals[i];
+                    }
+                }
+            }
+            if(loop1_type == LOOP_PRESSURE_VOLUME)
+                loop1_x = vals;
+            else if(loop1_type == LOOP_FLOW_PRESSURE)
+                loop1_y = vals;
+            if(loop2_type == LOOP_PRESSURE_VOLUME)
+                loop2_x = vals;
+            else if(loop2_type == LOOP_FLOW_PRESSURE)
+                loop2_y = vals;
+            if(left_over_rtchart1_paw_vals.size() > 0)
+            {
+                if(t-last_rtchart1_paw_time < LINE_BREAK_DELTA)
+                {
+                    double delta = (t-last_rtchart1_paw_time)/((double)left_over_rtchart1_paw_vals.size()+1);
+                    for(int i=0;i<(int)left_over_rtchart1_paw_vals.size();i++)
+                    {
+                        ui->rt_chart1->add_point(0, last_rtchart1_paw_time+delta*(i+1), left_over_rtchart1_paw_vals[i]);
+                    }
+                }
+                left_over_rtchart1_paw_vals.clear();
+            }
+            if(t > ui->rt_chart1->get_view_range_max_x())
+            {
+                ui->rt_chart1->set_view_range_max_x(t);
+                ui->rt_chart1->set_view_range_min_x(t-30*1000);
+            }
+            if(vals.size() > 0)
+            {
+                ui->rt_chart1->add_point(0, t, vals[0]);
+                if(vals.size() > 1)
+                {
+                    vals.erase(vals.begin());
+                    left_over_rtchart1_paw_vals = vals;
+                    last_rtchart1_paw_time = t;
+                }
+            }
+        }
+    }
+
+    querystr = "vmd_id MATCH '";
+    querystr.append(common->vmd_id);
+    querystr.append("' AND patient_id MATCH '");
+    querystr.append(common->patient_id);
+    querystr.append("' AND model MATCH '");
+    querystr.append(model);
+    querystr.append("' AND mdc_code MATCH 'FOYA_MEASURED_VolumeInspirationBegan'");
+    dds::sub::cond::QueryCondition qcond3(
+                dds::sub::Query(common->rtobservation_reader, querystr),
+                dds::sub::status::DataState(
+                dds::sub::status::SampleState::any(),
+                dds::sub::status::ViewState::any(),
+                dds::sub::status::InstanceState::alive()));
+    dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples3 = common->rtobservation_reader.select().condition(qcond3).take();
+    for(auto& sample : samples3)
+    {
+        if(sample.info().valid())
+        {
+            dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
+            rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
+            int32_t sec = loaned_member.get().value<int32_t>("sec");
+            uint32_t nsec = loaned_member.get().value<uint32_t>("nanosec");
+            loaned_member.return_loan();
+            time_t now = time(NULL);
+            now -= 3;
+            if(sec < now)
+                continue;
+            uint64_t t = ((uint64_t)sec)*1000 + ((uint64_t)nsec)/1000000;
+            std::vector<float> vals;
+            data.get_values("values", vals);
+            if(loop_start != -1)
+            {
+                if(loop_start < (int)vals.size())
+                {
+                    if((int)loop_snapshot.size() - snap_start >= loop_start)
+                    {
+                        for(int i=0;i<loop_start;i++)
+                        {
+                            loop_snapshot[i+snap_start].vol = vals[i];
+                        }
+                    }
+                    if((int)next_loop_snapshot.size() >= (int)vals.size() - loop_start)
+                    {
+                        for(int i=loop_start;i<(int)vals.size();i++)
+                        {
+                            next_loop_snapshot[i-loop_start].vol = vals[i];
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if((int)loop_snapshot.size() - snap_start >= (int)vals.size())
+                {
+                    for(int i=0;i<(int)vals.size();i++)
+                    {
+                        loop_snapshot[i+snap_start].vol = vals[i];
+                    }
+                }
+            }
+            if(loop1_type == LOOP_PRESSURE_VOLUME)
+                loop1_y = vals;
+            else if(loop1_type == LOOP_VOLUME_FLOW)
+                loop1_x = vals;
+            if(loop2_type == LOOP_PRESSURE_VOLUME)
+                loop2_y = vals;
+            else if(loop2_type == LOOP_VOLUME_FLOW)
+                loop2_x = vals;
+            if(left_over_rtchart2_vals.size() > 0)
+            {
+                if(t-last_rtchart2_time < LINE_BREAK_DELTA)
+                {
+                    double delta = (t-last_rtchart2_time)/((double)left_over_rtchart2_vals.size()+1);
+                    for(int i=0;i<(int)left_over_rtchart2_vals.size();i++)
+                    {
+                        ui->rt_chart2->add_point(0, last_rtchart2_time+delta*(i+1), left_over_rtchart2_vals[i]);
+                    }
+                }
+                left_over_rtchart2_vals.clear();
+            }
+            if(t > ui->rt_chart2->get_view_range_max_x())
+            {
+                ui->rt_chart2->set_view_range_max_x(t);
+                ui->rt_chart2->set_view_range_min_x(t-30*1000);
+            }
+            if(vals.size() > 0)
+            {
+                ui->rt_chart2->add_point(0, t, vals[0]);
+                if(vals.size() > 1)
+                {
+                    vals.erase(vals.begin());
+                    left_over_rtchart2_vals = vals;
+                    last_rtchart2_time = t;
+                }
+            }
+        }
+    }
+    ui->rt_chart1->trim_left();
+    ui->rt_chart2->trim_left();
+
+    if(captured)
+        return;
+    if(loop1_x.size() > 0 && loop1_y.size() > 0 && loop1_type != LOOP_PTRACH_VOLUME && loop1_type != LOOP_FLOW_PTRACH)
+    {
+        if(loop_start == -1)
+        {
+            for(int i=0;i<(int)loop1_x.size();i++)
+            {
+                ui->loop1->add_point(loop1_x[i], loop1_y[i]);
+                loop_check_and_expand(1, loop1_x[i], loop1_y[i]);
+                if(loop1_x[i] > max_loop1_x)
+                    max_loop1_x = loop1_x[i];
+                if(loop1_y[i] > max_loop1_y)
+                    max_loop1_y = loop1_y[i];
+                if(loop1_x[i] < min_loop1_x)
+                    min_loop1_x = loop1_x[i];
+                if(loop1_y[i] < min_loop1_y)
+                    min_loop1_y = loop1_y[i];
+            }
+        }
+        else
+        {
+            if(set_next_loop_as_ref || set_next_loop_as_cap)
+            {
+                for(int k=0;k<loop_start;k++)
+                {
+                    ui->loop1->add_point(loop1_x[k], loop1_y[k]);
+                    loop_check_and_expand(1, loop1_x[k], loop1_y[k]);
+                    if(loop1_x[k] > max_loop1_x)
+                        max_loop1_x = loop1_x[k];
+                    if(loop1_y[k] > max_loop1_y)
+                        max_loop1_y = loop1_y[k];
+                    if(loop1_x[k] < min_loop1_x)
+                        min_loop1_x = loop1_x[k];
+                    if(loop1_y[k] < min_loop1_y)
+                        min_loop1_y = loop1_y[k];
+                }
+                uint32_t now = Common::get_time_ms();
+                uint32_t elapsed = Common::get_elapsed_time(now, show_time);
+                if(set_next_loop_as_ref && elapsed > 2000 && !delay_reference)
+                {
+                    ui->loop1->save_points_as_ref();
+                }
+                if(set_next_loop_as_cap)
+                {
+                    goto prepare_loop2;
+                }
+            }
+            loop_check_and_shrink(1, max_loop1_x, max_loop1_y);
+
+            max_loop1_x = 0.0f;
+            max_loop1_y = 0.0f;
+            min_loop1_x = 0.0f;
+            min_loop1_y = 0.0f;
+            ui->loop1->clear_points();
+            int i=loop_start;
+            ui->loop1->add_point(last_loop1_x, last_loop1_y);
+            loop_check_and_expand(1, last_loop1_x, last_loop1_y);
+            for(;i<(int)loop1_x.size();i++)
+            {
+                ui->loop1->add_point(loop1_x[i], loop1_y[i]);
+                loop_check_and_expand(1, loop1_x[i], loop1_y[i]);
+                if(loop1_x[i] > max_loop1_x)
+                    max_loop1_x = loop1_x[i];
+                if(loop1_y[i] > max_loop1_y)
+                    max_loop1_y = loop1_y[i];
+                if(loop1_x[i] < min_loop1_x)
+                    min_loop1_x = loop1_x[i];
+                if(loop1_y[i] < min_loop1_y)
+                    min_loop1_y = loop1_y[i];
+            }
+        }
+        last_loop1_x = loop1_x[loop1_x.size()-1];
+        last_loop1_y = loop1_y[loop1_y.size()-1];
+    }
+
+    prepare_loop2:
+    if(loop2_x.size() > 0 && loop2_y.size() > 0 && loop2_type != LOOP_PTRACH_VOLUME && loop2_type != LOOP_FLOW_PTRACH)
+    {
+        if(loop_start == -1)
+        {
+            for(int i=0;i<(int)loop2_x.size();i++)
+            {
+                ui->loop2->add_point(loop2_x[i], loop2_y[i]);
+                loop_check_and_expand(2, loop2_x[i], loop2_y[i]);
+                if(loop2_x[i] > max_loop2_x)
+                    max_loop2_x = loop2_x[i];
+                if(loop2_y[i] > max_loop2_y)
+                    max_loop2_y = loop2_y[i];
+                if(loop2_x[i] < min_loop2_x)
+                    min_loop2_x = loop2_x[i];
+                if(loop2_y[i] < min_loop2_y)
+                    min_loop2_y = loop2_y[i];
+            }
+        }
+        else
+        {
+            if(set_next_loop_as_ref || set_next_loop_as_cap)
+            {
+                for(int k=0;k<loop_start;k++)
+                {
+                    ui->loop2->add_point(loop2_x[k], loop2_y[k]);
+                    loop_check_and_expand(2, loop2_x[k], loop2_y[k]);
+                    if(loop2_x[k] > max_loop2_x)
+                        max_loop2_x = loop2_x[k];
+                    if(loop2_y[k] > max_loop2_y)
+                        max_loop2_y = loop2_y[k];
+                    if(loop2_x[k] < min_loop2_x)
+                        min_loop2_x = loop2_x[k];
+                    if(loop2_y[k] < min_loop2_y)
+                        min_loop2_y = loop2_y[k];
+                }
+                uint32_t now = Common::get_time_ms();
+                uint32_t elapsed = Common::get_elapsed_time(now, show_time);
+                if(set_next_loop_as_ref && elapsed > 2000 && !delay_reference)
+                    ui->loop2->save_points_as_ref();
+                if(set_next_loop_as_cap)
+                    goto finish;
+            }
+            loop_check_and_shrink(2, max_loop2_x, max_loop2_y);
+
+            max_loop2_x = 0.0f;
+            max_loop2_y = 0.0f;
+            min_loop2_x = 0.0f;
+            min_loop2_y = 0.0f;
+            ui->loop2->clear_points();
+            int i=loop_start;
+            ui->loop2->add_point(last_loop2_x, last_loop2_y);
+            loop_check_and_expand(2, last_loop2_x, last_loop2_y);
+            for(;i<(int)loop2_x.size();i++)
+            {
+                ui->loop2->add_point(loop2_x[i], loop2_y[i]);
+                loop_check_and_expand(2, loop2_x[i], loop2_y[i]);
+                if(loop2_x[i] > max_loop2_x)
+                    max_loop2_x = loop2_x[i];
+                if(loop2_y[i] > max_loop2_y)
+                    max_loop2_y = loop2_y[i];
+                if(loop2_x[i] < min_loop2_x)
+                    min_loop2_x = loop2_x[i];
+                if(loop2_y[i] < min_loop2_y)
+                    min_loop2_y = loop2_y[i];
+            }
+        }
+        last_loop2_x = loop2_x[loop2_x.size()-1];
+        last_loop2_y = loop2_y[loop2_y.size()-1];
+    }
+finish:
+    if(loop_start != -1)
+    {
+        if(set_next_loop_as_cap)
+        {
+            captured = 1;
+            cap_loop_snapshot = loop_snapshot;
+        }
+        if(set_next_loop_as_ref)
+            ref_loop_snapshot = loop_snapshot;
+        uint32_t now = Common::get_time_ms();
+        uint32_t elapsed = Common::get_elapsed_time(now, show_time);
+        if(elapsed > 2000)
+        {
+            if(!delay_reference)
+                set_next_loop_as_ref = 0;
+            else
+                delay_reference = 0;
+        }
+        set_next_loop_as_cap = 0;
+        loop_snapshot = next_loop_snapshot;
+    }
+}*/

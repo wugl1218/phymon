@@ -213,11 +213,11 @@ void Manager_Topalarm::topalarm(mc_btn_topalart *label ,Device devices)
             sql.append(i->second.alarm_description);
             sql.append("'");
         cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-        while (dummy!="IP200")
+        int error=0;while (dummy!="IP200"&&error<5)
             {
             results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
             qDebug()<<QString::fromStdString(dummy);
-            fflog_out(common->log,dummy.c_str());
+            fflog_out(common->log,dummy.c_str());error++;
             }               bool is_results=0;
             for(auto& result: results)
             {
@@ -280,11 +280,11 @@ void Manager_Topalarm::topalarm(mc_btn_topalart *label ,Device devices)
             sql.append(i->second.alarm_code);
             sql.append("'");
         cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-        while (dummy!="IP200")
+        int error=0;while (dummy!="IP200"&&error<5)
             {
             results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
             qDebug()<<QString::fromStdString(dummy);
-            fflog_out(common->log,dummy.c_str());
+            fflog_out(common->log,dummy.c_str());error++;
             }               bool is_results=0;
             for(auto& result: results)
             {
@@ -347,11 +347,11 @@ void Manager_Topalarm::UI_set(mc_btn_topalart *label ,Device devices)
         sql.append(i->second.alarm_code);
         sql.append("'");
         cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-        while (dummy!="IP200")
+        int error=0;while (dummy!="IP200"&&error<5)
             {
             results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
             qDebug()<<QString::fromStdString(dummy);
-            fflog_out(common->log,dummy.c_str());
+            fflog_out(common->log,dummy.c_str());error++;
             }           bool is_results=0;
         for(auto& result: results)
         {
@@ -398,11 +398,11 @@ void Manager_Topalarm::UI_set(mc_btn_topalart *label ,Device devices)
         sql.append(i->second.alarm_code);
         sql.append("'");
         cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-        while (dummy!="IP200")
+        int error=0;while (dummy!="IP200"&&error<5)
             {
             results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
             qDebug()<<QString::fromStdString(dummy);
-            fflog_out(common->log,dummy.c_str());
+            fflog_out(common->log,dummy.c_str());error++;
             }        bool is_results=0;
         for(auto& result: results)
         {

@@ -96,11 +96,11 @@ Common::Common(MainDialog* m)
     {
         std::string sql ="SELECT vmd_id FROM _ WHERE data_source='VMD' ORDER BY source_timestamp DESC";
         cbl::ResultSet results= cbl->queryDocuments(db, sql, dummy);
-        while (dummy!="IP200")
+        int error=0;while (dummy!="IP200"&&error<5)
             {
             results = cbl->queryDocuments(db, sql, dummy);
             qDebug()<<QString::fromStdString(dummy);
-            fflog_out(log,dummy.c_str());
+            fflog_out(log,dummy.c_str());error++;
             }
         for(auto& result: results)
         {
@@ -118,11 +118,11 @@ Common::Common(MainDialog* m)
         md->nd.is_server=1;
     std::string sql ="SELECT domain_id FROM _ WHERE data_source='DOMAIN' ORDER BY source_timestamp DESC";
     cbl::ResultSet dresults= cbl->queryDocuments(db, sql, dummy);
-    while (dummy!="IP200")
+    int error=0;while (dummy!="IP200"&&error<5)
         {
         dresults = cbl->queryDocuments(db, sql, dummy);
         qDebug()<<QString::fromStdString(dummy);
-        fflog_out(log,dummy.c_str());
+        fflog_out(log,dummy.c_str());error++;
         }
 
     domain_id = -1;
@@ -582,11 +582,11 @@ void Common::populate_item_checkstate()
     sql.append(patient_id);
     sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
     cbl::ResultSet results2= cbl->queryDocuments(display_items_db, sql, dummy);
-    while (dummy!="IP200")
+    int error=0;while (dummy!="IP200"&&error<5)
         {
         results2 = cbl->queryDocuments(display_items_db, sql, dummy);
         qDebug()<<QString::fromStdString(dummy);
-        fflog_out(log,dummy.c_str());
+        fflog_out(log,dummy.c_str());error++;
         }
 
     for(auto& result: results2)
@@ -621,11 +621,11 @@ void Common::populate_device_checkstate()
     sql.append(patient_id);
     sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
     cbl::ResultSet results= cbl->queryDocuments(display_items_db, sql, dummy);
-    while (dummy!="IP200")
+    int error=0;while (dummy!="IP200"&&error<5)
         {
         results = cbl->queryDocuments(display_items_db, sql, dummy);
         qDebug()<<QString::fromStdString(dummy);
-        fflog_out(log,dummy.c_str());
+        fflog_out(log,dummy.c_str());error++;
         }
     for(auto& result: results)
     {

@@ -292,11 +292,11 @@ void Tab_NS_Monitor::on_itemSelectionChanged()
     sql.append(common->vmd_id);
     sql.append("'");
     cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
-    while (dummy!="IP200")
+    int error=0;while (dummy!="IP200"&&error<5)
         {
         results = common->cbl->queryDocuments(common->db, sql, dummy);
         qDebug()<<QString::fromStdString(dummy);
-        fflog_out(common->log,dummy.c_str());
+        fflog_out(common->log,dummy.c_str());error++;
         }
     for(auto& result: results)
     {
@@ -313,11 +313,11 @@ void Tab_NS_Monitor::on_itemSelectionChanged()
     sql1.append(common->patient_id);
     sql1.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
     cbl::ResultSet results1 = common->cbl->queryDocuments(common->display_items_db, sql1, dummy);;
-    while (dummy!="IP200")
+    error=0;while (dummy!="IP200"&&error<5)
         {
         results1 = common->cbl->queryDocuments(common->display_items_db, sql1, dummy);
         qDebug()<<QString::fromStdString(dummy);
-        fflog_out(common->log,dummy.c_str());
+        fflog_out(common->log,dummy.c_str());error++;
         }
     for(auto& result: results1)
     {
