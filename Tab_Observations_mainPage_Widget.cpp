@@ -54,9 +54,11 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     ui->rt_chart2->set_num_labels_x(5);
     ui->rt_chart2->set_num_labels_y(5);
     ui->rt_chart2->set_series_color(0, QColor(0xce, 0x5c, 0x00));
-    ui->legend->set_series_text(0, "PAW");
-    ui->legend->set_series_text(1, "FLOW");
-    ui->legend->set_series_text(2, "RV");
+    ui->rt_chart2->set_series_color(1, QColor(144, 50, 200));
+
+    ui->legend->set_series_text(0, "PAW","Savina","MDC_PRESS_AWAY");
+    ui->legend->set_series_text(1, "FLOW","Savina","MDC_FLOW_AWAY");
+    ui->legend->set_series_text(2, "RV","Savina","FOYA_MEASURED_VolumeInspirationBegan");
     ui->legend->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
     ui->legend->set_series_color(1, QColor(0x5c, 0xe5, 0x5f));
     ui->legend->set_series_color(2, QColor(0xce, 0x5c, 0x00));
@@ -116,6 +118,11 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
         rtchart1_time_list<<time;
         rtchart2_time_list<<time;
     }
+    ui->loop1->hide();
+    ui->loop2->hide();
+    ui->ref_btn->hide();
+    ui->cap_btn->hide();
+
 }
 
 void Tab_Observations_mainPage_Widget::visualizetion_clicked()
@@ -424,7 +431,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
     if(common->patient_id.size() == 0)
         return;
     std::string model;
-/*    auto fit = common->md->dm.devices.find("Savina");
+    auto fit = common->md->dm.devices.find("Savina");
     if(fit == common->md->dm.devices.end())
     {
         fit = common->md->dm.devices.find("Savina 300");
@@ -440,7 +447,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
     std::vector<float> loop2_y;
     std::vector<mc_loop_entry> next_loop_snapshot;
     int snap_start = 0;
-
+/*
     std::string querystr = "vmd_id MATCH '";
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");
@@ -519,7 +526,8 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
 //                loop2_y = vals;
 //            else if(loop2_type == LOOP_FLOW_PRESSURE)
 //                loop2_x = vals;
-            left_over_rtchart1_flow_vals = rtchart1_wave_list[1];
+
+            auto left_over_rtchart1_flow_vals = rtchart1_wave_list[0];
             if(left_over_rtchart1_flow_vals.size() > 0)
             {
                 if(t-last_rtchart1_flow_time < LINE_BREAK_DELTA)
@@ -527,7 +535,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
                     double delta = (t-last_rtchart1_flow_time)/((double)left_over_rtchart1_flow_vals.size()+1);
                     for(int i=0;i<(int)left_over_rtchart1_flow_vals.size();i++)
                     {
-                        ui->rt_chart1->add_point(1, last_rtchart1_flow_time+delta*(i+1), left_over_rtchart1_flow_vals[i]);
+                        ui->rt_chart1->add_point(0, last_rtchart1_flow_time+delta*(i+1), left_over_rtchart1_flow_vals[i]);
                     }
                 }
                 left_over_rtchart1_flow_vals.clear();
@@ -539,19 +547,19 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
             }
             if(vals.size() > 0)
             {
-                ui->rt_chart1->add_point(1, t, vals[0]);
+                ui->rt_chart1->add_point(0, t, vals[0]);
                 if(vals.size() > 1)
                 {
                     vals.erase(vals.begin());
                     left_over_rtchart1_flow_vals = vals;
-                    rtchart1_wave_list[1]=left_over_rtchart1_flow_vals;
                     last_rtchart1_flow_time = t;
                 }
+                rtchart1_wave_list[0]=left_over_rtchart1_flow_vals;
             }
         }
     }
 
-    querystr = "vmd_id MATCH '";
+/*    querystr = "vmd_id MATCH '";
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");
     querystr.append(common->patient_id);
@@ -650,8 +658,8 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
                 }
             }
         }
-    }
-
+    }*/
+/*
     querystr = "vmd_id MATCH '";
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");
@@ -748,15 +756,15 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
                 }
             }
         }
-    }
-    ui->rt_chart1->trim_left();
-    ui->rt_chart2->trim_left();*/
+    }*/
+
     add_wave_to_chart(0,"Savina","MDC_PRESS_AWAY",common->rtobservation_reader,ui->rt_chart1,rtchart1_wave_list,rtchart1_time_list);
-    add_wave_to_chart(1,"Savina","MDC_FLOW_AWAY",common->rtobservation_reader,ui->rt_chart1,rtchart1_wave_list,rtchart1_time_list);
-    add_wave_to_chart(0,"Savina","FOYA_MEASURED_VolumeInspirationBegan",common->rtobservation_reader,ui->rt_chart2,rtchart2_wave_list,rtchart2_time_list);
+    add_wave_to_chart(1,"Savina","MDC_FLOW_AWAY",common->rtobservation_reader_2,ui->rt_chart1,rtchart1_wave_list,rtchart1_time_list);
+    add_wave_to_chart(0,"Savina","FOYA_MEASURED_VolumeInspirationBegan",common->rtobservation_reader_2,ui->rt_chart2,rtchart2_wave_list,rtchart2_time_list);
     ui->rt_chart1->trim_left();
     ui->rt_chart2->trim_left();
-/*
+    ui->legend->update();
+
     if(captured)
         return;
     if(loop1_x.size() > 0 && loop1_y.size() > 0 && loop1_type != LOOP_PTRACH_VOLUME && loop1_type != LOOP_FLOW_PTRACH)
@@ -924,7 +932,7 @@ finish:
         }
         set_next_loop_as_cap = 0;
         loop_snapshot = next_loop_snapshot;
-    }*/
+    }
 }
 
 void Tab_Observations_mainPage_Widget::loop_check_and_expand(int loopnum, float x, float y)
@@ -1457,8 +1465,8 @@ void Tab_Observations_mainPage_Widget::on_visualization_new_clicked()
 void Tab_Observations_mainPage_Widget::add_wave_to_chart(int series_index,std::string model,std::string mdc_code,
                                                          dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
                                                          mc_chart* chart,
-                                                         QList<std::vector<float>> wave_list,
-                                                         QList<uint64_t> time_list)
+                                                         QList<std::vector<float>> &wave_list,
+                                                         QList<uint64_t> &time_list)
 {
     Common* common = Common::instance();
     if(common->patient_id.size() == 0)
@@ -1500,7 +1508,7 @@ void Tab_Observations_mainPage_Widget::add_wave_to_chart(int series_index,std::s
             auto left_over_rtchart_vals =wave_list[series_index];
             auto last_rtchart_time =time_list[series_index];
             data.get_values("values", vals);
-            qDebug()<<left_over_rtchart_vals.size();
+
             if(left_over_rtchart_vals.size() > 0)
             {
                 if(t-last_rtchart_time < LINE_BREAK_DELTA)
@@ -1520,15 +1528,16 @@ void Tab_Observations_mainPage_Widget::add_wave_to_chart(int series_index,std::s
             }
             if(vals.size() > 0)
             {
-
                 chart->add_point(series_index, t, vals[0]);
                 if(vals.size() > 1)
                 {
                     vals.erase(vals.begin());
                     left_over_rtchart_vals = vals;
-                    wave_list[series_index]=left_over_rtchart_vals;
                     last_rtchart_time = t;
                 }
+                wave_list[series_index]=left_over_rtchart_vals;
+                time_list[series_index]=last_rtchart_time ;
+
             }
         }
     }

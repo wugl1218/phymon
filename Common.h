@@ -193,6 +193,9 @@ public:
 
     dds::topic::Topic<dds::core::xtypes::DynamicData> rtobservation_topic = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader_2 = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader_3 = nullptr;
+
     dds::core::xtypes::DynamicType rtobservation_type;
 
     dds::topic::Topic<dds::core::xtypes::DynamicData> topalarm_topic = nullptr;

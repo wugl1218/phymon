@@ -14,6 +14,9 @@ class mc_legend_entry
 {
 public:
     std::string name;
+    std::string model;
+    std::string mdc_code;
+
     QColor color;
 };
 
@@ -37,7 +40,7 @@ public:
 
     void set_series_color(int series_index, QColor color);
     QColor get_series_color(int series_index);
-    void set_series_text(int series_index, std::string text);
+    void set_series_text(int series_index, std::string text, std::string model, std::string mdc_code);
     std::string get_series_text(int series_index);
     void remove_series(int series_index);
 
@@ -54,6 +57,8 @@ private:
     int left_margin;
     int top_margin;
     int square_width;
+    int square_height;
+
     int vertical_spacing;
     int font_size;
     QColor text_color;

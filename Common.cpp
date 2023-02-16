@@ -99,7 +99,8 @@ Common::Common(MainDialog* m)
         int error=0;while (dummy!="IP200"&&error<5)
             {
             results = cbl->queryDocuments(db, sql, dummy);
-            qDebug()<<QString::fromStdString(dummy);
+            qDebug()<<QString::fromStdString(dummy);    dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader = nullptr;
+
             fflog_out(log,dummy.c_str());error++;
             }
         for(auto& result: results)
@@ -214,6 +215,8 @@ void Common::init_dds(int domain_id)
     rtobservation_type = dds->getTypeObject("dds_collector::RTObservation");
     rtobservation_topic = dds->getTopic("TP_RTObservation", rtobservation_type, "");
     rtobservation_reader = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
+    rtobservation_reader_2 = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
+    rtobservation_reader_3 = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
 
     topalarm_type = dds->getTypeObject("common::Alert");
     topalarm_topic = dds->getTopic("TP_PatientAlert", topalarm_type, "");
