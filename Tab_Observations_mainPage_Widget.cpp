@@ -558,8 +558,14 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
             }
         }
     }
-
-/*    querystr = "vmd_id MATCH '";
+/*    uint32_t current_time1 = Common::get_time_ms();
+   if(Common::get_elapsed_time(current_time1, last_query_time1) > 1000)
+    {
+        last_query_time1 = current_time1;
+        ++time_running;
+    }
+    if(time_running>10);*/
+ /*   querystr = "vmd_id MATCH '";
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");
     querystr.append(common->patient_id);
@@ -588,7 +594,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
                 continue;
             uint64_t t = ((uint64_t)sec)*1000 + ((uint64_t)nsec)/1000000;
             std::vector<float> vals;
-            data.get_values("values", vals);
+            data.get_values("values", vals); */
 //            if(loop_start != -1)
 //            {
 //                if(loop_start < (int)vals.size())
@@ -627,7 +633,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
 //                loop2_x = vals;
 //            else if(loop2_type == LOOP_FLOW_PRESSURE)
 //                loop2_y = vals;
-            left_over_rtchart1_paw_vals = rtchart1_wave_list[0];
+ /*           left_over_rtchart1_paw_vals = rtchart1_wave_list[0];
 
             if(left_over_rtchart1_paw_vals.size() > 0)
             {

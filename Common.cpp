@@ -75,6 +75,7 @@ Common::Common(MainDialog* m)
     pluginName = "UtilsPlugin";
     utils = qobject_cast<UtilsInterface*>(pluginManager->getPluginObject(pluginName));
     db = cbl->getAppDB("VMD.cbl", db_path, false);
+    alarm_db = cbl->getAppDB("AlarmHis.cbl", db_path, false);
 
     display_items_db = cbl->getAppDB("DisplayItems.cbl", display_items_path, false);
     std::string dummy;
