@@ -50,16 +50,15 @@ private:
     uint8_t active;
     QList<std::vector<float>> rtchart1_wave_list;
     QList<std::vector<float>> rtchart2_wave_list;
+    QList<uint64_t> rtchart1_time_list;
+    QList<uint64_t> rtchart2_time_list;
 
-//    std::vector<float> left_over_rtchart_2_vals[21];
-//    <uint64_t> last_rtchart_1_time;
-//    QList <uint64_t> last_rtchart_2_time;
-    std::vector<float> left_over_rtchart1_paw_vals;
-    uint64_t last_rtchart1_paw_time;
-    std::vector<float> left_over_rtchart1_flow_vals;
-    uint64_t last_rtchart1_flow_time;
-    std::vector<float> left_over_rtchart2_vals;
-    uint64_t last_rtchart2_time;
+//    std::vector<float> left_over_rtchart1_paw_vals;
+//    uint64_t last_rtchart1_paw_time;
+//    std::vector<float> left_over_rtchart1_flow_vals;
+//    uint64_t last_rtchart1_flow_time;
+//    std::vector<float> left_over_rtchart2_vals;
+//    uint64_t last_rtchart2_time;
     int loop1_type;
     int loop2_type;
     float last_flow_val;
@@ -95,7 +94,11 @@ private:
     void set_checked(QWidget* w, uint8_t checked);
     void loop_check_and_expand(int loopnum, float x, float y);
     void loop_check_and_shrink(int loopnum, float x, float y);
-    void add_wave_to_chart(int series_index, std::string model, std::string mdc_code, dds::sub::DataReader<dds::core::xtypes::DynamicData> reader, mc_chart *chart, QList<std::vector<float> > wave_list);
+    void add_wave_to_chart(int series_index, std::string model, std::string mdc_code,
+                           dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
+                           mc_chart *chart,
+                           QList<std::vector<float> > wave_list,
+                           QList<uint64_t> time_list);
 
 private slots:
     void update_triggered();
