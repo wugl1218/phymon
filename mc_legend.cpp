@@ -8,7 +8,7 @@ mc_legend::mc_legend(QWidget *parent)
 {
     left_margin = 0;
     top_margin = 0;
-    square_width = 200;
+    square_width = 220;
     square_height =70;
     vertical_spacing = 40;
     font_size = 16;
@@ -180,24 +180,26 @@ void mc_legend::paintEvent(QPaintEvent *event)
             querystr.append(entries[i].mdc_code);
             querystr.append("'");
             dds::sub::cond::QueryCondition qcond(
-                        dds::sub::Query(common->rtobservation_reader_3, querystr),
+                        dds::sub::Query(common->observation_reader_2, querystr),
                         dds::sub::status::DataState(
                         dds::sub::status::SampleState::any(),
                         dds::sub::status::ViewState::any(),
                         dds::sub::status::InstanceState::alive()));
-            dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->rtobservation_reader_3.select().condition(qcond).read();
+            dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->observation_reader_2.select().condition(qcond).read();
             for(auto& sample : samples)
             {
                 if(sample.info().valid())
                 {
                     dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
-                    std::vector<float> vals;
-                    data.get_values("values", vals);
+                    //data.get_values("values", vals);
+                    float val = data.value<float>("value");
+//                    std::vector<float> vals;
+//                    vals.push_back(val);
                     std::string unit =data.value<std::string>("unit");
                     int length1= unit.length()*10;
                     Common::draw_text(painter, left_margin +  10,
                                       top_margin + vertical_spacing*i + 50,
-                                      Qt::AlignLeft | Qt::AlignVCenter, QString::number(vals[0]));
+                                      Qt::AlignLeft | Qt::AlignVCenter, QString::number(val));
                     Common::draw_text(painter, left_margin +  135,
                                       top_margin + vertical_spacing*i + 50,
                                       Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(unit));

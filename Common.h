@@ -33,7 +33,6 @@
 #define DEFAULT_FRICTION 0.35
 #define LINE_BREAK_DELTA 3000
 
-
 class MainDialog;
 class Tab_Devices_Widget;
 class Tab_Utilities_alarmHistoryPage_Widget;
@@ -182,6 +181,7 @@ public:
     dds::sub::DataReader<dds::core::xtypes::DynamicData> history_observation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> visualizetion_observation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> observation_reader = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> observation_reader_2 = nullptr;
     dds::core::xtypes::DynamicType observation_type;
 
     dds::topic::Topic<dds::core::xtypes::DynamicData> chansettings_topic = nullptr;
@@ -195,7 +195,6 @@ public:
     dds::topic::Topic<dds::core::xtypes::DynamicData> rtobservation_topic = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader_2 = nullptr;
-    dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader_3 = nullptr;
 
     dds::core::xtypes::DynamicType rtobservation_type;
 

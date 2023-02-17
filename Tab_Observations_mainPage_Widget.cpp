@@ -37,8 +37,8 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     ui->rt_chart1->set_series_width(0,2);
     ui->rt_chart1->set_scrollable(0);
     ui->rt_chart1->set_zoomable(0);
-    ui->rt_chart1->set_view_range_max_y(100);
-    ui->rt_chart1->set_view_range_min_y(-100);
+    ui->rt_chart1->set_view_range_max_y(200);
+    ui->rt_chart1->set_view_range_min_y(0);
     ui->rt_chart1->set_num_labels_x(5);
     ui->rt_chart1->set_num_labels_y(5);
     ui->rt_chart1->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
@@ -56,13 +56,7 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     ui->rt_chart2->set_series_color(0, QColor(0xce, 0x5c, 0x00));
     ui->rt_chart2->set_series_color(1, QColor(144, 50, 200));
 
-    ui->legend->set_series_text(0, "PAW","Savina","MDC_PRESS_AWAY");
-    ui->legend->set_series_text(1, "FLOW","Savina","MDC_FLOW_AWAY");
-    ui->legend->set_series_text(2, "RV","Savina","FOYA_MEASURED_VolumeInspirationBegan");
-    ui->legend->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
-    ui->legend->set_series_color(1, QColor(0x5c, 0xe5, 0x5f));
-    ui->legend->set_series_color(2, QColor(0xce, 0x5c, 0x00));
-    ui->legend->set_top_margin(35);
+    ui->legend->set_top_margin(10);
     ui->legend->set_text_color(QColor(255,255,255,255));
     ui->legend->set_vertical_spacing(80);
     connect(ui->legend, SIGNAL(on_series_select(int)), this, SLOT(on_series_pressed(int)));
@@ -763,10 +757,15 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
             }
         }
     }*/
-
-    add_wave_to_chart(0,"Savina","MDC_PRESS_AWAY",common->rtobservation_reader,ui->rt_chart1,rtchart1_wave_list,rtchart1_time_list);
-    add_wave_to_chart(1,"Savina","MDC_FLOW_AWAY",common->rtobservation_reader_2,ui->rt_chart1,rtchart1_wave_list,rtchart1_time_list);
-    add_wave_to_chart(0,"Savina","FOYA_MEASURED_VolumeInspirationBegan",common->rtobservation_reader_2,ui->rt_chart2,rtchart2_wave_list,rtchart2_time_list);
+    ui->legend->set_series_text(0, "Tplat","Savina","DRAEGER_MEASURED_CP1_Plateau");
+    ui->legend->set_series_text(1, "PEEP","Savina","MDC_PRESS_AWAY");
+    ui->legend->set_series_text(2, "Flow peak","Savina","FOYA_MEASURED_FlowPeak");
+    ui->legend->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
+    ui->legend->set_series_color(1, QColor(0x5c, 0xe5, 0x5f));
+    ui->legend->set_series_color(2, QColor(0xce, 0x5c, 0x00));
+    add_wave_to_chart(0,"Savina","DRAEGER_MEASURED_CP1_Plateau",common->observation_reader_2,ui->rt_chart1,ture,rtchart1_wave_list,rtchart1_time_list);
+    add_wave_to_chart(1,"Savina","MDC_PRESS_AWAY",common->observation_reader_2,ui->rt_chart1,ture,rtchart1_wave_list,rtchart1_time_list);
+    add_wave_to_chart(0,"Savina","FOYA_MEASURED_FlowPeak",common->observation_reader_2,ui->rt_chart2,ture,rtchart2_wave_list,rtchart2_time_list);
     ui->rt_chart1->trim_left();
     ui->rt_chart2->trim_left();
     ui->legend->update();
@@ -1468,15 +1467,21 @@ void Tab_Observations_mainPage_Widget::on_visualization_new_clicked()
 
 }
 //0215
-void Tab_Observations_mainPage_Widget::add_wave_to_chart(int series_index,std::string model,std::string mdc_code,
+void Tab_Observations_mainPage_Widget::add_wave_to_chart(int series_index, std::string model, std::string mdc_code,
                                                          dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
                                                          mc_chart* chart,
+                                                         bool is_Obs,
                                                          QList<std::vector<float>> &wave_list,
                                                          QList<uint64_t> &time_list)
 {
     Common* common = Common::instance();
     if(common->patient_id.size() == 0)
         return;
+    int line_break_delta;
+    if(is_Obs)
+        line_break_delta=10000;
+    else
+        line_break_delta=3000;
     std::string querystr = "vmd_id MATCH '";
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");
@@ -1492,7 +1497,7 @@ void Tab_Observations_mainPage_Widget::add_wave_to_chart(int series_index,std::s
                 dds::sub::status::SampleState::any(),
                 dds::sub::status::ViewState::any(),
                 dds::sub::status::InstanceState::alive()));
-    dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples2 = reader.select().condition(qcond).take();
+    dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples2 = reader.select().condition(qcond).read();
     if(samples2.length() == 0)
         return;
 
@@ -1507,17 +1512,22 @@ void Tab_Observations_mainPage_Widget::add_wave_to_chart(int series_index,std::s
             loaned_member.return_loan();
             time_t now = time(NULL);
             now -= 3;
-            if(sec < now)
-                continue;
+    /*        if(sec < now)
+                continue;*/
             uint64_t t = ((uint64_t)sec)*1000 + ((uint64_t)nsec)/1000000;
             std::vector<float> vals;
             auto left_over_rtchart_vals =wave_list[series_index];
             auto last_rtchart_time =time_list[series_index];
-            data.get_values("values", vals);
-
+            if(is_Obs)
+            {
+                float val = data.value<float>("value");
+                vals.push_back(val);
+            }
+            else
+               data.get_values("values", vals);
             if(left_over_rtchart_vals.size() > 0)
             {
-                if(t-last_rtchart_time < LINE_BREAK_DELTA)
+                if(t-last_rtchart_time < line_break_delta)
                 {
                     double delta = (t-last_rtchart_time)/((double)left_over_rtchart_vals.size()+1);
                     for(int i=0;i<(int)left_over_rtchart_vals.size();i++)
@@ -1530,7 +1540,7 @@ void Tab_Observations_mainPage_Widget::add_wave_to_chart(int series_index,std::s
             if(t > chart->get_view_range_max_x())
             {
                 chart->set_view_range_max_x(t);
-                chart->set_view_range_min_x(t-30*1000);
+                chart->set_view_range_min_x(t-5*60*1000);
             }
             if(vals.size() > 0)
             {

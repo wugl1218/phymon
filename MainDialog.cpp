@@ -161,7 +161,7 @@ void MainDialog::db_clean()
 {
     Common* common = Common::instance();
     std::string dummy;
-    std::string sql = "SELECT meta().id FROM _ WHERE (data_source='NumericDeviceSelection' OR data_source='NumericVisibility')";
+    std::string sql = "SELECT meta().id FROM _ WHERE (data_source='NumericDeviceSelection' OR data_source='Obs')";
     sql.append(" AND expired=1");
     sql.append(" AND meta().expiration IS NOT VALUED");
     cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);

@@ -204,6 +204,7 @@ void Common::init_dds(int domain_id)
     history_observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
     visualizetion_observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
     observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
+    observation_reader_2 = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
 
     chansettings_type = dds->getTypeObject("dds_collector::ChannelSettings");
     chansettings_topic = dds->getTopic("TP_ChannelSettings", chansettings_type, "");
@@ -217,7 +218,6 @@ void Common::init_dds(int domain_id)
     rtobservation_topic = dds->getTopic("TP_RTObservation", rtobservation_type, "");
     rtobservation_reader = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
     rtobservation_reader_2 = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
-    rtobservation_reader_3 = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
 
     topalarm_type = dds->getTypeObject("common::Alert");
     topalarm_topic = dds->getTopic("TP_PatientAlert", topalarm_type, "");
@@ -582,7 +582,7 @@ void Common::populate_item_checkstate()
 {
     item_checkstate.clear();
     std::string dummy;
-    std::string sql = "SELECT item,visibility,morder,model FROM _ WHERE data_source='NumericVisibility' AND patient_id='";
+    std::string sql = "SELECT item,visibility,display_index,model FROM _ WHERE data_source='Obs' AND patient_id='";
     sql.append(patient_id);
     sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
     cbl::ResultSet results2= cbl->queryDocuments(display_items_db, sql, dummy);

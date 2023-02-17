@@ -97,7 +97,8 @@ private:
     void add_wave_to_chart(int series_index, std::string model, std::string mdc_code,
                            dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
                            mc_chart *chart,
-                           QList<std::vector<float> > &wave_list,
+                           bool is_Obs,
+                           QList<std::vector<float>> &wave_list,
                            QList<uint64_t> &time_list);
 
 private slots:
