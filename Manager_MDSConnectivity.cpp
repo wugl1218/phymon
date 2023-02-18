@@ -16,18 +16,6 @@ void Manager_MDSConnectivity::init()
                 dds::sub::status::InstanceState::alive()));
     std::string querystr3 = "alarm_state MATCH '' AND source_timestamp.sec >";
             querystr3.append(QString::number(time(NULL)-6).toStdString());
-    patient_alarm_cond = new dds::sub::cond::QueryCondition(
-                dds::sub::Query(common->topalarm_reader, querystr3),
-                dds::sub::status::DataState(
-                dds::sub::status::SampleState::any(),//not_read
-                dds::sub::status::ViewState::any(),
-                dds::sub::status::InstanceState::alive()));
-    technical_alarm_cond = new dds::sub::cond::QueryCondition(
-                dds::sub::Query(common->topalarm_reader_2, querystr3),
-                dds::sub::status::DataState(
-                dds::sub::status::SampleState::any(),//not_read
-                dds::sub::status::ViewState::any(),
-                dds::sub::status::InstanceState::alive()));
     last_query_time = 0;
     last_query_time1 = 0;
 }
@@ -414,5 +402,5 @@ void Manager_MDSConnectivity::step()
         //
         common->monitor_page->update_MDS();
         }
-
+    }
 }

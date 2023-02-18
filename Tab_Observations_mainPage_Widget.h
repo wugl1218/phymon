@@ -56,10 +56,6 @@ private:
 
 //    std::vector<float> left_over_rtchart1_paw_vals;
 //    uint64_t last_rtchart1_paw_time;
-    std::vector<float> left_over_rtchart1_flow_vals;
-    uint64_t last_rtchart1_flow_time;
-    std::vector<float> left_over_rtchart2_vals;
-    uint64_t last_rtchart2_time;
     int loop1_type;
     int loop2_type;
     float last_flow_val;

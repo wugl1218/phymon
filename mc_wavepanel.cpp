@@ -91,9 +91,9 @@ void mc_wavepanel::UpdateWave()
 {
     printf("Agooda UpdateWave\n");
     m_DeviceName = "Savina";
-    QueryRtItems(m_DeviceName);
-    QueryObItems(m_DeviceName);
-    QueryDisplayItems();
+    //QueryRtItems(m_DeviceName);
+    //QueryObItems(m_DeviceName);
+    //QueryDisplayItems();
     //GetDisplayIntersec("Savina", "Obs");
 }
 
