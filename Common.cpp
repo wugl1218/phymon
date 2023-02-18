@@ -75,6 +75,7 @@ Common::Common(MainDialog* m)
     pluginName = "UtilsPlugin";
     utils = qobject_cast<UtilsInterface*>(pluginManager->getPluginObject(pluginName));
     db = cbl->getAppDB("VMD.cbl", db_path, false);
+    csp_db = cbl->getAppDB("CSP.cbl", db_path, false);
     alarm_db = cbl->getAppDB("AlarmHis.cbl", db_path, false);
 
     display_items_db = cbl->getAppDB("DisplayItems.cbl", display_items_path, false);
@@ -100,7 +101,7 @@ Common::Common(MainDialog* m)
         int error=0;while (dummy!="IP200"&&error<5)
             {
             results = cbl->queryDocuments(db, sql, dummy);
-            qDebug()<<QString::fromStdString(dummy);    dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader = nullptr;
+            qDebug()<<QString::fromStdString(dummy);
 
             fflog_out(log,dummy.c_str());error++;
             }

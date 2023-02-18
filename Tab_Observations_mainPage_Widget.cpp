@@ -1224,6 +1224,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                     e.val = data.value<float>("value");
                     e.abbv = data.value<std::string>("abbreviation");
                     std::string vt_desc;
+
                     if(e.model.compare("Savina") == 0)
                         vt_desc = "Tidal volume in mL";
                     else
@@ -1233,6 +1234,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                         e.y_max = "1000";
                     else
                         e.y_max = "200";
+
                     rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
                     e.ts.tv_sec = loaned_member.get().value<int32_t>("sec");
                     e.ts.tv_nsec = loaned_member.get().value<uint32_t>("nanosec");

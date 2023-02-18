@@ -32,6 +32,7 @@ void Manager_Device::step()
         last_query_time = current_time;
         devices.clear();
         dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->devcon_reader.select().condition(cond).read();
+        fflog_out(common->log,"Info :: Manager_Device ::TP_devon coller");
         for(auto& sample : samples)
         {
             if(sample.info().valid())
@@ -69,7 +70,7 @@ void Manager_Device::step()
 
             }
         }
-
+        fflog_out(common->log,"Info :: Manager_Device ::update_davices");
         common->devices_page->update_devices(&devices);
         common->alarm_page->update_devices(&devices);
         common->alarm_page_2->update_devices(&devices);

@@ -228,7 +228,7 @@ void mc_legend::paintEvent(QPaintEvent *event)
 //            }
         }
     }
-    update();
+//    update();
 
 }
 
