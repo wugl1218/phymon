@@ -12,7 +12,6 @@ public:
 
 protected:
     void mousePressEvent(QMouseEvent* event);
-
 private:
     mc_wavepanel_add_clicked_cb clicked_cb;
 };

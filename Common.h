@@ -27,7 +27,6 @@
 #include "Tab_NS_Monitor.h"
 #include "CSS_Infusion.h"
 
-
 #define STATIONARY_CHECK_DISTANCE 10.0f
 #define VELOCITY_MULTIPLIER 1.4
 #define DEFAULT_FRICTION 0.35
@@ -144,6 +143,11 @@ public:
     dds::pub::DataWriter<dds::core::xtypes::DynamicData> mds_writer = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> mds_reader = nullptr;
     dds::core::xtypes::DynamicType mds_type;
+
+    dds::topic::Topic<dds::core::xtypes::DynamicData> m_DisplayItem_topic = nullptr;
+    dds::pub::DataWriter<dds::core::xtypes::DynamicData> m_DisplayItem_writer = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> m_DisplayItem_reader = nullptr;
+    dds::core::xtypes::DynamicType m_DisplayItem_type;
 
     dds::pub::DataWriter<dds::core::xtypes::DynamicData> mdsm_writer = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> mdsm_reader = nullptr;

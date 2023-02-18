@@ -17,3 +17,5 @@ void mc_wavepanel_add::mousePressEvent(QMouseEvent* event)
     if(clicked_cb)
         clicked_cb(this->parent());
 }
+
+

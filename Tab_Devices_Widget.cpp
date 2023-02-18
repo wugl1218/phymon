@@ -63,7 +63,6 @@ void Tab_Devices_Widget::table_return()
 void Tab_Devices_Widget::update_devices(std::map<std::string, Device>* btns)
 {
     Common* common = Common::instance();
-
     for(int i=0;i<(int)devices.size();i++)
     {
         ui->devices_horizontalLayout->removeWidget(devices[i]);
@@ -101,11 +100,9 @@ void Tab_Devices_Widget::update_devices(std::map<std::string, Device>* btns)
         }
         i++;
     }
-
     if(active && dev)
     {
         Common* common = Common::instance();
-
         ui->history_table->clearContents();
         std::string querystr;
         int row;
@@ -417,6 +414,7 @@ void Tab_Devices_Widget::update_devices(std::map<std::string, Device>* btns)
 
 void Tab_Devices_Widget::btn_clicked()
 {
+    printf("agooda btn_clicked\n");
     QPushButton* s = (QPushButton*)sender();
     dev_index = s->property("index").value<int>();
     for(int i=0;i<(int)devices.size();i++)

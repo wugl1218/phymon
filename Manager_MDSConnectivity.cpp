@@ -14,7 +14,8 @@ void Manager_MDSConnectivity::init()
                 dds::sub::status::SampleState::any(),
                 dds::sub::status::ViewState::any(),
                 dds::sub::status::InstanceState::alive()));
-    std::string querystr3 = "alarm_state MATCH ''";
+    std::string querystr3 = "alarm_state MATCH '' AND source_timestamp.sec >";
+            querystr3.append(QString::number(time(NULL)-6).toStdString());
     patient_alarm_cond = new dds::sub::cond::QueryCondition(
                 dds::sub::Query(common->topalarm_reader, querystr3),
                 dds::sub::status::DataState(
@@ -227,7 +228,7 @@ void Manager_MDSConnectivity::step()
 /*      std::string dummy;
         std::string sql2 = "SELECT meta().alarm_no,channel_id,vmd_id,patient_id,alarm_code,alarm_description,alarm_priority,alarm_state,source_timestamp.sec,source_timestamp.nanosec FROM _ WHERE data_source='NumericDeviceSelection'";
         cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql2, dummy); */
-
+        uint64_t m=time(NULL)-6;
         if(common->md->mdsm.patient_alarm.size() >0)
         {
         for(auto i=common->md->mdsm.patient_alarm.begin(); i!=common->md->mdsm.patient_alarm.end();)
@@ -265,7 +266,7 @@ void Manager_MDSConnectivity::step()
             for(auto& result: results)
             {
                 uint64_t sec = result.valueAtIndex(0).asInt();
-                if(sec > i->sec)
+                if(m> i->sec||sec > i->sec)
                 {
                     i = common->md->mdsm.patient_alarm.erase(i);
                     is_erase=1;break;
@@ -313,7 +314,7 @@ void Manager_MDSConnectivity::step()
                 for(auto& result: results)
                 {
                     uint64_t sec = result.valueAtIndex(0).asInt();
-                    if(sec > i->sec)
+                    if(m> i->sec||sec > i->sec)
                     {
                         common->md->mdsm.technical_alarm.erase(i);
                         is_erase=1;break;

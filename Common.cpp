@@ -7,7 +7,7 @@
 #include "qpainter.h"
 
 Common* _common = NULL;
-//123
+
 
 
 Common::Common(MainDialog* m)
@@ -25,6 +25,7 @@ Common::Common(MainDialog* m)
     chansettingshis_type(dds::core::xtypes::StructType("")),
     rtobservation_type(dds::core::xtypes::StructType("")),
     topalarm_type(dds::core::xtypes::StructType("")),
+    m_DisplayItem_type(dds::core::xtypes::StructType("")),
     CapturedIssues_type(dds::core::xtypes::StructType(""))
 {
     _common = this;
@@ -197,6 +198,10 @@ void Common::init_dds(int domain_id)
     rtobservation_type = dds->getTypeObject("dds_collector::RTObservation");
     rtobservation_topic = dds->getTopic("TP_RTObservation", rtobservation_type, "");
     rtobservation_reader = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
+
+    m_DisplayItem_type = dds->getTypeObject("MonitoringStation::DisplayItems");
+    m_DisplayItem_topic = dds->getTopic("TP_DisplayItems", m_DisplayItem_type, "");
+    m_DisplayItem_reader = dds->getReader(m_DisplayItem_topic, "VMD_Library::profile::drDisplayItems");
 
     topalarm_type = dds->getTypeObject("common::Alert");
     topalarm_topic = dds->getTopic("TP_PatientAlert", topalarm_type, "");

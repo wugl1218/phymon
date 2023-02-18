@@ -24,6 +24,8 @@ void Dialog_wave_selection::clear_tabs()
 
 void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<std::string>* items, uint8_t has_loop)
 {
+    if (!items)
+        return;
     QWidget* w = new QWidget();
     w->setStyleSheet("background-color: rgb(0,73,159);");
     ui->tabWidget->addTab(w, tab_name);
@@ -92,6 +94,36 @@ void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<std::strin
         b->setFont(f);
         b->setStyleSheet(odd_style.c_str());
         connect(b, SIGNAL(clicked()), this, SLOT(clicked()));
+    }
+    if (items->size() > 30)
+    {
+        QHBoxLayout* page_layout = new QHBoxLayout(w);
+        page_layout->setSpacing(11);
+        page_layout->setContentsMargins(0,0,0,0);
+        main_layout->addLayout(page_layout, 0);
+
+        mc_btn_Clickable* up = new mc_btn_Clickable();
+        page_layout->addWidget(up, 0);
+        up->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        up->setText("PageUp");
+        up->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        up->setMargin(22);
+        QFont f = up->font();
+        f.setPixelSize(19);
+        up->setFont(f);
+        up->setStyleSheet(odd_style.c_str());
+        up->setEnabled(false);
+        connect(up, SIGNAL(clicked()), this, SLOT(clicked()));
+
+        mc_btn_Clickable* next = new mc_btn_Clickable();
+        page_layout->addWidget(next, 0);
+        next->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        next->setText("PageDown");
+        next->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        next->setMargin(22);
+        next->setFont(f);
+        next->setStyleSheet(odd_style.c_str());
+        connect(up, SIGNAL(clicked()), this, SLOT(clicked()));
     }
 }
 
