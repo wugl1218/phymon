@@ -1,6 +1,9 @@
 #ifndef TAB_OBSERVATIONS_MAINPAGE_WIDGET_H
 #define TAB_OBSERVATIONS_MAINPAGE_WIDGET_H
 
+#include "dds/core/corefwd.hpp"
+#include "dds/sub/TDataReader.hpp"
+#include "mc_chart.h"
 #include "mc_loop.h"
 #include "qgroupbox.h"
 #include "qtablewidget.h"
@@ -10,7 +13,6 @@
 #include <QAbstractButton>
 #include "Dialog_loopselection.h"
 #include "Dialog_visualization_config.h"
-
 class mc_loop_entry
 {
 public:
@@ -32,7 +34,7 @@ public:
     ~Tab_Observations_mainPage_Widget();
     void clear_points();
     Ui::Tab_Observations_mainPage_Widget *ui;
-    std::string CapturedIssues_model;
+    std::string CapturedIssues_channel_id;
     Dialog_loopselection lsd;
     Dialog_visualization_config vsd;
 protected:
@@ -46,8 +48,14 @@ private:
     QTimer update_timer;
     QTimer chart_update_timer;
     uint8_t active;
-    std::vector<float> left_over_rtchart1_paw_vals;
-    uint64_t last_rtchart1_paw_time;
+    QList<std::vector<float>> rtchart1_wave_list;
+    QList<std::vector<float>> rtchart2_wave_list;
+    QList<uint64_t> rtchart1_time_list;
+    QList<uint64_t> rtchart2_time_list;
+    QList<QColor> line_color_list;
+
+//    std::vector<float> left_over_rtchart1_paw_vals;
+//    uint64_t last_rtchart1_paw_time;
     std::vector<float> left_over_rtchart1_flow_vals;
     uint64_t last_rtchart1_flow_time;
     std::vector<float> left_over_rtchart2_vals;
@@ -87,7 +95,16 @@ private:
     void set_checked(QWidget* w, uint8_t checked);
     void loop_check_and_expand(int loopnum, float x, float y);
     void loop_check_and_shrink(int loopnum, float x, float y);
-
+    void add_wave_to_chart_Obs(int series_index,
+                               uint64_t t,float val,
+                               mc_chart *chart,
+                               QList<std::vector<float>> &wave_list,
+                               QList<uint64_t> &time_list);
+    void add_wave_to_chart_RTO(int series_index, std::string model, std::string code,
+                               dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
+                               mc_chart *chart,
+                               QList<std::vector<float>> &wave_list,
+                               QList<uint64_t> &time_list);
 private slots:
     void update_triggered();
     void chart_update_triggered();
@@ -115,6 +132,7 @@ private slots:
 
     void on_visualization_new_clicked();
 
+    void on_Obs_clicked();
 signals:
     void changeToMetricItemsDisplayConfigPage();
     void changeToHistoryPage();

@@ -269,7 +269,11 @@ uint8_t mc_chart::is_visible()
 {
     return visible;
 }
-
+void mc_chart::set_line_break_delta(int line_break_delta)
+{
+    this->line_break_delta = line_break_delta;
+    update();
+}
 void mc_chart::paintEvent(QPaintEvent*)
 {
     if(view_range_max_x == 0 || num_labels_x < 2 || num_labels_y < 2 || !visible)
@@ -358,7 +362,7 @@ void mc_chart::paintEvent(QPaintEvent*)
                 if(next != points[i].end() && next->first > view_range_min_x)
                 {
                     uint64_t delta_time = next->first - it->first;
-                    if(delta_time >= LINE_BREAK_DELTA)
+                    if(delta_time >= line_break_delta)
                         continue;
                     float delta_val = next->second - it->second;
                     float ratio = (double)(view_range_min_x - it->first)/delta_time;
@@ -377,7 +381,7 @@ void mc_chart::paintEvent(QPaintEvent*)
                 if(prev->first < view_range_max_x)
                 {
                     uint64_t delta_time = it->first - prev->first;
-                    if(delta_time >= LINE_BREAK_DELTA)
+                    if(delta_time >= line_break_delta)
                         break;
                     float delta_val = it->second - prev->second;
                     float ratio = (double)(view_range_max_x - prev->first)/delta_time;
@@ -392,7 +396,7 @@ void mc_chart::paintEvent(QPaintEvent*)
                 auto prev = it;
                 prev--;
                 uint64_t delta_time = it->first - prev->first;
-                if(delta_time >= LINE_BREAK_DELTA)
+                if(delta_time >= line_break_delta)
                 {
                     painter.drawPolyline(&scratch[0], scratch.size());
                     scratch.clear();
@@ -656,17 +660,18 @@ void mc_chart::handle_release(float x, float y)
 
 void mc_chart::mouseMoveEvent(QMouseEvent *event)
 {
-    handle_move(event->pos().x(), event->pos().y());
+    //handle_move(event->pos().x(), event->pos().y());
 }
 
 void mc_chart::mousePressEvent(QMouseEvent *event)
 {
-    handle_press(event->pos().x(), event->pos().y());
+    //handle_press(event->pos().x(), event->pos().y());
+    emit clicked();
 }
 
 void mc_chart::mouseReleaseEvent(QMouseEvent *event)
 {
-    handle_release(event->pos().x(), event->pos().y());
+    //handle_release(event->pos().x(), event->pos().y());
 }
 
 bool mc_chart::event(QEvent* event)

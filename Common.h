@@ -32,21 +32,26 @@
 #define DEFAULT_FRICTION 0.35
 #define LINE_BREAK_DELTA 3000
 
-
 class MainDialog;
 class Tab_Devices_Widget;
 class Tab_Utilities_alarmHistoryPage_Widget;
 class Tab_Observations_metricItemsDisplayConfigPage_Widget;
 class Tab_Observations_mainPage_Widget;
 class Tab_Observations_historyPage_Widget;
+class TOPAlarm;
 
 class mc_entry
 {
 public:
     std::string code;
+    std::string model;
     std::string desc;
-    std::string unit;
     std::string abbv;
+    std::string unit;
+    std::string y_max;
+    std::string y_min;
+    std::string display_index;
+    std::string display_desc;
     float val;
     struct timespec ts;
 };
@@ -59,6 +64,8 @@ public:
     std::string model;
     std::string serial_no;
     std::string desc;
+    std::multimap<int,TOPAlarm,std::greater<int>> top_patient_alarm;
+    std::multimap<int,TOPAlarm,std::greater<int>> top_technical_alarm;
 };
 
 class mc_checkstate
@@ -76,6 +83,7 @@ public:
     Tab_Utilities_exporterPage_Widget* exporter_page;
     Tab_Utilities_alarmHistoryPage_Widget* alarm_page = NULL;
     Tab_Utilities_alarmHistoryPage_Widget* alarm_page_2 = NULL;
+    Tab_Utilities_alarmHistoryPage_Widget* alarm_page_3 = NULL;
     Tab_Devices_Widget* devices_page;
     Tab_Observations_Widget* observation_widget_page;
     Tab_Observations_metricItemsDisplayConfigPage_Widget* device_settings_page;
@@ -98,6 +106,8 @@ public:
     std::string bed_id;
     std::string room_id;
     cbl::Database db;
+    cbl::Database alarm_db;
+    cbl::Database csp_db;
     cbl::Replicator observation_puller;
     cbl::Replicator display_items_pusher;
     cbl::Replicator display_items_puller;
@@ -120,6 +130,7 @@ public:
     std::map<std::string, mc_checkstate> item_checkstate;
     std::string qos_path;
     std::string log_path;
+    std::string Ping_url;
     std::string export_path;
     std::string history_model;
     std::string history_mdccode;
@@ -133,6 +144,7 @@ public:
     fflog_t* log;
     QJsonArray Restful_API(char queryStartTime[64] , char queryEndTime[64], std::string dataSource);
     QJsonArray Restful_API_Orderby(char queryStartTime[64] , char queryEndTime[64], std::string dataSource, std::string model, std::string orderStr);
+    QJsonArray Restful_API_Alarm(char queryStartTime[64] , char queryEndTime[64], std::string dataSource, std::string model, std::string orderStr);
 
     dds::domain::DomainParticipant participant = nullptr;
     dds::pub::Publisher publisher = nullptr;
@@ -171,6 +183,7 @@ public:
 
     dds::topic::Topic<dds::core::xtypes::DynamicData> useractions_topic = nullptr;
     dds::pub::DataWriter<dds::core::xtypes::DynamicData> useractions_writer = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> useractions_reader = nullptr;
     dds::core::xtypes::DynamicType useractions_type;
 
     dds::topic::Topic<dds::core::xtypes::DynamicData> observation_topic = nullptr;
@@ -178,6 +191,7 @@ public:
     dds::sub::DataReader<dds::core::xtypes::DynamicData> history_observation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> visualizetion_observation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> observation_reader = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> observation_reader_2 = nullptr;
     dds::core::xtypes::DynamicType observation_type;
 
     dds::topic::Topic<dds::core::xtypes::DynamicData> chansettings_topic = nullptr;
@@ -190,6 +204,8 @@ public:
 
     dds::topic::Topic<dds::core::xtypes::DynamicData> rtobservation_topic = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader_2 = nullptr;
+
     dds::core::xtypes::DynamicType rtobservation_type;
 
     dds::topic::Topic<dds::core::xtypes::DynamicData> topalarm_topic = nullptr;

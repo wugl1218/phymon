@@ -76,6 +76,7 @@ public:
 
     void set_visible(uint8_t visible);
     uint8_t is_visible();
+    void set_line_break_delta(int line_break_delta);
 
     void trim_left(); //Removes points left of view_range_min_x
 
@@ -96,11 +97,13 @@ signals:
     void on_point_select(int series_index, uint64_t timestamp, float val, int screenspace_x, int screenspace_y);
     void on_paint();
     void on_press();
+    void clicked();
 
 private slots:
     void worker();
 
 private:
+    int line_break_delta =3000;
     std::vector<std::multimap<uint64_t, float>> points;
     std::vector<QColor> colors;
     std::vector<int> widths;

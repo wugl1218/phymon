@@ -28,6 +28,7 @@ MainDialog::MainDialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::MainDialog)
     , nd(this)
+    , mute(this)
     , common(this)
 {
     ui->setupUi(this);
@@ -94,10 +95,6 @@ MainDialog::MainDialog(QWidget *parent)
     exporter.init();
     mainWorker = new QTimer(this);
     connect(mainWorker, SIGNAL(timeout()), this, SLOT(mainWorkerUpdate()));
-    connect(ui->topalarm_label_1, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
-    connect(ui->topalarm_label_2, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
-    connect(ui->topalarm_label_3, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
-    connect(ui->topalarm_label_4, SIGNAL(clicked()), this, SLOT(is_alarmSound()));
 
     mainWorker->start(16);
     db_cleaner = new QTimer(this);
@@ -164,10 +161,16 @@ void MainDialog::db_clean()
 {
     Common* common = Common::instance();
     std::string dummy;
-    std::string sql = "SELECT meta().id FROM _ WHERE (data_source='NumericDeviceSelection' OR data_source='NumericVisibility')";
+    std::string sql = "SELECT meta().id FROM _ WHERE (data_source='NumericDeviceSelection' OR data_source='Obs')";
     sql.append(" AND expired=1");
     sql.append(" AND meta().expiration IS NOT VALUED");
     cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+    int error=0;while (dummy!="IP200"&&error<5)
+        {
+        results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        qDebug()<<QString::fromStdString(dummy);
+        fflog_out(common->log,dummy.c_str());error++;
+        }
     for(auto& result: results)
     {
         std::string id = result.valueAtIndex(0).asstring();
@@ -204,16 +207,6 @@ void MainDialog::mainWorkerUpdate()
 
 }
 
-
-void MainDialog::is_alarmSound()
-{
-
-     if(is_alarmSound_index)
-         is_alarmSound_index=false;
-     else
-        is_alarmSound_index=true;
-
-}
 void MainDialog::on_Xbtn_clicked()
 {
     exit(1);

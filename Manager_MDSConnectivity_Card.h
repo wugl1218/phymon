@@ -33,6 +33,7 @@ public:
     void update_but();
     QLabel *title;
     QLabel *circle;
+    uint8_t circle_time=0;
     bool eventFilter(QObject *watched, QEvent *event);
     std::map<std::string, int> patient_alarm;
     void set_alarm(std::map<std::string, int> patient_alarm);

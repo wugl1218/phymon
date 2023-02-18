@@ -8,7 +8,8 @@ mc_legend::mc_legend(QWidget *parent)
 {
     left_margin = 0;
     top_margin = 0;
-    square_width = 20;
+    square_width = 220;
+    square_height =70;
     vertical_spacing = 40;
     font_size = 16;
 }
@@ -96,7 +97,11 @@ QColor mc_legend::get_series_color(int series_index)
     return entries[series_index].color;
 }
 
-void mc_legend::set_series_text(int series_index, std::string text)
+void mc_legend::set_series_text(int series_index,
+                                std::string text,
+                                std::string model,
+                                std::string unit,
+                                float val)
 {
     if(series_index >= (int)entries.size())
     {
@@ -105,6 +110,10 @@ void mc_legend::set_series_text(int series_index, std::string text)
         entries.resize(series_index+1, e);
     }
     entries[series_index].name = text;
+    entries[series_index].model = model;
+    entries[series_index].unit = unit;
+    entries[series_index].val = val;
+
     update();
 }
 
@@ -142,25 +151,89 @@ QColor mc_legend::get_text_color()
 
 void mc_legend::paintEvent(QPaintEvent *event)
 {
+    Common* common = Common::instance();
+
     QPainter painter(this);
+
     painter.setRenderHint(QPainter::Antialiasing, true);
     QPen nopen(Qt::NoPen);
     QPen pen(text_color);
+    QColor blackColor =QColor(04,05,07);
+    QPen black(blackColor);
     painter.setPen(nopen);
+    painter.drawRect(0,0,width(),height());
     for(int i=0;i<(int)entries.size();i++)
     {
         QBrush brush(entries[i].color);
         painter.setBrush(brush);
         painter.setPen(nopen);
-        painter.drawRect(left_margin, top_margin + vertical_spacing*i, square_width, square_width);
+        painter.drawRoundedRect(0,top_margin + vertical_spacing*i,square_width,square_height,10,10);
         if(entries[i].name.size() > 0)
         {
+            if(entries[i].name.compare("I:E Ratio") == 0);
+            else if(entries[i].name.compare("Flow peak") == 0)
+            {
+                entries[i].unit = "L/min";
+
+                entries[i].val = (entries[i].val*60.0)/1000.0;
+//                common->utils->mdcValueFormatter("Observation",code,val,"", tempbuf);
+            }
+//            else
+//                common->utils->mdcValueFormatter("Observation",code,val, "", tempbuf);
+            std::string name =entries[i].name;
+            name.append(" (");
+            name.append(entries[i].model);
+            name.append(")");
+
             painter.setPen(pen);
-            Common::draw_text(painter, left_margin + square_width + 10,
-                              top_margin + vertical_spacing*i + square_width/2.0,
-                              Qt::AlignLeft | Qt::AlignVCenter, entries[i].name.c_str());
+            Common::draw_text(painter, left_margin +  10,
+                              top_margin + vertical_spacing*i + 20,
+                              Qt::AlignLeft | Qt::AlignVCenter, name.c_str());
+            Common::draw_text(painter, left_margin +  10,
+                              top_margin + vertical_spacing*i + 50,
+                              Qt::AlignLeft | Qt::AlignVCenter, QString::number(entries[i].val));
+            Common::draw_text(painter, left_margin +  135,
+                              top_margin + vertical_spacing*i + 50,
+                              Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(entries[i].unit));
+//            std::string querystr = "vmd_id MATCH '";
+//            querystr.append(common->vmd_id);
+//            querystr.append("' AND patient_id MATCH '");
+//            querystr.append(common->patient_id);
+//            querystr.append("' AND model MATCH '");
+//            querystr.append(entries[i].model);
+//            querystr.append("' AND mdc_code MATCH '");
+//            querystr.append(entries[i].mdc_code);
+//            querystr.append("'");
+//            dds::sub::cond::QueryCondition qcond(
+//                        dds::sub::Query(common->observation_reader_2, querystr),
+//                        dds::sub::status::DataState(
+//                        dds::sub::status::SampleState::any(),
+//                        dds::sub::status::ViewState::any(),
+//                        dds::sub::status::InstanceState::alive()));
+//            dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->observation_reader_2.select().condition(qcond).read();
+//            for(auto& sample : samples)
+//            {
+//                if(sample.info().valid())
+//                {
+//                    dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
+//                    //data.get_values("values", vals);
+//                    float val = data.value<float>("value");
+////                    std::vector<float> vals;
+////                    vals.push_back(val);
+//                    std::string unit =data.value<std::string>("unit");
+//                    int length1= unit.length()*10;
+//                    Common::draw_text(painter, left_margin +  10,
+//                                      top_margin + vertical_spacing*i + 50,
+//                                      Qt::AlignLeft | Qt::AlignVCenter, QString::number(val));
+//                    Common::draw_text(painter, left_margin +  135,
+//                                      top_margin + vertical_spacing*i + 50,
+//                                      Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(unit));
+//                }
+//            }
         }
     }
+    update();
+
 }
 
 void mc_legend::mouseMoveEvent(QMouseEvent *event)
