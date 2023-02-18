@@ -33,7 +33,7 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="6,5">
+  <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="8,3">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -50,7 +50,7 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,13,0,0,0">
+    <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,15,0,0,0">
      <property name="spacing">
       <number>0</number>
      </property>
@@ -71,7 +71,13 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="4,0">
+         <property name="spacing">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>8</number>
+         </property>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
@@ -322,19 +328,65 @@ color:rgb(255, 255, 255);</string>
           </layout>
          </item>
          <item>
-          <widget class="mc_legend" name="legend" native="true">
+          <widget class="QScrollArea" name="scrollArea">
            <property name="minimumSize">
             <size>
-             <width>120</width>
+             <width>220</width>
              <height>0</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>18</pointsize>
-            </font>
+           <property name="verticalScrollBarPolicy">
+            <enum>Qt::ScrollBarAsNeeded</enum>
            </property>
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+           </property>
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrollAreaWidgetContents">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>218</width>
+              <height>156</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="mc_legend" name="legend" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>120</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>Arial</family>
+                 <pointsize>18</pointsize>
+                </font>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
         </layout>
@@ -636,6 +688,12 @@ QPushButton:checked{
    <class>mc_loop</class>
    <extends>QWidget</extends>
    <header>mc_loop.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>mc_wavepanel</class>
+   <extends>QWidget</extends>
+   <header>mc_wavepanel.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

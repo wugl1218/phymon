@@ -75,6 +75,8 @@ Common::Common(MainDialog* m)
     pluginName = "UtilsPlugin";
     utils = qobject_cast<UtilsInterface*>(pluginManager->getPluginObject(pluginName));
     db = cbl->getAppDB("VMD.cbl", db_path, false);
+    csp_db = cbl->getAppDB("CSP.cbl", db_path, false);
+    alarm_db = cbl->getAppDB("AlarmHis.cbl", db_path, false);
 
     display_items_db = cbl->getAppDB("DisplayItems.cbl", display_items_path, false);
     std::string dummy;
@@ -94,7 +96,15 @@ Common::Common(MainDialog* m)
     }
     if(!is_server)
     {
-        cbl::ResultSet results = cbl->queryDocuments(db, "SELECT vmd_id FROM _ WHERE data_source='VMD' ORDER BY source_timestamp DESC", dummy);
+        std::string sql ="SELECT vmd_id FROM _ WHERE data_source='VMD' ORDER BY source_timestamp DESC";
+        cbl::ResultSet results= cbl->queryDocuments(db, sql, dummy);
+        int error=0;while (dummy!="IP200"&&error<5)
+            {
+            results = cbl->queryDocuments(db, sql, dummy);
+            qDebug()<<QString::fromStdString(dummy);
+
+            fflog_out(log,dummy.c_str());error++;
+            }
         for(auto& result: results)
         {
             vmd_id = result.valueForKey("vmd_id").asstring();
@@ -109,7 +119,15 @@ Common::Common(MainDialog* m)
     }
     else
         md->nd.is_server=1;
-    cbl::ResultSet dresults = cbl->queryDocuments(db, "SELECT domain_id FROM _ WHERE data_source='DOMAIN' ORDER BY source_timestamp DESC", dummy);
+    std::string sql ="SELECT domain_id FROM _ WHERE data_source='DOMAIN' ORDER BY source_timestamp DESC";
+    cbl::ResultSet dresults= cbl->queryDocuments(db, sql, dummy);
+    int error=0;while (dummy!="IP200"&&error<5)
+        {
+        dresults = cbl->queryDocuments(db, sql, dummy);
+        qDebug()<<QString::fromStdString(dummy);
+        fflog_out(log,dummy.c_str());error++;
+        }
+
     domain_id = -1;
     for(auto& result: dresults)
     {
@@ -118,11 +136,13 @@ Common::Common(MainDialog* m)
     }
     log = fflog_create(log_path.c_str(),5,100*1024*1024);
     fflog_out(log,"start");
+    //新增Obs置頂欄位
     std::vector<std::string> savina_special;
     savina_special.push_back("Tidal volume in mL");
     savina_special.push_back("MV");
     savina_special.push_back("Respiratory rate");
-    savina_special.push_back("I:E Ratio");
+    savina_special.push_back("I:E I-Part");
+    savina_special.push_back("I:E E-Part");
     savina_special.push_back("Peak airway pressure");
     savina_special.push_back("Plateau pressure");
     savina_special.push_back("RSI");
@@ -132,7 +152,8 @@ Common::Common(MainDialog* m)
     savina300_special.push_back("Tidal volume");
     savina300_special.push_back("MV");
     savina300_special.push_back("Respiratory rate");
-    savina300_special.push_back("I:E Ratio");
+    savina300_special.push_back("I:E I-Part");
+    savina300_special.push_back("I:E E-Part");
     savina300_special.push_back("Peak airway pressure");
     savina300_special.push_back("Plateau pressure");
     savina300_special.push_back("RSI");
@@ -186,6 +207,7 @@ void Common::init_dds(int domain_id)
     history_observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
     visualizetion_observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
     observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
+    observation_reader_2 = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
 
     chansettings_type = dds->getTypeObject("dds_collector::ChannelSettings");
     chansettings_topic = dds->getTopic("TP_ChannelSettings", chansettings_type, "");
@@ -198,6 +220,7 @@ void Common::init_dds(int domain_id)
     rtobservation_type = dds->getTypeObject("dds_collector::RTObservation");
     rtobservation_topic = dds->getTopic("TP_RTObservation", rtobservation_type, "");
     rtobservation_reader = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
+    rtobservation_reader_2 = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
 
     m_DisplayItem_type = dds->getTypeObject("MonitoringStation::DisplayItems");
     m_DisplayItem_topic = dds->getTopic("TP_DisplayItems", m_DisplayItem_type, "");
@@ -268,6 +291,9 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
     uint8_t has_epart = 0;
     float vt;
     float rr;
+    uint64_t sec = 0;
+    uint64_t nsec = 0;
+
     float ipart;
     float epart;
     std::string vt_desc;
@@ -283,12 +309,14 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
     {
         has_vt = 1;
         vt = it->second.val;
+
     }
     it = left_over->find("Respiratory rate");
     if(it != left_over->end())
     {
         has_rr = 1;
         rr = it->second.val;
+
     }
     it = left_over->find("I:E I-Part");
     if(it != left_over->end())
@@ -308,6 +336,8 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         {
             has_vt = 1;
             vt = it2->second.val;
+            sec = it->second.ts.tv_sec;
+            nsec = it->second.ts.tv_nsec;
         }
         else if(it2->second.desc.compare("Respiratory rate") == 0)
         {
@@ -317,12 +347,10 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         else if(it2->second.desc.compare("I:E I-Part") == 0)
         {
             has_ipart = 1;
-            ipart = it2->second.val;
         }
         else if(it2->second.desc.compare("I:E E-Part") == 0)
         {
             has_epart = 1;
-            epart = it2->second.val;
         }
     }
     if(item_checkstate.size() == 0)
@@ -366,14 +394,23 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         e.desc = "MV";
         e.unit = "L/min";
         e.val = (vt/1000.0)*rr;
+        e.model = "Savina";
+        e.y_max = "200";
+        e.ts.tv_sec=sec;
+        e.ts.tv_nsec=nsec;
+
         entries->emplace(mv_order, e);
         e.code = "RSI";
         e.desc = "RSI";
         e.unit = "";
         e.val = vt/rr;
+        e.model = "Savina";
+        e.y_max = "200";
+        e.ts.tv_sec=sec;
+        e.ts.tv_nsec=nsec;
         entries->emplace(rsi_order, e);
     }
-    if(has_ipart && has_epart)
+/*    if(has_ipart && has_epart)
     {
         mc_entry e;
         e.desc = "I:E Ratio";
@@ -382,8 +419,26 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         char tbuf[64];
         sprintf(tbuf, "%.1f:%.1f", ipart, epart);
         e.code = tbuf;
+        entries->emplace(ie_order, e);*/
+/*        e.desc = "I:E I-Part";
+        e.unit = "";
+        e.val = ipart;
+        e.code = "E7";
+        e.model = "Savina";
+        e.y_max = "200";
+        e.ts.tv_sec=sec;
+        e.ts.tv_nsec=nsec;
         entries->emplace(ie_order, e);
-    }
+        e.desc = "I:E E-Part";
+        e.unit = "";
+        e.val = epart;
+        e.code = "E8";
+        e.model = "Savina";
+        e.y_max = "200";
+        e.ts.tv_sec=sec;
+        e.ts.tv_nsec=nsec;
+        entries->emplace(ie_order, e);
+    }*/
 }
 
 void Common::remove_savina_items(std::multimap<int, mc_entry>* entries)
@@ -566,18 +621,25 @@ void Common::populate_item_checkstate()
 {
     item_checkstate.clear();
     std::string dummy;
-    std::string sql = "SELECT item,visibility,morder,model FROM _ WHERE data_source='NumericVisibility' AND patient_id='";
+    std::string sql = "SELECT mdc_code,visibility,display_index,model FROM _ WHERE data_source='Obs' AND patient_id='";
     sql.append(patient_id);
     sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
-    cbl::ResultSet results2 = cbl->queryDocuments(display_items_db, sql, dummy);
+    cbl::ResultSet results2= cbl->queryDocuments(display_items_db, sql, dummy);
+    int error=0;while (dummy!="IP200"&&error<5)
+        {
+        results2 = cbl->queryDocuments(display_items_db, sql, dummy);
+        qDebug()<<QString::fromStdString(dummy);
+        fflog_out(log,dummy.c_str());error++;
+        }
+
     for(auto& result: results2)
     {
-        std::string item = result.valueAtIndex(0).asstring();
+        std::string mdc_code = result.valueAtIndex(0).asstring();
         mc_checkstate cs;
         cs.checked = result.valueAtIndex(1).asUnsigned();
         cs.order = result.valueAtIndex(2).asInt();
         std::string model = result.valueAtIndex(3).asstring();
-        item_checkstate.emplace(model+","+item, cs);
+        item_checkstate.emplace(model+","+mdc_code, cs);
     }
     if(item_checkstate.size() == 0)
         return;
@@ -601,7 +663,13 @@ void Common::populate_device_checkstate()
     std::string sql = "SELECT model,checked FROM _ WHERE data_source='NumericDeviceSelection' AND patient_id='";
     sql.append(patient_id);
     sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
-    cbl::ResultSet results = cbl->queryDocuments(display_items_db, sql, dummy);
+    cbl::ResultSet results= cbl->queryDocuments(display_items_db, sql, dummy);
+    int error=0;while (dummy!="IP200"&&error<5)
+        {
+        results = cbl->queryDocuments(display_items_db, sql, dummy);
+        qDebug()<<QString::fromStdString(dummy);
+        fflog_out(log,dummy.c_str());error++;
+        }
     for(auto& result: results)
     {
         std::string model = result.valueAtIndex(0).asstring();

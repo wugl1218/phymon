@@ -71,8 +71,13 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         sql.append("' AND alarm_code='");
                         sql.append(i->alarm_code);
                         sql.append("'");
-                        cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-                        for(auto& result: results)
+        cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        int error=0;while (dummy!="IP200"&&error<5)
+            {
+            results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            qDebug()<<QString::fromStdString(dummy);
+            fflog_out(common->log,dummy.c_str());error++;
+            }                           for(auto& result: results)
                             Uid = result.valueAtIndex(0).asstring();
 
                         rapidjson::Document d;
@@ -83,7 +88,7 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         d.AddMember("patient_id", rapidjson::Value().SetString(i->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("vmd_id", rapidjson::Value().SetString(vmd.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("alarm_code", rapidjson::Value().SetString(i->alarm_code.c_str(), d.GetAllocator()), d.GetAllocator());
-                        d.AddMember("alarm_description", rapidjson::Value().SetString(i->alarm_priority.c_str(), d.GetAllocator()), d.GetAllocator());
+                        d.AddMember("alarm_description", rapidjson::Value().SetString(i->alarm_description.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("alarm_priority", rapidjson::Value().SetString(i->alarm_priority.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("alarm_state", rapidjson::Value().SetString("handled", d.GetAllocator()), d.GetAllocator());
                         d.AddMember("handled_time",time(NULL), d.GetAllocator());
@@ -125,8 +130,13 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         sql.append(i->alarm_code);
                         sql.append("'");
 
-                        cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-                        for(auto& result: results)
+        cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        int error=0;while (dummy!="IP200"&&error<5)
+            {
+            results = common->cbl-> queryDocuments(common->display_items_db, sql, dummy);
+            qDebug()<<QString::fromStdString(dummy);
+            fflog_out(common->log,dummy.c_str());error++;
+            }                           for(auto& result: results)
                             Uid = result.valueAtIndex(0).asstring();
 
                         rapidjson::Document d;
@@ -137,7 +147,7 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                         d.AddMember("patient_id", rapidjson::Value().SetString(i->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("vmd_id", rapidjson::Value().SetString(vmd.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("alarm_code", rapidjson::Value().SetString(i->alarm_code.c_str(), d.GetAllocator()), d.GetAllocator());
-                        d.AddMember("alarm_description", rapidjson::Value().SetString(i->alarm_priority.c_str(), d.GetAllocator()), d.GetAllocator());
+                        d.AddMember("alarm_description", rapidjson::Value().SetString(i->alarm_description.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("alarm_priority", rapidjson::Value().SetString(i->alarm_priority.c_str(), d.GetAllocator()), d.GetAllocator());
                         d.AddMember("alarm_state", rapidjson::Value().SetString("handled", d.GetAllocator()), d.GetAllocator());
                         d.AddMember("handled_time",time(NULL), d.GetAllocator());
@@ -160,9 +170,8 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
                 title->show();
                 QPoint point = circle->pos();
                 point.rx() = 0;
-                point.ry() = 230;
+                point.ry() = 236-65;
                 title->move(point);
-
                 title->raise();//显示最顶层
                 return true;
             }
@@ -187,7 +196,7 @@ void Manager_MDSConnectivity_Card::update_but()
 {
     if(id == "") return;
     CustomButton *releasebtn = new CustomButton(this);
-    releasebtn->setGeometry(310,250,60,60);
+    releasebtn->setGeometry(width()-41,height()-41,60,60);
     if(male)
         releasebtn->set_is_male(1);
     else
@@ -198,7 +207,6 @@ void Manager_MDSConnectivity_Card::update_but()
 void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
 {
     Common* common = Common::instance();
-
     QPainter painter(this);
     QPen bed_pen(QColor(255,255,255));
     QPen title_pen(QColor(170,170,170));
@@ -207,12 +215,17 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
     QFont title_font ;
     QFont value_font ;
     bool Show_pen =1;
-    bed_font.setPixelSize(36);
+    bed_font.setPixelSize(32);
     bed_font.setFamily("Arial [Mono]");
-    title_font.setPixelSize(32);
+    title_font.setPixelSize(28);
     title_font.setFamily("Arial [Mono]");
-    value_font.setPixelSize(76);
+    value_font.setPixelSize(72);
     value_font.setFamily("Arial [Mono]");
+    int title_left_x =7;
+    int title_right_x =235;
+    int title_above_y =70;
+    int title_under_y =220;
+    int title_value_interval=58;
     if(id == "")
         {
 
@@ -230,7 +243,12 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
     sql.append(id);
     sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
     cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-    for(auto& result: results)
+    int error=0;while (dummy!="IP200"&&error<5)
+        {
+        results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        qDebug()<<QString::fromStdString(dummy);
+        fflog_out(common->log,dummy.c_str());error++;
+        }       for(auto& result: results)
     {
         uint8_t checked = result.valueAtIndex(0).asUnsigned();
         if (checked)
@@ -253,18 +271,22 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
         circle->setStyleSheet("background:rgb(200,37,37);color:rgb(248, 208, 4);");
         circle->show();
         is_Equipment_alarm =1;
-        if(devcon_samples.length() > 0)
-            {
+        if(devcon_samples.length() == 1)
+        {
             title->setText("Medical Equipment \nDisconnection");
             common->msg.setText("Please click \nMedical Equipment");
 
-            }
+        }
         else if (devcon_samples.length() == 0)
-            {
+        {
             title->setText("MetaCares Box Error");
             common->msg.setText("Please click \nMetaCares Box");
-
-            }
+        }
+        else
+        {
+            title->setText("Devices connecting...");
+            common->msg.setText("Please wait");
+        }
         Show_pen=0;
         title->setWordWrap(true);
     }
@@ -289,6 +311,7 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             value_pen.setColor(QColor(11, 42, 78));
             circle->setStyleSheet("background:rgb(252, 233, 79);color:rgb(248, 208, 4);");
             //circle->show();
+            circle_time=time(0);
             title->setText(QString::fromStdString(i->alarm_description));
             title->setWordWrap(true);
             is_patient_alarm = 1;
@@ -306,6 +329,7 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             value_pen.setColor(QColor(11, 42, 78));
             circle->setStyleSheet("background:rgb(252, 233, 79);color:rgb(248, 208, 4);");
             //circle->show();
+            circle_time=time(0);
             title->setText(QString::fromStdString(i->alarm_description));
             title->setWordWrap(true);
             is_patient_alarm = 0;
@@ -314,11 +338,39 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             break;
         }
     else
+    {
         painter.setBrush(QColor(11, 42, 78));
+        QPixmap *pixmap = new QPixmap(":/icons/yellowcircle.png");
+        pixmap->scaled(circle->size(), Qt::KeepAspectRatio);
+        circle->setScaledContents(true);
+        circle->setPixmap(*pixmap);
+        title->hide();
+        if(circle_time!=0)
+            circle->show();
+    }
     painter.drawRect(0,0,width(),height());
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
-
+    if(circle_time!=0)
+    {
+        std::string querystr = "action MATCH '";
+        querystr.append("checkALL");
+        querystr.append("' AND patient_id MATCH '");
+        querystr.append(id);
+/*多設備四個燈號皆取消要在想        querystr.append("' AND user_id MATCH '");
+        querystr.append(devices.model);*/
+        querystr.append("' AND exec_timestamp.sec > ");
+        querystr.append(QString::number(circle_time).toStdString());
+        dds::sub::cond::QueryCondition useractions_cond(
+                    dds::sub::Query(common->useractions_reader, querystr),
+                    dds::sub::status::DataState(
+                    dds::sub::status::SampleState::not_read(),
+                    dds::sub::status::ViewState::any(),
+                    dds::sub::status::InstanceState::alive()));
+        dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> useractions_samples = common->useractions_reader.select().condition(useractions_cond).read();
+         for (auto sample :useractions_samples)
+             circle->hide();
+    }
 
 
 
@@ -334,20 +386,20 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
     {
         painter.setFont(title_font);
         painter.setPen(title_pen);
-        Common::draw_text(painter, 7, 90, Qt::AlignLeft | Qt::AlignVCenter, "RR (1/min)");
-        Common::draw_text(painter, 235, 90, Qt::AlignLeft | Qt::AlignVCenter, "I:E");
-        Common::draw_text(painter, 7, 230, Qt::AlignLeft | Qt::AlignVCenter, "MV (L/min)");
-        Common::draw_text(painter, 235, 230, Qt::AlignLeft | Qt::AlignVCenter, "VT (mL)");
+        Common::draw_text(painter, title_left_x, title_above_y, Qt::AlignLeft | Qt::AlignVCenter, "RR (1/min)");
+        Common::draw_text(painter, title_right_x, title_above_y, Qt::AlignLeft | Qt::AlignVCenter, "I:E");
+        Common::draw_text(painter, title_left_x, title_under_y, Qt::AlignLeft | Qt::AlignVCenter, "MV (L/min)");
+        Common::draw_text(painter, title_right_x, title_under_y, Qt::AlignLeft | Qt::AlignVCenter, "VT (mL)");
         painter.setFont(value_font);
         painter.setPen(value_pen);
         if(RR!="")
-        Common::draw_text(painter, 7, 148, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(RR));
+        Common::draw_text(painter, title_left_x, title_above_y+title_value_interval, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(RR));
         if(MV!="")
-        Common::draw_text(painter, 235, 148, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(IE));
+        Common::draw_text(painter, title_right_x, title_above_y+title_value_interval, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(IE));
         if(IE!="")
-        Common::draw_text(painter, 7, 288, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(MV));
+        Common::draw_text(painter, title_left_x, title_under_y+title_value_interval, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(MV));
         if(VT!="")
-        Common::draw_text(painter, 235, 288, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(VT));
+        Common::draw_text(painter, title_right_x, title_under_y+title_value_interval, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(VT));
     }
 
 
@@ -397,7 +449,6 @@ void Manager_MDSConnectivity_Card::mousePressEvent(QMouseEvent *event)
         {
         emit clicked();
         }
-
 }
 
 void Manager_MDSConnectivity_Card::mouseReleaseEvent(QMouseEvent *event)

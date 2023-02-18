@@ -90,7 +90,13 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::update_devices()
         std::string sql = "SELECT model,checked FROM _ WHERE data_source='NumericDeviceSelection' AND patient_id='";
         sql.append(common->patient_id);
         sql.append("' AND meta(_).expiration IS NOT VALUED and expired=0");
-        cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        cbl::ResultSet results= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        int error=0;while (dummy!="IP200"&&error<5)
+            {
+            results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            qDebug()<<QString::fromStdString(dummy);
+            fflog_out(common->log,dummy.c_str());error++;
+            }
         for(auto& result: results)
         {
             std::string model = result.valueAtIndex(0).asstring();
@@ -157,12 +163,18 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::update_devices()
             device_changed = 1;
             std::map<std::string, mc_checkstate> item_visibility;
             std::string dummy;
-            std::string sql = "SELECT item,visibility,morder FROM _ WHERE data_source='NumericVisibility' AND model='";
+            std::string sql = "SELECT mdc_code,visibility,display_index FROM _ WHERE data_source='Obs' AND model='";
             sql.append(it->second.model);
             sql.append("' AND patient_id='");
             sql.append(common->patient_id);
             sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
-            cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            cbl::ResultSet results2= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+            int error=0;while (dummy!="IP200"&&error<5)
+                {
+                results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+                qDebug()<<QString::fromStdString(dummy);
+                fflog_out(common->log,dummy.c_str());error++;
+                }
             for(auto& result: results2)
             {
                 std::string item = result.valueAtIndex(0).asstring();
@@ -307,22 +319,29 @@ static void mc_find_and_swap(int index, std::string name, std::vector<QWidget*>*
 
 void Tab_Observations_metricItemsDisplayConfigPage_Widget::apply_savina_ordering(std::vector<QWidget*>* lines, std::string model, int row)
 {
+    //新增Obs置頂欄位
+
     QWidget* parent = rightscrollarea[row];
     mc_selection_entry* mv = new mc_selection_entry(parent);
     (*lines).emplace(lines->begin(), mv);
     mv->set_type(MC_ENTRY_STATIC);
     mv->set_text("MV");
     mv->show();
-    mc_selection_entry* ie_ratio = new mc_selection_entry(parent);
-    (*lines).emplace(lines->begin(), ie_ratio);
-    ie_ratio->set_type(MC_ENTRY_STATIC);
-    ie_ratio->set_text("I:E Ratio");
-    ie_ratio->show();
     mc_selection_entry* rsi = new mc_selection_entry(parent);
     (*lines).emplace(lines->begin(), rsi);
     rsi->set_type(MC_ENTRY_STATIC);
     rsi->set_text("RSI");
     rsi->show();
+    mc_selection_entry* ipart = new mc_selection_entry(parent);
+    (*lines).emplace(lines->begin(), ipart);
+    ipart->set_type(MC_ENTRY_STATIC);
+    ipart->set_text("I:E I-part");
+    ipart->show();
+    mc_selection_entry* epart = new mc_selection_entry(parent);
+    (*lines).emplace(lines->begin(), epart);
+    epart->set_type(MC_ENTRY_STATIC);
+    epart->set_text("I:E E-part");
+    epart->show();
 
     Common* common = Common::instance();
     std::vector<std::string> items;
@@ -527,7 +546,13 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
     sql.append(common->patient_id);
     sql.append("' AND expired=0");
     sql.append(" AND meta().expiration IS NOT VALUED");
-    cbl::ResultSet results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+    cbl::ResultSet results= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+    int error=0;while (dummy!="IP200"&&error<5)
+        {
+        results = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        qDebug()<<QString::fromStdString(dummy);
+        fflog_out(common->log,dummy.c_str());error++;
+        }
     for(auto& result: results)
     {
         std::string id = result.valueAtIndex(0).asstring();
@@ -538,7 +563,7 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
 
         rapidjson::Document d;
         d.SetObject();
-        d.AddMember("data_source", "NumericDeviceSelection", d.GetAllocator());
+        d.AddMember("data_source", "WaveDeviceSelection", d.GetAllocator());
         d.AddMember("model", rapidjson::Value().SetString(model.c_str(), d.GetAllocator()), d.GetAllocator());
         d.AddMember("checked", checked, d.GetAllocator());
         d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
@@ -559,28 +584,34 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
         common->cbl->setDocExpiration(common->display_items_db, id, now, dummy);
     }
 
-    sql = "SELECT meta().id,data_source,model,item,visibility,morder,source_timestamp.sec,source_timestamp.nanosec FROM _ WHERE data_source='NumericVisibility' AND patient_id='";
+    sql = "SELECT meta().id,data_source,model,mdc_code,visibility,display_index,source_timestamp.sec,source_timestamp.nanosec FROM _ WHERE data_source='Obs' AND patient_id='";
     sql.append(common->patient_id);
     sql.append("' AND expired=0");
     sql.append(" AND meta().expiration IS NOT VALUED");
-    cbl::ResultSet resultsx = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+    cbl::ResultSet resultsx= common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+    error=0;while (dummy!="IP200"&&error<5)
+        {
+        resultsx = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+        qDebug()<<QString::fromStdString(dummy);
+        fflog_out(common->log,dummy.c_str());error++;
+        }
     for(auto& result: resultsx)
     {
         std::string id = result.valueAtIndex(0).asstring();
         std::string model = result.valueAtIndex(2).asstring();
-        std::string item = result.valueAtIndex(3).asstring();
+        std::string mdc_code = result.valueAtIndex(3).asstring();
         uint8_t visibility = result.valueAtIndex(4).asUnsigned();
-        int morder = result.valueAtIndex(5).asInt();
+        int display_index = result.valueAtIndex(5).asInt();
         int64_t sec = result.valueAtIndex(6).asInt();
         int64_t nanosec = result.valueAtIndex(7).asInt();
 
         rapidjson::Document d;
         d.SetObject();
-        d.AddMember("data_source", "NumericVisibility", d.GetAllocator());
+        d.AddMember("data_source", "Obs", d.GetAllocator());
         d.AddMember("model", rapidjson::Value().SetString(model.c_str(), d.GetAllocator()), d.GetAllocator());
-        d.AddMember("item", rapidjson::Value().SetString(item.c_str(), d.GetAllocator()), d.GetAllocator());
+        d.AddMember("mdc_code", rapidjson::Value().SetString(mdc_code.c_str(), d.GetAllocator()), d.GetAllocator());
         d.AddMember("visibility", visibility, d.GetAllocator());
-        d.AddMember("morder", morder, d.GetAllocator());
+        d.AddMember("display_index", display_index, d.GetAllocator());
         d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
         d.AddMember("expired", 1, d.GetAllocator());
         rapidjson::Value v;
@@ -638,11 +669,11 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
             common->item_checkstate.emplace(it->second.model+","+((mc_selection_entry*)left_lines[i][k])->get_text(), cs);
             rapidjson::Document d;
             d.SetObject();
-            d.AddMember("data_source", "NumericVisibility", d.GetAllocator());
+            d.AddMember("data_source", "Obs", d.GetAllocator());
             d.AddMember("model", rapidjson::Value().SetString(it->second.model.c_str(), d.GetAllocator()), d.GetAllocator());
-            d.AddMember("item", rapidjson::Value().SetString(((mc_selection_entry*)left_lines[i][k])->get_text().c_str(), d.GetAllocator()), d.GetAllocator());
+            d.AddMember("mdc_code", rapidjson::Value().SetString(((mc_selection_entry*)left_lines[i][k])->get_text().c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("visibility", cs.checked, d.GetAllocator());
-            d.AddMember("morder", cs.order, d.GetAllocator());
+            d.AddMember("display_index", cs.order, d.GetAllocator());
             d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("expired", 0, d.GetAllocator());
             rapidjson::Value v;
@@ -670,11 +701,11 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
                 //continue;
             rapidjson::Document d;
             d.SetObject();
-            d.AddMember("data_source", "NumericVisibility", d.GetAllocator());
+            d.AddMember("data_source", "Obs", d.GetAllocator());
             d.AddMember("model", rapidjson::Value().SetString(it->second.model.c_str(), d.GetAllocator()), d.GetAllocator());
-            d.AddMember("item", rapidjson::Value().SetString(((mc_selection_entry*)right_lines[i][k])->get_text().c_str(), d.GetAllocator()), d.GetAllocator());
+            d.AddMember("mdc_code", rapidjson::Value().SetString(((mc_selection_entry*)right_lines[i][k])->get_text().c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("visibility", cs.checked, d.GetAllocator());
-            d.AddMember("morder", cs.order, d.GetAllocator());
+            d.AddMember("display_index", cs.order, d.GetAllocator());
             d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("expired", 0, d.GetAllocator());
             rapidjson::Value v;
@@ -717,9 +748,9 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
             common->item_checkstate.emplace(it->second.model + "," + btns[i][k]->text().toStdString(), (unsigned)btns[i][k]->isChecked());
             rapidjson::Document d;
             d.SetObject();
-            d.AddMember("data_source", "NumericVisibility", d.GetAllocator());
+            d.AddMember("data_source", "Obs", d.GetAllocator());
             d.AddMember("model", rapidjson::Value().SetString(it->second.model.c_str(), d.GetAllocator()), d.GetAllocator());
-            d.AddMember("item", rapidjson::Value().SetString(btns[i][k]->text().toStdString().c_str(), d.GetAllocator()), d.GetAllocator());
+            d.AddMember("mdc_code", rapidjson::Value().SetString(btns[i][k]->text().toStdString().c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("visibility", (unsigned)btns[i][k]->isChecked(), d.GetAllocator());
             rapidjson::StringBuffer buffer;
             rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);

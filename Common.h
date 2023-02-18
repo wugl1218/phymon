@@ -32,7 +32,6 @@
 #define DEFAULT_FRICTION 0.35
 #define LINE_BREAK_DELTA 3000
 
-
 class MainDialog;
 class Tab_Devices_Widget;
 class Tab_Utilities_alarmHistoryPage_Widget;
@@ -44,9 +43,14 @@ class mc_entry
 {
 public:
     std::string code;
+    std::string model;
     std::string desc;
-    std::string unit;
     std::string abbv;
+    std::string unit;
+    std::string y_max;
+    std::string y_min;
+    std::string display_index;
+    std::string display_desc;
     float val;
     struct timespec ts;
 };
@@ -98,6 +102,8 @@ public:
     std::string bed_id;
     std::string room_id;
     cbl::Database db;
+    cbl::Database alarm_db;
+    cbl::Database csp_db;
     cbl::Replicator observation_puller;
     cbl::Replicator display_items_pusher;
     cbl::Replicator display_items_puller;
@@ -178,6 +184,7 @@ public:
     dds::sub::DataReader<dds::core::xtypes::DynamicData> history_observation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> visualizetion_observation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> observation_reader = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> observation_reader_2 = nullptr;
     dds::core::xtypes::DynamicType observation_type;
 
     dds::topic::Topic<dds::core::xtypes::DynamicData> chansettings_topic = nullptr;
@@ -190,6 +197,8 @@ public:
 
     dds::topic::Topic<dds::core::xtypes::DynamicData> rtobservation_topic = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader_2 = nullptr;
+
     dds::core::xtypes::DynamicType rtobservation_type;
 
     dds::topic::Topic<dds::core::xtypes::DynamicData> topalarm_topic = nullptr;
