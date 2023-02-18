@@ -319,22 +319,29 @@ static void mc_find_and_swap(int index, std::string name, std::vector<QWidget*>*
 
 void Tab_Observations_metricItemsDisplayConfigPage_Widget::apply_savina_ordering(std::vector<QWidget*>* lines, std::string model, int row)
 {
+    //新增Obs置頂欄位
+
     QWidget* parent = rightscrollarea[row];
     mc_selection_entry* mv = new mc_selection_entry(parent);
     (*lines).emplace(lines->begin(), mv);
     mv->set_type(MC_ENTRY_STATIC);
     mv->set_text("MV");
     mv->show();
-    mc_selection_entry* ie_ratio = new mc_selection_entry(parent);
-    (*lines).emplace(lines->begin(), ie_ratio);
-    ie_ratio->set_type(MC_ENTRY_STATIC);
-    ie_ratio->set_text("I:E Ratio");
-    ie_ratio->show();
     mc_selection_entry* rsi = new mc_selection_entry(parent);
     (*lines).emplace(lines->begin(), rsi);
     rsi->set_type(MC_ENTRY_STATIC);
     rsi->set_text("RSI");
     rsi->show();
+    mc_selection_entry* ipart = new mc_selection_entry(parent);
+    (*lines).emplace(lines->begin(), ipart);
+    ipart->set_type(MC_ENTRY_STATIC);
+    ipart->set_text("I:E I-part");
+    ipart->show();
+    mc_selection_entry* epart = new mc_selection_entry(parent);
+    (*lines).emplace(lines->begin(), epart);
+    epart->set_type(MC_ENTRY_STATIC);
+    epart->set_text("I:E E-part");
+    epart->show();
 
     Common* common = Common::instance();
     std::vector<std::string> items;

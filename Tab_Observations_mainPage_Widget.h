@@ -95,8 +95,8 @@ private:
     void set_checked(QWidget* w, uint8_t checked);
     void loop_check_and_expand(int loopnum, float x, float y);
     void loop_check_and_shrink(int loopnum, float x, float y);
-    void add_wave_to_chart_Obs(int series_index, std::string model, std::string code,
-                               dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
+    void add_wave_to_chart_Obs(int series_index,
+                               uint64_t t,float val,
                                mc_chart *chart,
                                QList<std::vector<float>> &wave_list,
                                QList<uint64_t> &time_list);

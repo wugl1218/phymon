@@ -154,10 +154,14 @@ void mc_legend::paintEvent(QPaintEvent *event)
     Common* common = Common::instance();
 
     QPainter painter(this);
+
     painter.setRenderHint(QPainter::Antialiasing, true);
     QPen nopen(Qt::NoPen);
     QPen pen(text_color);
+    QColor blackColor =QColor(04,05,07);
+    QPen black(blackColor);
     painter.setPen(nopen);
+    painter.drawRect(0,0,width(),height());
     for(int i=0;i<(int)entries.size();i++)
     {
         QBrush brush(entries[i].color);
@@ -228,7 +232,7 @@ void mc_legend::paintEvent(QPaintEvent *event)
 //            }
         }
     }
-//    update();
+    update();
 
 }
 

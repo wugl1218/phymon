@@ -136,6 +136,7 @@ Common::Common(MainDialog* m)
     }
     log = fflog_create(log_path.c_str(),5,100*1024*1024);
     fflog_out(log,"start");
+    //新增Obs置頂欄位
     std::vector<std::string> savina_special;
     savina_special.push_back("Tidal volume in mL");
     savina_special.push_back("MV");
@@ -152,7 +153,8 @@ Common::Common(MainDialog* m)
     savina300_special.push_back("MV");
     savina300_special.push_back("Respiratory rate");
     savina300_special.push_back("I:E I-Part");
-    savina300_special.push_back("I:E E-Part");       savina300_special.push_back("Peak airway pressure");
+    savina300_special.push_back("I:E E-Part");
+    savina300_special.push_back("Peak airway pressure");
     savina300_special.push_back("Plateau pressure");
     savina300_special.push_back("RSI");
     special_items.emplace("Savina 300", savina300_special);
@@ -286,6 +288,9 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
     uint8_t has_epart = 0;
     float vt;
     float rr;
+    uint64_t sec = 0;
+    uint64_t nsec = 0;
+
     float ipart;
     float epart;
     std::string vt_desc;
@@ -301,12 +306,14 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
     {
         has_vt = 1;
         vt = it->second.val;
+
     }
     it = left_over->find("Respiratory rate");
     if(it != left_over->end())
     {
         has_rr = 1;
         rr = it->second.val;
+
     }
     it = left_over->find("I:E I-Part");
     if(it != left_over->end())
@@ -326,6 +333,8 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         {
             has_vt = 1;
             vt = it2->second.val;
+            sec = it->second.ts.tv_sec;
+            nsec = it->second.ts.tv_nsec;
         }
         else if(it2->second.desc.compare("Respiratory rate") == 0)
         {
@@ -335,12 +344,10 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         else if(it2->second.desc.compare("I:E I-Part") == 0)
         {
             has_ipart = 1;
-            ipart = it2->second.val;
         }
         else if(it2->second.desc.compare("I:E E-Part") == 0)
         {
             has_epart = 1;
-            epart = it2->second.val;
         }
     }
     if(item_checkstate.size() == 0)
@@ -386,6 +393,8 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         e.val = (vt/1000.0)*rr;
         e.model = "Savina";
         e.y_max = "200";
+        e.ts.tv_sec=sec;
+        e.ts.tv_nsec=nsec;
 
         entries->emplace(mv_order, e);
         e.code = "RSI";
@@ -394,26 +403,28 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         e.val = vt/rr;
         e.model = "Savina";
         e.y_max = "200";
-
+        e.ts.tv_sec=sec;
+        e.ts.tv_nsec=nsec;
         entries->emplace(rsi_order, e);
     }
-    if(has_ipart && has_epart)
+/*    if(has_ipart && has_epart)
     {
         mc_entry e;
- /*       e.desc = "I:E Ratio";
+        e.desc = "I:E Ratio";
         e.unit = "";
         e.val = 0.0f;
         char tbuf[64];
         sprintf(tbuf, "%.1f:%.1f", ipart, epart);
         e.code = tbuf;
         entries->emplace(ie_order, e);*/
-        e.desc = "I:E I-Part";
+/*        e.desc = "I:E I-Part";
         e.unit = "";
         e.val = ipart;
         e.code = "E7";
         e.model = "Savina";
         e.y_max = "200";
-
+        e.ts.tv_sec=sec;
+        e.ts.tv_nsec=nsec;
         entries->emplace(ie_order, e);
         e.desc = "I:E E-Part";
         e.unit = "";
@@ -421,9 +432,10 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         e.code = "E8";
         e.model = "Savina";
         e.y_max = "200";
-
+        e.ts.tv_sec=sec;
+        e.ts.tv_nsec=nsec;
         entries->emplace(ie_order, e);
-    }
+    }*/
 }
 
 void Common::remove_savina_items(std::multimap<int, mc_entry>* entries)
