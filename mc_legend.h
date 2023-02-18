@@ -15,7 +15,8 @@ class mc_legend_entry
 public:
     std::string name;
     std::string model;
-    std::string mdc_code;
+    std::string unit;
+    float val;
 
     QColor color;
 };
@@ -40,7 +41,11 @@ public:
 
     void set_series_color(int series_index, QColor color);
     QColor get_series_color(int series_index);
-    void set_series_text(int series_index, std::string text, std::string model, std::string mdc_code);
+    void set_series_text(int series_index,
+                         std::string text,
+                         std::string model,
+                         std::string unit,
+                         float val);
     std::string get_series_text(int series_index);
     void remove_series(int series_index);
 

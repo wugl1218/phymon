@@ -710,6 +710,7 @@ observation:
             e.unit = data.value<std::string>("unit");
             e.val = data.value<float>("value");
             e.abbv = data.value<std::string>("abbreviation");
+            e.y_max = "200";
             rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
             e.ts.tv_sec = loaned_member.get().value<int32_t>("sec");
             e.ts.tv_nsec = loaned_member.get().value<uint32_t>("nanosec");

@@ -45,9 +45,14 @@ class mc_entry
 {
 public:
     std::string code;
+    std::string model;
     std::string desc;
-    std::string unit;
     std::string abbv;
+    std::string unit;
+    std::string y_max;
+    std::string y_min;
+    std::string display_index;
+    std::string display_desc;
     float val;
     struct timespec ts;
 };

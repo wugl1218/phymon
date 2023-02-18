@@ -139,7 +139,8 @@ Common::Common(MainDialog* m)
     savina_special.push_back("Tidal volume in mL");
     savina_special.push_back("MV");
     savina_special.push_back("Respiratory rate");
-    savina_special.push_back("I:E Ratio");
+    savina_special.push_back("I:E I-Part");
+    savina_special.push_back("I:E E-Part");
     savina_special.push_back("Peak airway pressure");
     savina_special.push_back("Plateau pressure");
     savina_special.push_back("RSI");
@@ -149,8 +150,8 @@ Common::Common(MainDialog* m)
     savina300_special.push_back("Tidal volume");
     savina300_special.push_back("MV");
     savina300_special.push_back("Respiratory rate");
-    savina300_special.push_back("I:E Ratio");
-    savina300_special.push_back("Peak airway pressure");
+    savina300_special.push_back("I:E I-Part");
+    savina300_special.push_back("I:E E-Part");       savina300_special.push_back("Peak airway pressure");
     savina300_special.push_back("Plateau pressure");
     savina300_special.push_back("RSI");
     special_items.emplace("Savina 300", savina300_special);
@@ -382,22 +383,44 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         e.desc = "MV";
         e.unit = "L/min";
         e.val = (vt/1000.0)*rr;
+        e.model = "Savina";
+        e.y_max = "200";
+
         entries->emplace(mv_order, e);
         e.code = "RSI";
         e.desc = "RSI";
         e.unit = "";
         e.val = vt/rr;
+        e.model = "Savina";
+        e.y_max = "200";
+
         entries->emplace(rsi_order, e);
     }
     if(has_ipart && has_epart)
     {
         mc_entry e;
-        e.desc = "I:E Ratio";
+ /*       e.desc = "I:E Ratio";
         e.unit = "";
         e.val = 0.0f;
         char tbuf[64];
         sprintf(tbuf, "%.1f:%.1f", ipart, epart);
         e.code = tbuf;
+        entries->emplace(ie_order, e);*/
+        e.desc = "I:E I-Part";
+        e.unit = "";
+        e.val = ipart;
+        e.code = "E7";
+        e.model = "Savina";
+        e.y_max = "200";
+
+        entries->emplace(ie_order, e);
+        e.desc = "I:E E-Part";
+        e.unit = "";
+        e.val = epart;
+        e.code = "E8";
+        e.model = "Savina";
+        e.y_max = "200";
+
         entries->emplace(ie_order, e);
     }
 }
@@ -582,7 +605,7 @@ void Common::populate_item_checkstate()
 {
     item_checkstate.clear();
     std::string dummy;
-    std::string sql = "SELECT item,visibility,display_index,model FROM _ WHERE data_source='Obs' AND patient_id='";
+    std::string sql = "SELECT mdc_code,visibility,display_index,model FROM _ WHERE data_source='Obs' AND patient_id='";
     sql.append(patient_id);
     sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
     cbl::ResultSet results2= cbl->queryDocuments(display_items_db, sql, dummy);
@@ -595,12 +618,12 @@ void Common::populate_item_checkstate()
 
     for(auto& result: results2)
     {
-        std::string item = result.valueAtIndex(0).asstring();
+        std::string mdc_code = result.valueAtIndex(0).asstring();
         mc_checkstate cs;
         cs.checked = result.valueAtIndex(1).asUnsigned();
         cs.order = result.valueAtIndex(2).asInt();
         std::string model = result.valueAtIndex(3).asstring();
-        item_checkstate.emplace(model+","+item, cs);
+        item_checkstate.emplace(model+","+mdc_code, cs);
     }
     if(item_checkstate.size() == 0)
         return;

@@ -52,6 +52,7 @@ private:
     QList<std::vector<float>> rtchart2_wave_list;
     QList<uint64_t> rtchart1_time_list;
     QList<uint64_t> rtchart2_time_list;
+    QList<QColor> line_color_list;
 
 //    std::vector<float> left_over_rtchart1_paw_vals;
 //    uint64_t last_rtchart1_paw_time;
@@ -94,13 +95,16 @@ private:
     void set_checked(QWidget* w, uint8_t checked);
     void loop_check_and_expand(int loopnum, float x, float y);
     void loop_check_and_shrink(int loopnum, float x, float y);
-    void add_wave_to_chart(int series_index, std::string model, std::string mdc_code,
-                           dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
-                           mc_chart *chart,
-                           bool is_Obs,
-                           QList<std::vector<float>> &wave_list,
-                           QList<uint64_t> &time_list);
-
+    void add_wave_to_chart_Obs(int series_index, std::string model, std::string code,
+                               dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
+                               mc_chart *chart,
+                               QList<std::vector<float>> &wave_list,
+                               QList<uint64_t> &time_list);
+    void add_wave_to_chart_RTO(int series_index, std::string model, std::string code,
+                               dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
+                               mc_chart *chart,
+                               QList<std::vector<float>> &wave_list,
+                               QList<uint64_t> &time_list);
 private slots:
     void update_triggered();
     void chart_update_triggered();
@@ -128,6 +132,7 @@ private slots:
 
     void on_visualization_new_clicked();
 
+    void on_Obs_clicked();
 signals:
     void changeToMetricItemsDisplayConfigPage();
     void changeToHistoryPage();
