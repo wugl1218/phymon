@@ -31,7 +31,7 @@ void Manager_Patient::step()
     if(Common::get_elapsed_time(current_time, last_query_time) > (uint32_t)common->patients_query_interval*1000)
     {
      qDebug()<<"Manager_Patient";
-        fflog_out(common->log,"Info :: Manager_Patient");
+        fflog_out(common->log,"Manager_Patient");
         bound_patients.clear();
         dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> mds_samples = common->mds_reader.select().condition(*mds_cond).read();
         for(auto& sample : mds_samples)
@@ -90,12 +90,6 @@ void Manager_Patient::step()
             sql.append(common->vmd_id);
             sql.append("'");
             cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
-            while (dummy!="IP200")
-                {
-                results = common->cbl->queryDocuments(common->db, sql, dummy);
-                qDebug()<<QString::fromStdString(dummy);
-                fflog_out(common->log,dummy.c_str());
-                }
             for(auto& result: results)
             {
                 rebind_patient = result.valueAtIndex(0).asstring();
@@ -186,7 +180,6 @@ void Manager_Patient::step()
             {
                 printf("can rebind. bind_index=%d\n", (int)bind_index);
                 common->mapping_tab->select_patient(bind_index);
-                common->md->ui->nav->update();
             }
             else
                 force_release();

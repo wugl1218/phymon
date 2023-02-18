@@ -26,23 +26,10 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     update_timer.start(1000);
     connect(&chart_update_timer, SIGNAL(timeout()), this, SLOT(chart_update_triggered()));
     chart_update_timer.start(50);
-    tables[0] = ui->device1_groupBox;
-    tables[1] = ui->device2_groupBox;
-    tables[2] = ui->device3_groupBox;
-    tables[3] = ui->device4_groupBox;
-    table_widgets[0] = ui->device1_tableWidget;
-    table_widgets[1] = ui->device2_tableWidget;
-    table_widgets[2] = ui->device3_tableWidget;
-    table_widgets[3] = ui->device4_tableWidget;
     set_next_loop_as_ref = 0;
     set_next_loop_as_cap = 0;
     captured = 0;
     delay_reference = 0;
-
-    ui->device1_tableWidget->setColumnWidth(0, Device_TableWidget_WIDTH);
-    ui->device2_tableWidget->setColumnWidth(0, Device_TableWidget_WIDTH);
-    ui->device3_tableWidget->setColumnWidth(0, Device_TableWidget_WIDTH);
-    ui->device4_tableWidget->setColumnWidth(0, Device_TableWidget_WIDTH);
 
     ui->rt_chart1->set_axis_visible(1);
     ui->rt_chart1->set_selection_width(40);
@@ -357,8 +344,11 @@ void Tab_Observations_mainPage_Widget::on_series_pressed(int series_index)
         fit = common->md->dm.devices.find("Savina 300");
         if(fit == common->md->dm.devices.end())
             return;
+        else
+            CapturedIssues_model="Savina 300";
     }
-    CapturedIssues_channel_id=fit->second.channel_id;
+    else
+        CapturedIssues_model="Savina";
     model = fit->first;
     common->history_model = model;
     if(sender() == ui->legend)
@@ -419,8 +409,11 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
         fit = common->md->dm.devices.find("Savina 300");
         if(fit == common->md->dm.devices.end())
             return;
+        else
+            CapturedIssues_model="Savina 300";
     }
-    CapturedIssues_channel_id=fit->second.channel_id;
+    else
+        CapturedIssues_model="Savina";
     model = fit->first;
     int loop_start = -1;
     std::vector<float> loop1_x;
@@ -1121,10 +1114,9 @@ void Tab_Observations_mainPage_Widget::update_triggered()
     Common* common = Common::instance();
     if(active)
     {
-        for(int i=0;i<4;i++)
-            tables[i]->hide();
         if(common->patient_id.size() == 0)
             return;
+        /*
         //if(common->device_checkstate.size() == 0)
             common->populate_device_checkstate();
         //if(common->item_checkstate.size() == 0)
@@ -1246,6 +1238,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             }
             table_index++;
         }
+        */
     }
 }
 
@@ -1268,10 +1261,11 @@ void Tab_Observations_mainPage_Widget::mouseMoveEvent(QMouseEvent *event)
 
 void Tab_Observations_mainPage_Widget::mousePressEvent(QMouseEvent *event)
 {
+    /*
     if(childAt(event->pos()) == ui->scrollAreaWidgetContents)
     {
         emit changeToMetricItemsDisplayConfigPage();
-    }
+    }*/
     event->setAccepted(false);
 }
 
@@ -1280,6 +1274,7 @@ void Tab_Observations_mainPage_Widget::mouseReleaseEvent(QMouseEvent *event)
     event->setAccepted(false);
 }
 
+/*
 void Tab_Observations_mainPage_Widget::on_device1_tableWidget_cellClicked(int row, int column)
 {
     emit changeToMetricItemsDisplayConfigPage();
@@ -1302,16 +1297,14 @@ void Tab_Observations_mainPage_Widget::on_device4_tableWidget_cellClicked(int ro
 {
     emit changeToMetricItemsDisplayConfigPage();
 }
-
+*/
 
 void Tab_Observations_mainPage_Widget::on_ref_btn_toggled(bool checked)
 {
-    Common* common = Common::instance();
     if(checked)
     {
         set_next_loop_as_ref = 1;
         set_checked(ui->ref_btn, 1);
-        ui->ref_btn->setStyleSheet(common->css.Checked_ButtonStyle);
         is_ref =1;
 
     }
@@ -1321,7 +1314,6 @@ void Tab_Observations_mainPage_Widget::on_ref_btn_toggled(bool checked)
         set_next_loop_as_ref = 0;
         ui->loop1->clear_ref_points();
         ui->loop2->clear_ref_points();
-        ui->ref_btn->setStyleSheet(common->css.unChecked_ButtonStyle);
         is_ref =0;
         ref_loop_snapshot.clear();
     }
@@ -1346,7 +1338,7 @@ void Tab_Observations_mainPage_Widget::on_cap_btn_toggled(bool checked)
 
         dds::core::xtypes::DynamicData sample(common->CapturedIssues_type);
         sample.value<std::string>("patient_id", common->patient_id);
-        sample.value<std::string>("channel_id", CapturedIssues_channel_id);
+        sample.value<std::string>("model", CapturedIssues_model);
         rti::core::xtypes::LoanedDynamicData point_member = sample.loan_value("captured_point");
         point_member.get().value("x_mdc_code", loop1_x_label);
         point_member.get().value("y_mdc_code", loop1_y_label);
@@ -1361,7 +1353,7 @@ void Tab_Observations_mainPage_Widget::on_cap_btn_toggled(bool checked)
 
         dds::core::xtypes::DynamicData sample1(common->CapturedIssues_type);
         sample1.value<std::string>("patient_id", common->patient_id);
-        sample1.value<std::string>("channel_id", CapturedIssues_channel_id);
+        sample1.value<std::string>("model", CapturedIssues_model);
         rti::core::xtypes::LoanedDynamicData point_member1 = sample1.loan_value("captured_point");
         point_member1.get().value("x_mdc_code", loop2_x_label);
         point_member1.get().value("y_mdc_code", loop2_y_label);

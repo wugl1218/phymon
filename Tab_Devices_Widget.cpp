@@ -63,7 +63,6 @@ void Tab_Devices_Widget::table_return()
 void Tab_Devices_Widget::update_devices(std::map<std::string, Device>* btns)
 {
     Common* common = Common::instance();
-
     for(int i=0;i<(int)devices.size();i++)
     {
         ui->devices_horizontalLayout->removeWidget(devices[i]);
@@ -101,11 +100,9 @@ void Tab_Devices_Widget::update_devices(std::map<std::string, Device>* btns)
         }
         i++;
     }
-
     if(active && dev)
     {
         Common* common = Common::instance();
-
         ui->history_table->clearContents();
         std::string querystr;
         int row;
@@ -219,7 +216,10 @@ void Tab_Devices_Widget::update_devices(std::map<std::string, Device>* btns)
                     dds::sub::status::InstanceState::alive()));
         dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->chansettings_reader.select().condition(cond).read();
         ui->current_settings_table->clearContents();
-
+        if(samples.length()>14)
+            ui->current_settings_table->setRowCount(samples.length());
+        else
+            ui->current_settings_table->setRowCount(samples.length()+1);
         std::map<std::string, TableItem> device_section;
         std::multimap<std::string, TableItem> hl_section;
         std::map<std::string, TableItem> mode_section;
@@ -257,10 +257,6 @@ void Tab_Devices_Widget::update_devices(std::map<std::string, Device>* btns)
             else
                 mode_section.emplace(code, i);
         }
-        if(device_section.size()>14)
-            ui->current_settings_table->setRowCount(samples.length());
-        else
-            ui->current_settings_table->setRowCount(samples.length()+1);
         row = 0;
         for(auto it=device_section.begin();it!=device_section.end();it++)
         {
@@ -346,7 +342,7 @@ void Tab_Devices_Widget::update_devices(std::map<std::string, Device>* btns)
             for(auto& sample : samples2)
             {
                 HistoryItem i;
-                dds::core:: xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
+                dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
                 rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("cur_source_timestamp");
                 time_t sec = (time_t)loaned_member.get().value<int32_t>("sec");
                 loaned_member.return_loan();
@@ -418,6 +414,7 @@ void Tab_Devices_Widget::update_devices(std::map<std::string, Device>* btns)
 
 void Tab_Devices_Widget::btn_clicked()
 {
+    printf("agooda btn_clicked\n");
     QPushButton* s = (QPushButton*)sender();
     dev_index = s->property("index").value<int>();
     for(int i=0;i<(int)devices.size();i++)

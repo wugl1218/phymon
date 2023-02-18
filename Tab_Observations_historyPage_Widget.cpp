@@ -120,13 +120,7 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 sql.append("' AND model='");
                 sql.append(common->history_model);
                 sql.append("'");
-                cbl::ResultSet results;
-                while (dummy!="IP200")
-                    {
-                    results = common->cbl->queryDocuments(common->db, sql, dummy);
-                    qDebug()<<QString::fromStdString(dummy);
-                    fflog_out(common->log,dummy.c_str());
-                    }
+                cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
     //           printf("unlocked query took %u milliseconds.\n", query_end-query_start);*/
     /*            std::multimap<uint64_t, fleece::Array> vals;
                 for(auto& result: results)
@@ -208,13 +202,7 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 sql.append(common->vmd_id);
                 sql.append("'");
                 uint32_t query_start = Common::get_time_ms();
-                cbl::ResultSet results;
-                while (dummy!="IP200")
-                    {
-                    results = common->cbl->queryDocuments(common->db, sql, dummy);
-                    qDebug()<<QString::fromStdString(dummy);
-                    fflog_out(common->log,dummy.c_str());
-                    }
+                cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
                 uint32_t query_end = Common::get_time_ms();
     //            printf("unlocked query took %u milliseconds.\n", query_end-query_start);
                 std::multimap<uint64_t, fleece::Array> vals;
@@ -304,12 +292,6 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 sql.append(common->history_model);
                 sql.append("'");
                 cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
-                while (dummy!="IP200")
-                    {
-                    results = common->cbl->queryDocuments(common->db, sql, dummy);
-                    qDebug()<<QString::fromStdString(dummy);
-                    fflog_out(common->log,dummy.c_str());
-                    }
     //           printf("unlocked query took %u milliseconds.\n", query_end-query_start);*/
                 std::multimap<uint64_t, fleece::Array> vals;
                 for(auto& result: results)
@@ -392,13 +374,6 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 sql.append("'");
     //            uint32_t query_start = Common::get_time_ms();
                 cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
-                while (dummy!="IP200")
-                    {
-                    results = common->cbl->queryDocuments(common->db, sql, dummy);
-                    qDebug()<<QString::fromStdString(dummy);
-                    fflog_out(common->log,dummy.c_str());
-                    }
-
     //            uint32_t query_end = Common::get_time_ms();
     //            printf("unlocked query took %u milliseconds.\n", query_end-query_start);
                 std::multimap<uint64_t, fleece::Array> vals;
@@ -488,12 +463,6 @@ void Tab_Observations_historyPage_Widget::update_triggered()
 
             uint32_t query_start = Common::get_time_ms();
             cbl::ResultSet results2 = common->cbl->queryDocuments(common->db, sql, dummy);
-            while (dummy!="IP200")
-                {
-                results2 = common->cbl->queryDocuments(common->db, sql, dummy);
-                qDebug()<<QString::fromStdString(dummy);
-                fflog_out(common->log,dummy.c_str());
-                }
             uint32_t query_end = Common::get_time_ms();*/
     //        printf("query took %u milliseconds.\n", query_end-query_start);
         /*
@@ -590,12 +559,6 @@ void Tab_Observations_historyPage_Widget::update_triggered()
 
             uint32_t query_start = Common::get_time_ms();
             cbl::ResultSet results2 = common->cbl->queryDocuments(common->db, sql, dummy);
-            while (dummy!="IP200")
-                {
-                results2 = common->cbl->queryDocuments(common->db, sql, dummy);
-                qDebug()<<QString::fromStdString(dummy);
-                fflog_out(common->log,dummy.c_str());
-                }
             uint32_t query_end = Common::get_time_ms();
     //        printf("query took %u milliseconds.\n", query_end-query_start);
         /*
@@ -826,12 +789,6 @@ void Tab_Observations_historyPage_Widget::on_point_select(int series_index, uint
     sql.append(startbuf);
     sql.append(" ORDER BY source_timestamp.sec ASC");
     cbl::ResultSet results2 = common->cbl->queryDocuments(common->db, sql, dummy);
-    while (dummy!="IP200")
-        {
-        results2 = common->cbl->queryDocuments(common->db, sql, dummy);
-        qDebug()<<QString::fromStdString(dummy);
-        fflog_out(common->log,dummy.c_str());
-        }
     std::multimap<int, mc_entry> vals;
     std::multimap<std::string, mc_entry> left_over;
     for(auto& result: results2)

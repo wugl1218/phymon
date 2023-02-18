@@ -15,6 +15,7 @@ Thread_network::~Thread_network()
 }
 void Thread_network::init()
 {
+    return;
     Common* common = Common::instance();
     if (QFile::exists("../config/config.json"))
     {
@@ -31,13 +32,13 @@ void Thread_network::init()
 }
 void Thread_network::run()
 {
-    Common* common = Common::instance();
-    qDebug()<<url;
     if(url=="0.0.0.0")return;
+    return;
+    Common* common = Common::instance();
     while(1)
     {
        qDebug()<<"Thread_network";
-        fflog_out(common->log,"Info :: Thread_network");
+        fflog_out(common->log,"Thread_network");
         foyaCouchbaseReplicator();
         if(common->is_server)
             QThread::currentThread()->msleep(common->Network_Interval*1000);
@@ -51,7 +52,7 @@ void Thread_network::foyaCouchbaseReplicator()
     Common* common = Common::instance();
     // we need to wait...
     client = new QTcpSocket;
-    client->connectToHost(url, 8091);
+    client->connectToHost(url, 80);
     if(!client->waitForConnected(1200))
     {
         if(common->is_server)

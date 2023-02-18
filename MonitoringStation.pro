@@ -27,6 +27,7 @@ SOURCES += \
     Dialog_release.cpp \
     Dialog_visualization_config.cpp \
     Dialog_visualization_selection.cpp \
+    Dialog_wave_selection.cpp \
     MainDialog.cpp \
     Manager_Device.cpp \
     Manager_MDSConnectivity.cpp \
@@ -57,7 +58,10 @@ SOURCES += \
     mc_selection_entry.cpp \
     mc_visualization.cpp \
     mc_visualization_setting.cpp \
-    mc_visualization_setting_item.cpp
+    mc_visualization_setting_item.cpp \
+    mc_wavepanel.cpp \
+    mc_wavepanel_add.cpp \
+    mc_wavepanel_item.cpp
 
 HEADERS += \
     BarcodeDaemon.h \
@@ -74,6 +78,7 @@ HEADERS += \
     Dialog_release.h \
     Dialog_visualization_config.h \
     Dialog_visualization_selection.h \
+    Dialog_wave_selection.h \
     MainDialog.h \
     Manager_Device.h \
     Manager_MDSConnectivity.h \
@@ -103,7 +108,10 @@ HEADERS += \
     mc_selection_entry.h \
     mc_visualization.h \
     mc_visualization_setting.h \
-    mc_visualization_setting_item.h
+    mc_visualization_setting_item.h \
+    mc_wavepanel.h \
+    mc_wavepanel_add.h \
+    mc_wavepanel_item.h
 
 FORMS += \
     Dialog_forcerelease.ui \
@@ -115,6 +123,7 @@ FORMS += \
     Dialog_topalarm_mute.ui \
     Dialog_visualization_config.ui \
     Dialog_visualization_selection.ui \
+    Dialog_wave_selection.ui \
     MainDialog.ui \
     Tab_Devices_Widget.ui \
     Tab_Domaininput.ui \
@@ -128,19 +137,19 @@ FORMS += \
     Tab_Utilities_alarmHistoryPage_Widget.ui \
     Tab_Utilities_exporterPage_Widget.ui
 
-DEPENDPATH += /opt/rti_connext_dds-6.1.0/lib/x64Linux4gcc7.3.0 \
+DEPENDPATH += /home/agooda/rti_connext_dds-6.1.0/lib/x64Linux4gcc7.3.0 \
 
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
+else: unix:!android: target.path = /home/agooda/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 INCLUDEPATH += $$PWD/rapidjson \
-    /opt/rti_connext_dds-6.1.0/include \
-    /opt/rti_connext_dds-6.1.0/include/ndds \
-    /opt/rti_connext_dds-6.1.0/include/ndds/hpp \
-    /opt/couchbase-lite-C/build/output/include \
+    /home/agooda/rti_connext_dds-6.1.0/include \
+    /home/agooda/rti_connext_dds-6.1.0/include/ndds \
+    /home/agooda/rti_connext_dds-6.1.0/include/ndds/hpp \
+    /home/agooda/couchbase-lite-C/build/output/include \
     $$PWD/../miot/CBLPlugin \
     $$PWD/../miot/DDSPlugin \
     $$PWD/../miot/FHIRPlugin \
@@ -149,9 +158,9 @@ INCLUDEPATH += $$PWD/rapidjson \
     $$PWD/../miot/UtilsPlugin
 
 
-LIBS += -L/opt/rti_connext_dds-6.1.0/lib/x64Linux4gcc7.3.0 -lnddscpp2 -lnddsc -lnddscore -ldl -lm -lpthread \
-        -L/opt/dds_collector/lib -lpluginmanager \
-        -L/opt/couchbase-lite-C/build/output/lib/x86_64-linux-gnu -lcblite
+LIBS += -L/home/agooda/rti_connext_dds-6.1.0/lib/x64Linux4gcc7.3.0 -lnddscpp2 -lnddsc -lnddscore -ldl -lm -lpthread \
+        -L/home/agooda/opt/dds_collector/lib -lpluginmanager \
+        -L/home/agooda/couchbase-lite-C/build/output/lib/x86_64-linux-gnu -lcblite
 
 RESOURCES += \
     resource.qrc

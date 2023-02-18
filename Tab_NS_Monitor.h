@@ -35,10 +35,7 @@ public:
     void init();
     QString Bed_size;
     QJsonArray Set_bed;
-    int Card_spacing;
-    int Card_width;
-    int Card_height;
-    /*width=1920 height=1080*/
+
 private slots:
     void patient_clicked();
 

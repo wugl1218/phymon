@@ -41,7 +41,7 @@ return;
     if(Common::get_elapsed_time(current_time, last_query_time) > (uint32_t)common->Network_Interval*1000)
     {
    qDebug()<<"NetworkManager";
-        fflog_out(common->log,"Info :: NetworkManager");
+        fflog_out(common->log,"NetworkManager");
         last_query_time = current_time;
         foyaCouchbaseReplicator();
     }

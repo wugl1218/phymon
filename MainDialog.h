@@ -6,7 +6,6 @@
 #include <QTimer>
 #include <QAbstractButton>
 #include "BarcodeDaemon.h"
-#include "Dialog_topalarm_mute.h"
 #include "Manager_Patient.h"
 #include "Manager_Device.h"
 #include "Common.h"
@@ -41,11 +40,12 @@ public:
     Manager_MDSConnectivity mdsm;
     Tab_NS_Monitor monitor;
     //NetworkManager nm;
-        Dialog_topalarm_mute mute;
+    Dialog_jsontext jt;
     Dialog_network nd;
     Thread_network* network;
     //topalarm
     QSoundEffect *efx;
+    bool is_alarmSound_index=1;
 
     void outPutInfo(QString info);
     void startThread();
@@ -54,6 +54,7 @@ private slots:
     void mainWorkerUpdate();
     void on_tab_switched(int i);
     void db_clean();
+    void is_alarmSound();
     void on_Xbtn_clicked();
 
     

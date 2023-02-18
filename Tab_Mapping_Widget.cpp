@@ -290,12 +290,6 @@ void Tab_Mapping_Widget::on_itemSelectionChanged()
     sql.append(common->vmd_id);
     sql.append("'");
     cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
-    while (dummy!="IP200")
-        {
-        results = common->cbl->queryDocuments(common->db, sql, dummy);
-        qDebug()<<QString::fromStdString(dummy);
-        fflog_out(common->log,dummy.c_str());
-        }
     for(auto& result: results)
     {
         std::string id = result.valueAtIndex(0).asstring();
@@ -368,12 +362,6 @@ void Tab_Mapping_Widget::perform_release(std::string employeeID)
     sql.append(common->vmd_id);
     sql.append("'");
     cbl::ResultSet results = common->cbl->queryDocuments(common->db, sql, dummy);
-    while (dummy!="IP200")
-        {
-        results = common->cbl->queryDocuments(common->db, sql, dummy);
-        qDebug()<<QString::fromStdString(dummy);
-        fflog_out(common->log,dummy.c_str());
-        }
     for(auto& result: results)
     {
         std::string id = result.valueAtIndex(0).asstring();
@@ -411,12 +399,8 @@ void Tab_Mapping_Widget::perform_release(std::string employeeID)
         common->md->ui->main_stackedWidget->setCurrentIndex(0);
         common->vmd_id.clear();
         }
-    for(auto i :common->md->ta.UI_name)
-        {
-        qDebug()<<"============================";
-        i->set_mute_sheet(0);
-        i->circle->hide();
-        }
+    common->md->is_alarmSound_index=true;
+
 }
 
 void Tab_Mapping_Widget::force_release()
@@ -517,6 +501,7 @@ void Tab_Mapping_Widget::force_return()
     common->bed_id.clear();
     common->vmd_id.clear();
     common->exporter_page->handle_stop();
+    common->md->is_alarmSound_index=true;
     selected_patient = -1;
     common->monitor_page->selected_patient = -1;
     for(int i=0;i<(int)cards.size();i++)
@@ -538,15 +523,13 @@ Common* common = Common::instance();
 common->observation_main_page->clear_points();
 common->alarm_page->ui->queryResult_tableWidget->clearContents();
 common->alarm_page_2->ui->queryResult_tableWidget->clearContents();
-common->alarm_page_3->ui->queryResult_tableWidget->clearContents();
 common->alarm_page->ui->queryResult_tableWidget->setRowCount(0);
 common->alarm_page_2->ui->queryResult_tableWidget->setRowCount(0);
-common->alarm_page_3->ui->queryResult_tableWidget->setRowCount(0);
-
+/*
 common->observation_main_page->ui->device1_tableWidget->clearContents();
 common->observation_main_page->ui->device2_tableWidget->clearContents();
 common->observation_main_page->ui->device3_tableWidget->clearContents();
-common->observation_main_page->ui->device4_tableWidget->clearContents();
+common->observation_main_page->ui->device4_tableWidget->clearContents();*/
 common->exporter_page->ui->log_textBrowser->setText("");
 common->exporter_page->ui->fileName_label->setText("");
 common->exporter_page->ui->send_pushButton->setEnabled(false);

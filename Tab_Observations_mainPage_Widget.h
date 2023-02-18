@@ -32,7 +32,7 @@ public:
     ~Tab_Observations_mainPage_Widget();
     void clear_points();
     Ui::Tab_Observations_mainPage_Widget *ui;
-    std::string CapturedIssues_channel_id;
+    std::string CapturedIssues_model;
     Dialog_loopselection lsd;
     Dialog_visualization_config vsd;
 protected:
@@ -46,8 +46,6 @@ private:
     QTimer update_timer;
     QTimer chart_update_timer;
     uint8_t active;
-    QGroupBox* tables[4];
-    QTableWidget* table_widgets[4];
     std::vector<float> left_over_rtchart1_paw_vals;
     uint64_t last_rtchart1_paw_time;
     std::vector<float> left_over_rtchart1_flow_vals;
@@ -94,14 +92,14 @@ private slots:
     void update_triggered();
     void chart_update_triggered();
     void on_series_pressed(int);
-
+/*
     void on_device1_tableWidget_cellClicked(int row, int column);
 
     void on_device2_tableWidget_cellClicked(int row, int column);
 
     void on_device3_tableWidget_cellClicked(int row, int column);
 
-    void on_device4_tableWidget_cellClicked(int row, int column);
+    void on_device4_tableWidget_cellClicked(int row, int column);*/
 
     void visualizetion_clicked();
 

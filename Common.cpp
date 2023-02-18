@@ -25,6 +25,7 @@ Common::Common(MainDialog* m)
     chansettingshis_type(dds::core::xtypes::StructType("")),
     rtobservation_type(dds::core::xtypes::StructType("")),
     topalarm_type(dds::core::xtypes::StructType("")),
+    m_DisplayItem_type(dds::core::xtypes::StructType("")),
     CapturedIssues_type(dds::core::xtypes::StructType(""))
 {
     _common = this;
@@ -57,8 +58,7 @@ Common::Common(MainDialog* m)
     button_hold_state_duration1 = d["ButtonHoldStateDuration1"].GetUint();
     button_hold_tick_interval_slow = d["ButtonHoldTickIntervalSlow"].GetUint();
     button_hold_tick_interval_fast = d["ButtonHoldTickIntervalFast"].GetUint();
-    log_path = d["LogPath"].GetString();
-    Ping_url =d["PingIP"].GetString();
+    log_path = d["LogPath"].GetString();;
 
     rti::config::Verbosity verbosity = static_cast<rti::config::Verbosity::inner_enum>(0);
     // Starting RTI DDS...
@@ -94,14 +94,7 @@ Common::Common(MainDialog* m)
     }
     if(!is_server)
     {
-        std::string sql ="SELECT vmd_id FROM _ WHERE data_source='VMD' ORDER BY source_timestamp DESC";
-        cbl::ResultSet results= cbl->queryDocuments(db, sql, dummy);
-        while (dummy!="IP200")
-            {
-            results = cbl->queryDocuments(db, sql, dummy);
-            qDebug()<<QString::fromStdString(dummy);
-            fflog_out(log,dummy.c_str());
-            }
+        cbl::ResultSet results = cbl->queryDocuments(db, "SELECT vmd_id FROM _ WHERE data_source='VMD' ORDER BY source_timestamp DESC", dummy);
         for(auto& result: results)
         {
             vmd_id = result.valueForKey("vmd_id").asstring();
@@ -116,15 +109,7 @@ Common::Common(MainDialog* m)
     }
     else
         md->nd.is_server=1;
-    std::string sql ="SELECT domain_id FROM _ WHERE data_source='DOMAIN' ORDER BY source_timestamp DESC";
-    cbl::ResultSet dresults= cbl->queryDocuments(db, sql, dummy);
-    while (dummy!="IP200")
-        {
-        dresults = cbl->queryDocuments(db, sql, dummy);
-        qDebug()<<QString::fromStdString(dummy);
-        fflog_out(log,dummy.c_str());
-        }
-
+    cbl::ResultSet dresults = cbl->queryDocuments(db, "SELECT domain_id FROM _ WHERE data_source='DOMAIN' ORDER BY source_timestamp DESC", dummy);
     domain_id = -1;
     for(auto& result: dresults)
     {
@@ -194,7 +179,6 @@ void Common::init_dds(int domain_id)
     useractions_type = dds->getTypeObject("common::UserActions");
     useractions_topic = dds->getTopic("TP_UserActions", useractions_type, "");
     useractions_writer = dds->getWriter(useractions_topic, "VMD_Library::profile::dwUserActions");
-    useractions_reader = dds->getReader(useractions_topic, "VMD_Library::profile::drUserActions");
 
     observation_type = dds->getTypeObject("dds_collector::Observation");
     observation_topic = dds->getTopic("TP_Observation", observation_type, "");
@@ -214,6 +198,10 @@ void Common::init_dds(int domain_id)
     rtobservation_type = dds->getTypeObject("dds_collector::RTObservation");
     rtobservation_topic = dds->getTopic("TP_RTObservation", rtobservation_type, "");
     rtobservation_reader = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
+
+    m_DisplayItem_type = dds->getTypeObject("MonitoringStation::DisplayItems");
+    m_DisplayItem_topic = dds->getTopic("TP_DisplayItems", m_DisplayItem_type, "");
+    m_DisplayItem_reader = dds->getReader(m_DisplayItem_topic, "VMD_Library::profile::drDisplayItems");
 
     topalarm_type = dds->getTypeObject("common::Alert");
     topalarm_topic = dds->getTopic("TP_PatientAlert", topalarm_type, "");
@@ -581,14 +569,7 @@ void Common::populate_item_checkstate()
     std::string sql = "SELECT item,visibility,morder,model FROM _ WHERE data_source='NumericVisibility' AND patient_id='";
     sql.append(patient_id);
     sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
-    cbl::ResultSet results2= cbl->queryDocuments(display_items_db, sql, dummy);
-    while (dummy!="IP200")
-        {
-        results2 = cbl->queryDocuments(display_items_db, sql, dummy);
-        qDebug()<<QString::fromStdString(dummy);
-        fflog_out(log,dummy.c_str());
-        }
-
+    cbl::ResultSet results2 = cbl->queryDocuments(display_items_db, sql, dummy);
     for(auto& result: results2)
     {
         std::string item = result.valueAtIndex(0).asstring();
@@ -620,13 +601,7 @@ void Common::populate_device_checkstate()
     std::string sql = "SELECT model,checked FROM _ WHERE data_source='NumericDeviceSelection' AND patient_id='";
     sql.append(patient_id);
     sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
-    cbl::ResultSet results= cbl->queryDocuments(display_items_db, sql, dummy);
-    while (dummy!="IP200")
-        {
-        results = cbl->queryDocuments(display_items_db, sql, dummy);
-        qDebug()<<QString::fromStdString(dummy);
-        fflog_out(log,dummy.c_str());
-        }
+    cbl::ResultSet results = cbl->queryDocuments(display_items_db, sql, dummy);
     for(auto& result: results)
     {
         std::string model = result.valueAtIndex(0).asstring();
@@ -824,80 +799,6 @@ QJsonArray Common::Restful_API_Orderby(char queryStartTime[64] ,char queryEndTim
     QJsonObject jsonobject = jsonDoc.object();
     QJsonArray array =jsonobject["row"].toArray();
     qDebug()<<array;
-    pReplay->deleteLater();
-    delete manager;
-    manager = nullptr;
-    return array;
-    /*        switch(value.type()) //測試 QJsonValue資料型態
-            {
-            case QJsonValue::Bool:
-                qDebug() << value.toBool();
-                break;
-            case QJsonValue::Double:
-                qDebug() << value.toDouble();
-                break;
-            case QJsonValue::String:
-                qDebug() << value.toString();
-                break;
-            case QJsonValue::Null:
-                qDebug() << " ";
-                break;
-            case QJsonValue::Array:
-                //转化为数组
-                qDebug() << value.toArray();
-                break;
-            case QJsonValue::Object:
-                qDebug() <<value.toObject();
-                break;
-
-            default:
-                qDebug() << "未知类型";
-            }*/
-}
-QJsonArray Common::Restful_API_Alarm(char queryStartTime[64] ,char queryEndTime[64],std::string dataSource,std::string model,std::string orderStr)
-{ //使用於 Tab_Observations_historyPage中 NS端資料庫搜尋
-    Common* common = Common::instance();
-    // URL
-    QString restfulUrl = "http://";
-    restfulUrl.append(QString::fromStdString(common->restful_API_url));
-    restfulUrl.append("/Common/VmdSync/getAlarmHisData");
-    // 構造請求
-    QNetworkRequest request;
-    request.setUrl(QUrl(restfulUrl));
-    request.setRawHeader("API-Key", "dm1kX3N5bmM=");
-    QNetworkAccessManager *manager = new QNetworkAccessManager(md);
-    // 發送請求
-    QByteArray post_index ="patientId=";
-    post_index.append(common->patient_id);
-    post_index.append("&model=");
-    post_index.append(model);
-    post_index.append("&queryStartTime=");
-    post_index.append(queryStartTime);
-    post_index.append("&queryEndTime=");
-    post_index.append(queryEndTime);
-    post_index.append("&dataSource=");
-    post_index.append(dataSource);
-    post_index.append("&orderStr=");
-    post_index.append(orderStr);
- /*   qDebug()<<"patient_id="<<QString::fromStdString(common->patient_id);
-    qDebug()<<"history_mdccode="<<QString::fromStdString(common->history_mdccode);
-    qDebug()<<"history_model="<<QString::fromStdString(common->history_model);
-    qDebug()<<"queryStartTime="<<queryStartTime;
-    qDebug()<<"queryEndTime="<<queryEndTime;
-    qDebug()<<"dataSource="<<QString::fromStdString(dataSource); */
-    QNetworkReply *pReplay = manager->post(request,post_index);
-    // 開啟一個局部的事件循環，等待響應結束，退出
-    QEventLoop eventLoop;
-    QObject::connect(manager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
-    eventLoop.exec();
-    // 獲取響應信息
-    QByteArray bytes = pReplay->readAll();
-    QJsonParseError jsonParseError;
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes, &jsonParseError);
-    qDebug() << jsonParseError.errorString();
-    QJsonObject jsonobject = jsonDoc.object();
-    QJsonArray array =jsonobject["row"].toArray();
-   // qDebug()<<array;
     pReplay->deleteLater();
     delete manager;
     manager = nullptr;

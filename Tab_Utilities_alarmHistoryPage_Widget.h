@@ -19,7 +19,7 @@ class Tab_Utilities_alarmHistoryPage_Widget : public QWidget
 public:
     int dev_index;
     int order;
-    int is_technical;
+    bool is_technical =1;
     uint8_t index_u8;//philo
     Ui::Tab_Utilities_alarmHistoryPage_Widget *ui;
     explicit Tab_Utilities_alarmHistoryPage_Widget(QWidget *parent = nullptr);
