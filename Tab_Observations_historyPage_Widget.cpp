@@ -104,45 +104,16 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 if(custom_right_bound > now*1000)
                     custom_right_bound = now*1000;
                 ui->chart->set_custom_right_bound(custom_right_bound);
-                /*std::string dummy;
-                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>=";
-                char timebuf[64];
-                sprintf(timebuf, "%llu", last_left_bound/1000 - 30);
-                sql.append(timebuf);
-                char timebuf1[64];
-                sql.append(" AND source_timestamp.sec<=");
-                sprintf(timebuf1, "%llu", last_left_bound/1000 - 30 + 180);
-                sql.append(timebuf1);
-                sql.append(" AND mdc_code='");
-                sql.append(common->history_mdccode);
-                sql.append("' AND patient_id='");
-                sql.append(common->patient_id);
-                sql.append("' AND model='");
-                sql.append(common->history_model);
-                sql.append("'");
-                cbl::ResultSet results;
-                int error=0;while (dummy!="IP200"&&error<5)
-                    {
-                    results = common->cbl->queryDocuments(common->db, sql, dummy);
-                    qDebug()<<QString::fromStdString(dummy);
-                    fflog_out(common->log,dummy.c_str());error++;
-                    }
-    //           printf("unlocked query took %u milliseconds.\n", query_end-query_start);*/
-    /*            std::multimap<uint64_t, fleece::Array> vals;
-                for(auto& result: results)
-                {
-                    int32_t sec = result.valueAtIndex(0).asInt();
-                    uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
-                    fleece::Array values = result.valueAtIndex(2).asArray();
-                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
-                    vals.emplace(key, values);
-                }*/
                 char timebuf[64];
                 char timebuf1[64];
                 sprintf(timebuf, "%llu", last_left_bound/1000 - 60);
                 sprintf(timebuf1, "%llu", last_left_bound/1000 + 180);
                 std::multimap<uint64_t, QJsonArray> vals;
-                QJsonArray array =common->Restful_API(timebuf,timebuf1,"RTObservation");
+                QJsonArray array;
+                if(common->history_datasource=="Observation")
+                    array =common->Restful_API(timebuf,timebuf1,"Observation");
+                else
+                    array =common->Restful_API(timebuf,timebuf1,"RTObservation");
                 for (int i=0; i<array.count();++i)
                 {
                     QJsonValue value = array.at(i).toObject();
@@ -190,49 +161,17 @@ void Tab_Observations_historyPage_Widget::on_worker()
                     new_right_bounds = now*1000;
                 ui->chart->set_custom_left_bound(new_right_bounds - 180*1000);
                 ui->chart->set_custom_right_bound(new_right_bounds);
-                std::string dummy;
-                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>=";
-    /*            char timebuf[64];
-                sprintf(timebuf, "%llu", new_right_bounds/1000 - 180);
-                sql.append(timebuf);
-                sql.append(" AND source_timestamp.sec<=");
-                sprintf(timebuf, "%llu", new_right_bounds/1000);
-                sql.append(timebuf);
-                sql.append(" AND mdc_code='");
-                sql.append(common->history_mdccode);
-                sql.append("' AND patient_id='");
-                sql.append(common->patient_id);
-                sql.append("' AND model='");
-                sql.append(common->history_model);
-                sql.append("' AND vmd_id='");
-                sql.append(common->vmd_id);
-                sql.append("'");
-                uint32_t query_start = Common::get_time_ms();
-                cbl::ResultSet results;
-                int error=0;while (dummy!="IP200"&&error<5)
-                    {
-                    results = common->cbl->queryDocuments(common->db, sql, dummy);
-                    qDebug()<<QString::fromStdString(dummy);
-                    fflog_out(common->log,dummy.c_str());error++;
-                    }
-                uint32_t query_end = Common::get_time_ms();
-    //            printf("unlocked query took %u milliseconds.\n", query_end-query_start);
-                std::multimap<uint64_t, fleece::Array> vals;
 
-                for(auto& result: results)
-                {
-                    int32_t sec = result.valueAtIndex(0).asInt();
-                    uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
-                    fleece::Array values = result.valueAtIndex(2).asArray();
-                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
-                    vals.emplace(key, values);
-                }*/
                 char timebuf[64];
                 char timebuf1[64];
                 sprintf(timebuf, "%llu", last_left_bound/1000 -60);
                 sprintf(timebuf1, "%llu", last_left_bound/1000  + 180);
                 std::multimap<uint64_t, QJsonArray> vals;
-                QJsonArray array =common->Restful_API(timebuf,timebuf1,"RTObservation");
+                QJsonArray array;
+                if(common->history_datasource=="Observation")
+                    array =common->Restful_API(timebuf,timebuf1,"Observation");
+                else
+                    array =common->Restful_API(timebuf,timebuf1,"RTObservation");
                 for (int i=0; i<array.count();++i)
                 {
                     QJsonValue value = array.at(i).toObject();
@@ -288,7 +227,10 @@ void Tab_Observations_historyPage_Widget::on_worker()
                     custom_right_bound = now*1000;
                 ui->chart->set_custom_right_bound(custom_right_bound);
                 std::string dummy;
-                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>=";
+                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='";
+                sql.append(common->history_mdccode);
+                sql.append("' AND source_timestamp.sec>=");
+
                 char timebuf[64];
                 sprintf(timebuf, "%llu", last_left_bound/1000 - 30);
                 sql.append(timebuf);
@@ -374,7 +316,9 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 ui->chart->set_custom_left_bound(new_right_bounds - 180*1000);
                 ui->chart->set_custom_right_bound(new_right_bounds);
                 std::string dummy;
-                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>=";
+                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='";
+                sql.append(common->history_mdccode);
+                sql.append("' AND source_timestamp.sec>=");
                 char timebuf[64];
                 sprintf(timebuf, "%llu", new_right_bounds/1000 - 180);
                 sql.append(timebuf);
@@ -471,61 +415,16 @@ void Tab_Observations_historyPage_Widget::update_triggered()
             ui->chart->set_custom_right_bound(now*1000);
             ui->chart->set_custom_left_bound((now-180)*1000);
             now -=180;
-      /*      char timebuf[64];
-            sprintf(timebuf, "%llu", now);
-            std::string dummy;
-            std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>";
-            sql.append(timebuf);
-            sql.append(" AND mdc_code='");
-            sql.append(common->history_mdccode);
-            sql.append("' AND patient_id='");
-            sql.append(common->patient_id);
-            sql.append("' AND model_id='");
-            sql.append(common->history_model);
-            sql.append("' AND vmd_id='");
-            sql.append(common->vmd_id);
-            sql.append("'");
-
-            uint32_t query_start = Common::get_time_ms();
-            cbl::ResultSet results2 = common->cbl->queryDocuments(common->db, sql, dummy);
-            int error=0;while (dummy!="IP200"&&error<5)
-                {
-                results2 = common->cbl->queryDocuments(common->db, sql, dummy);
-                qDebug()<<QString::fromStdString(dummy);
-                fflog_out(common->log,dummy.c_str());error++;
-                }
-            uint32_t query_end = Common::get_time_ms();*/
-    //        printf("query took %u milliseconds.\n", query_end-query_start);
-        /*
-            std::multimap<uint64_t, float> new_pts;
-            for(auto& result: results2)
-            {
-                int32_t sec = result.valueAtIndex(0).asInt();
-                uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
-                fleece::Array values = result.valueAtIndex(2).asArray();
-                uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
-                double avg = 0.0;
-                for(int i=0;i<(int)values.count();i++)
-                    avg += values[i].asFloat();
-                avg /= values.count();
-                new_pts.emplace(key, avg);
-            }
-            std::multimap<uint64_t, fleece::Array> vals;
-            for(auto& result: results2)
-            {
-                int32_t sec = result.valueAtIndex(0).asInt();
-                uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
-                fleece::Array values = result.valueAtIndex(2).asArray();
-                uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
-                vals.emplace(key, values);
-            }*/
             char timebuf[64];
             char timebuf1[64];
             sprintf(timebuf, "%llu", now-30);
             sprintf(timebuf1, "%llu", now+180);
             std::multimap<uint64_t, QJsonArray> vals;
-            QJsonArray array =common->Restful_API(timebuf,timebuf1,"RTObservation");
-            for (int i=0; i<array.count();++i)
+            QJsonArray array;
+            if(common->history_datasource=="Observation")
+                array =common->Restful_API(timebuf,timebuf1,"Observation");
+            else
+                array =common->Restful_API(timebuf,timebuf1,"RTObservation");            for (int i=0; i<array.count();++i)
             {
                 QJsonValue value = array.at(i).toObject();
                 QJsonValue source_timestamp =value["source_timestamp"];
@@ -576,7 +475,9 @@ void Tab_Observations_historyPage_Widget::update_triggered()
             char timebuf[64];
             sprintf(timebuf, "%llu", now);
             std::string dummy;
-            std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='RTObservation' AND source_timestamp.sec>";
+            std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values FROM _ WHERE data_source='";
+            sql.append(common->history_mdccode);
+            sql.append("' AND source_timestamp.sec>=");
             sql.append(timebuf);
             sql.append(" AND mdc_code='");
             sql.append(common->history_mdccode);
