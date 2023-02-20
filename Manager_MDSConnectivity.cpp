@@ -14,6 +14,8 @@ void Manager_MDSConnectivity::init()
                 dds::sub::status::SampleState::any(),
                 dds::sub::status::ViewState::any(),
                 dds::sub::status::InstanceState::alive()));
+    std::string querystr3 = "alarm_state MATCH '' AND source_timestamp.sec >";
+            querystr3.append(QString::number(time(NULL)-6).toStdString());
     last_query_time = 0;
     last_query_time1 = 0;
 }
@@ -115,6 +117,7 @@ void Manager_MDSConnectivity::step()
                 if(patient_samples.length() > 0)
                     mdsconnectivity.emplace(mdsc.bed_id, mdsc);
             }
+
         for(int i=0; i<common->monitor_page->Set_bed.size(); i++)
             {
             auto item = mdsconnectivity.find(common->monitor_page->Set_bed[i].toString().toStdString());
@@ -232,6 +235,7 @@ void Manager_MDSConnectivity::step()
             if(!is_exist)
                 common->md->mdsm.technical_alarm.push_back(alarm);
         }
+
         //刪除過期警告
 /*      std::string dummy;
         std::string sql2 = "SELECT meta().alarm_no,channel_id,vmd_id,patient_id,alarm_code,alarm_description,alarm_priority,alarm_state,source_timestamp.sec,source_timestamp.nanosec FROM _ WHERE data_source='NumericDeviceSelection'";

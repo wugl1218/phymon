@@ -45,7 +45,8 @@ mc_wavepanel::mc_wavepanel(QWidget *parent)
 void mc_wavepanel::add_clicked()
 {
     menu.clear_tabs();
-    std::vector<std::string> items = m_WaveRtItems;
+    std::vector<std::string> items = GetDisplayIntersec("Savina", "TPO");
+
     for (int i = 0; i < items.size(); i++)
         printf("*** items[%d]=%s\n", i, items[i].c_str());
 
