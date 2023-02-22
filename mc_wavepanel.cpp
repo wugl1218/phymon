@@ -94,12 +94,6 @@ void mc_wavepanel::UpdateWave()
 {
     printf("Agooda UpdateWave\n");
     m_DeviceName = "Savina";
-<<<<<<< Updated upstream
-    QueryRtItems(m_DeviceName);
-    QueryObItems(m_DeviceName);
-    QueryDisplayItems();
-    GetDisplayIntersec("Savina", "Obs");
-=======
     //QueryRtItems(m_DeviceName);
     //QueryObItems(m_DeviceName);
     //QueryDisplayItems();
@@ -118,7 +112,6 @@ void mc_wavepanel::UpdateWave()
                           m_RTO_chart_list[0],
                           m_rtchart1_wave_list,
                           m_rtchart1_time_list);
->>>>>>> Stashed changes
 }
 
 std::vector<std::string> mc_wavepanel::QueryRtItems(std::string DeviceName)

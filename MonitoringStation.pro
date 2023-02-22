@@ -137,12 +137,12 @@ FORMS += \
     Tab_Utilities_alarmHistoryPage_Widget.ui \
     Tab_Utilities_exporterPage_Widget.ui
 
-DEPENDPATH += /home/agooda/rti_connext_dds-6.1.0/lib/x64Linux4gcc7.3.0 \
+DEPENDPATH += /opt/rti_connext_dds-6.1.0/lib/x64Linux4gcc7.3.0 \
 
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /home/agooda/$${TARGET}/bin
+else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 INCLUDEPATH += $$PWD/rapidjson \

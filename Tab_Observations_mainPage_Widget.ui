@@ -442,19 +442,6 @@ color:rgb(255, 255, 255);</string>
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
           <widget class="QPushButton" name="visualization_new">
            <property name="maximumSize">
             <size>
@@ -467,19 +454,6 @@ color:rgb(255, 255, 255);</string>
 (test)</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
          </item>
          <item>
           <widget class="QPushButton" name="visualization_hide_btn">
@@ -1160,9 +1134,9 @@ color:rgb(255, 255, 255);</string>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>mc_wavepanel</class>
+   <class>mc_visualization</class>
    <extends>QWidget</extends>
-   <header>mc_wavepanel.h</header>
+   <header>mc_visualization.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
