@@ -660,18 +660,18 @@ void mc_chart::handle_release(float x, float y)
 
 void mc_chart::mouseMoveEvent(QMouseEvent *event)
 {
-    //handle_move(event->pos().x(), event->pos().y());
+    handle_move(event->pos().x(), event->pos().y());
 }
 
 void mc_chart::mousePressEvent(QMouseEvent *event)
 {
-    //handle_press(event->pos().x(), event->pos().y());
+    handle_press(event->pos().x(), event->pos().y());
     emit clicked();
 }
 
 void mc_chart::mouseReleaseEvent(QMouseEvent *event)
 {
-    //handle_release(event->pos().x(), event->pos().y());
+    handle_release(event->pos().x(), event->pos().y());
 }
 
 bool mc_chart::event(QEvent* event)

@@ -13,6 +13,8 @@
 #include <QAbstractButton>
 #include "Dialog_loopselection.h"
 #include "Dialog_visualization_config.h"
+#include "mc_legend.h"
+
 class mc_loop_entry
 {
 public:
@@ -53,6 +55,9 @@ private:
     QList<uint64_t> rtchart1_time_list;
     QList<uint64_t> rtchart2_time_list;
     QList<QColor> line_color_list;
+    std::vector<mc_legend*> legends;
+    int mc_chart1_line =0;
+    int mc_chart2_line =0;
 
 //    std::vector<float> left_over_rtchart1_paw_vals;
 //    uint64_t last_rtchart1_paw_time;
@@ -104,7 +109,7 @@ private:
 private slots:
     void update_triggered();
     void chart_update_triggered();
-    void on_series_pressed(int);
+    void on_series_pressed(std::string model,std::string mdccode);
 /*
     void on_device1_tableWidget_cellClicked(int row, int column);
 

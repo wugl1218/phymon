@@ -37,9 +37,9 @@ mc_wavepanel::mc_wavepanel(QWidget *parent)
     item_layout = new QVBoxLayout();
     main_layout->addLayout(item_layout, 1);
     push_add_item();
-    m_Timer.setInterval(1000);
-    connect(&m_Timer, SIGNAL(timeout()), this, SLOT(UpdateWave()));
-    m_Timer.start();
+//    m_Timer.setInterval(1000);
+//    connect(&m_Timer, SIGNAL(timeout()), this, SLOT(UpdateWave()));
+//    m_Timer.start();
 }
 
 void mc_wavepanel::add_clicked()

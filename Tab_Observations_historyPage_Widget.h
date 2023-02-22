@@ -88,6 +88,7 @@ private slots:
     void on_min_down_pressed();
     void on_min_down_released();
     void on_day_dropdown_currentIndexChanged(int index);
+
 };
 
 #endif // TAB_OBSERVATIONS_HISTORYPAGE_WIDGET_H

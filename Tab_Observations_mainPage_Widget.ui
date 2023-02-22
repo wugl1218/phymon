@@ -336,7 +336,7 @@ color:rgb(255, 255, 255);</string>
             </size>
            </property>
            <property name="verticalScrollBarPolicy">
-            <enum>Qt::ScrollBarAsNeeded</enum>
+            <enum>Qt::ScrollBarAlwaysOn</enum>
            </property>
            <property name="horizontalScrollBarPolicy">
             <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -344,12 +344,12 @@ color:rgb(255, 255, 255);</string>
            <property name="widgetResizable">
             <bool>true</bool>
            </property>
-           <widget class="QWidget" name="scrollAreaWidgetContents">
+           <widget class="QWidget" name="WidgetContents">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>218</width>
+              <width>204</width>
               <height>156</height>
              </rect>
             </property>
@@ -369,22 +369,6 @@ color:rgb(255, 255, 255);</string>
              <property name="spacing">
               <number>0</number>
              </property>
-             <item row="0" column="0">
-              <widget class="mc_legend" name="legend" native="true">
-               <property name="minimumSize">
-                <size>
-                 <width>120</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>Arial</family>
-                 <pointsize>18</pointsize>
-                </font>
-               </property>
-              </widget>
-             </item>
             </layout>
            </widget>
           </widget>
@@ -651,12 +635,6 @@ QPushButton:checked{
    <class>mc_chart</class>
    <extends>QWidget</extends>
    <header>mc_chart.h</header>
-  </customwidget>
-  <customwidget>
-   <class>mc_legend</class>
-   <extends>QWidget</extends>
-   <header>mc_legend.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>mc_loop</class>

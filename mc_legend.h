@@ -16,6 +16,7 @@ public:
     std::string name;
     std::string model;
     std::string unit;
+    std::string mdccode;
     float val;
 
     QColor color;
@@ -26,10 +27,6 @@ class mc_legend : public QWidget
     Q_OBJECT
 public:
     mc_legend(QWidget *parent = nullptr);
-    void set_left_margin(int margin);
-    int get_left_margin();
-    void set_top_margin(int margin);
-    int get_top_margin();
     void set_vertical_spacing(int spacing);
     int get_vertical_spacing();
     void set_square_width(int width);
@@ -39,15 +36,16 @@ public:
     void set_text_color(QColor color);
     QColor get_text_color();
 
-    void set_series_color(int series_index, QColor color);
-    QColor get_series_color(int series_index);
-    void set_series_text(int series_index,
+    void set_series_color(QColor color);
+    QColor get_series_color();
+    void set_series_text(
                          std::string text,
                          std::string model,
                          std::string unit,
+                         std::string mdccode,
                          float val);
-    std::string get_series_text(int series_index);
-    void remove_series(int series_index);
+    std::string get_series_text();
+    void remove_series();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -56,18 +54,16 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 signals:
-    void on_series_select(int series_index);
+    void on_series_select(std::string model,std::string mdccode);
 
 private:
-    int left_margin;
-    int top_margin;
     int square_width;
     int square_height;
 
     int vertical_spacing;
     int font_size;
     QColor text_color;
-    std::vector<mc_legend_entry> entries;
+    mc_legend_entry entries;
 };
 
 #endif // MC_LEGEND_H

@@ -18,7 +18,7 @@ Manager_MDSConnectivity_Card::Manager_MDSConnectivity_Card(QWidget *parent)
 
     circle = new QLabel(this);
     circle->setGeometry(310,0,42,42);
-    circle->hide();
+//    circle->hide();
     QPixmap *pixmap = new QPixmap(":/icons/bluecircle.png");
     pixmap->scaled(circle->size(), Qt::KeepAspectRatio);
     circle->setScaledContents(true);
@@ -235,6 +235,7 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
         painter.setFont(bed_font);
         painter.setPen(bed_pen);
         Common::draw_text(painter, 2,18, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(bed));
+        circle->hide();
         return;
         }
     painter.setPen(Qt::NoPen);
@@ -310,7 +311,7 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             title_pen.setColor(QColor(61, 102, 128));
             value_pen.setColor(QColor(11, 42, 78));
             circle->setStyleSheet("background:rgb(252, 233, 79);color:rgb(248, 208, 4);");
-            //circle->show();
+            circle->hide();
             circle_time=time(0);
             title->setText(QString::fromStdString(i->alarm_description));
             title->setWordWrap(true);
@@ -328,7 +329,7 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             title_pen.setColor(QColor(61, 102, 128));
             value_pen.setColor(QColor(11, 42, 78));
             circle->setStyleSheet("background:rgb(252, 233, 79);color:rgb(248, 208, 4);");
-            //circle->show();
+            circle->hide();
             circle_time=time(0);
             title->setText(QString::fromStdString(i->alarm_description));
             title->setWordWrap(true);
@@ -347,6 +348,9 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
         title->hide();
         if(circle_time!=0)
             circle->show();
+        else
+            circle->hide();
+
     }
     painter.drawRect(0,0,width(),height());
     painter.setRenderHint(QPainter::Antialiasing, true);

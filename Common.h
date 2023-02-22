@@ -44,6 +44,7 @@ class mc_entry
 {
 public:
     std::string code;
+    std::string mdccode;
     std::string model;
     std::string desc;
     std::string abbv;
