@@ -1283,6 +1283,9 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             int row=0;
             mc_chart1_line =0;
             mc_chart2_line =0;
+            for(int i=0;i<(int)legends.size();i++)
+                delete legends[i];
+            legends.clear();
 
             for(auto it2=entries.begin();it2!=entries.end();it2++)
             {
@@ -1317,24 +1320,23 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                 legend1->show();
                 connect(legend1, SIGNAL(on_series_select(std::string,std::string)), this, SLOT(on_series_pressed(std::string,std::string)));
                 legends.push_back(legend1);
-
                 uint64_t t = ((uint64_t)it2->second.ts.tv_sec)*1000 + ((uint64_t)it2->second.ts.tv_nsec)/1000000;
                 if(it2->second.y_max=="200")
                 {
-                    add_wave_to_chart_Obs(mc_chart1_line,
+                   /* add_wave_to_chart_Obs(mc_chart1_line,
                                       t,it2->second.val,
                                       ui->rt_chart1,
                                       rtchart1_wave_list,
-                                      rtchart1_time_list);
+                                      rtchart1_time_list);*/
                     ++mc_chart1_line;
                 }
                 else if (it2->second.y_max=="1000")
                 {
-                    add_wave_to_chart_Obs(mc_chart2_line,
+                   /* add_wave_to_chart_Obs(mc_chart2_line,
                                       t,it2->second.val,
                                       ui->rt_chart2,
                                       rtchart2_wave_list,
-                                      rtchart2_time_list);
+                                      rtchart2_time_list);*/
                     ++mc_chart2_line;
                 }
                 else
@@ -1366,8 +1368,27 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                     ui->rt_chart2->set_series_color(i-mc_chart1_line-1, line_color_list[i]);
                 }
             }
+          /*  for (int i=row+1;i<21;++i)
+            {
+                mc_legend *legend1 = new mc_legend(ui->WidgetContents);
+                legend1->setGeometry(0,
+                                     (10+80)*row,
+                                     220, 80);
+                legend1->set_text_color(QColor(0,0,0,255));
+                legend1->set_series_color(line_color_list[row]);
+                legend1->set_series_text("null",
+                                         "",
+                                         "",
+                                         "",
+                                         0);
+                legend1->show();
+            }*/
+            ui->WidgetContents->update();
+            ui->WidgetContents->setMinimumHeight(90*row+10);
+//            qDebug()<<ui->WidgetContents->height();
 
         }
+
     }
 }
 

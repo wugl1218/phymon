@@ -369,10 +369,6 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
                     mv_order = i;
                 else if(it2->second[i].compare("I:E Ratio") == 0)
                     ie_order = i;
-/*                else if(it2->second[i].compare("I:E I-Part") == 0)
-                    i_order = i;
-                else if(it2->second[i].compare("I:E E-Part") == 0)
-                    e_order = i;*/
             }
         }
     }
@@ -394,15 +390,6 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         if(it2!=item_checkstate.end())
             rsi_order = it2->second.order;
         str = model;
-        str.append(",I:E I-Part");
-        it2 = item_checkstate.find(str);
-        if(it2!=item_checkstate.end())
-            i_order = it2->second.order;
-        str = model;
-        str.append(",I:E E-Part");
-        it2 = item_checkstate.find(str);
-        if(it2!=item_checkstate.end())
-            e_order = it2->second.order;
     }
     if(has_vt && has_rr)
     {
@@ -668,10 +655,6 @@ void Common::populate_item_checkstate()
     k.order = 3;
     item_checkstate.emplace("Savina,I:E Ratio", k);
     item_checkstate.emplace("Savina 300,I:E Ratio", k);
-    item_checkstate.emplace("Savina,I:E I-Part", k);
-    item_checkstate.emplace("Savina 300,I:E I-Part", k);
-    item_checkstate.emplace("Savina,I:E E-Part", k);
-    item_checkstate.emplace("Savina 300,I:E E-Part", k);
     k.order = 6;
     item_checkstate.emplace("Savina,RSI", k);
     item_checkstate.emplace("Savina 300,RSI", k);

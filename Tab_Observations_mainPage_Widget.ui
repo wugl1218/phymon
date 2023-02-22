@@ -336,7 +336,7 @@ color:rgb(255, 255, 255);</string>
             </size>
            </property>
            <property name="verticalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOn</enum>
+            <enum>Qt::ScrollBarAsNeeded</enum>
            </property>
            <property name="horizontalScrollBarPolicy">
             <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -349,9 +349,15 @@ color:rgb(255, 255, 255);</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>204</width>
+              <width>218</width>
               <height>156</height>
              </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
             </property>
             <layout class="QGridLayout" name="gridLayout">
              <property name="leftMargin">

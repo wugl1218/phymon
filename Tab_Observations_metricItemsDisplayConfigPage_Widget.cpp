@@ -332,16 +332,16 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::apply_savina_ordering
     rsi->set_type(MC_ENTRY_STATIC);
     rsi->set_text("RSI");
     rsi->show();
-    mc_selection_entry* ipart = new mc_selection_entry(parent);
-    (*lines).emplace(lines->begin(), ipart);
-    ipart->set_type(MC_ENTRY_STATIC);
-    ipart->set_text("I:E I-part");
-    ipart->show();
-    mc_selection_entry* epart = new mc_selection_entry(parent);
-    (*lines).emplace(lines->begin(), epart);
-    epart->set_type(MC_ENTRY_STATIC);
-    epart->set_text("I:E E-part");
-    epart->show();
+//    mc_selection_entry* ipart = new mc_selection_entry(parent);
+//    (*lines).emplace(lines->begin(), ipart);
+//    ipart->set_type(MC_ENTRY_STATIC);
+//    ipart->set_text("I:E I-part");
+//    ipart->show();
+//    mc_selection_entry* epart = new mc_selection_entry(parent);
+//    (*lines).emplace(lines->begin(), epart);
+//    epart->set_type(MC_ENTRY_STATIC);
+//    epart->set_text("I:E E-part");
+//    epart->show();
 
     Common* common = Common::instance();
     std::vector<std::string> items;

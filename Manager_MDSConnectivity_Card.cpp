@@ -167,6 +167,7 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
         }
         else if(QEvent::Enter == event->type()) {            //鼠标进入
             if (title->isHidden()) { //已经隐藏就显示出来
+                if(!is_Equipment_alarm)return true;
                 title->show();
                 QPoint point = circle->pos();
                 point.rx() = 0;
@@ -228,7 +229,6 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
     int title_value_interval=58;
     if(id == "")
         {
-
         painter.setPen(Qt::NoPen);
         painter.setBrush(QColor(107, 107, 107));
         painter.drawRect(0,0,width(),height());
@@ -236,6 +236,8 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
         painter.setPen(bed_pen);
         Common::draw_text(painter, 2,18, Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(bed));
         circle->hide();
+        title->hide();
+        title->setStyleSheet("background:rgb(107, 107, 107);color:rgb(248, 208, 4);");
         return;
         }
     painter.setPen(Qt::NoPen);
