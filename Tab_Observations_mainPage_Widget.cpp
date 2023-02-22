@@ -139,6 +139,7 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
                    <<QColor(170,70,90)
 
                    <<QColor(190,90,110);
+    ui->WidgetContents->setStyleSheet("background:rgb(4, 5, 7);");
 
 }
 
@@ -1261,9 +1262,20 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                     }
                     else
                     {
+                        qDebug()<<"=============================2";
+                        qDebug()<<"=entries.size()="<<entries.size();
                         std::string str = it->second.model;
                         str.append(",");
                         str.append(e.desc);
+                        bool is_continue =0;
+                        for(auto it3=entries.begin();it3!=entries.end();it3++)
+                            if(it3->second.desc==e.desc)
+                                {
+                                is_continue=1;
+                                break;
+                                }
+                        if(is_continue)
+                            continue;
                         auto it2 = common->item_checkstate.find(str);
                         if(it2==common->item_checkstate.end())
                             entries.emplace(9999, e);
@@ -1286,6 +1298,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             for(int i=0;i<(int)legends.size();i++)
                 delete legends[i];
             legends.clear();
+            qDebug()<<"=entries.size()="<<entries.size();
 
             for(auto it2=entries.begin();it2!=entries.end();it2++)
             {
@@ -1302,10 +1315,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                     it2->second.unit = "L/min";
                     QString str = QString::number((it2->second.val*60.0)/1000.0, 'f', 2);
                     it2->second.val = str.toInt();
-//                    common->utils->mdcValueFormatter("Observation", it2->second.code, it2->second.val, "", tempbuf);
                 }
-//                else
-//                    common->utils->mdcValueFormatter("Observation", it2->second.code, it2->second.val, "", tempbuf);
                 mc_legend *legend1 = new mc_legend(ui->WidgetContents);
                 legend1->setGeometry(0,
                                      (10+80)*row,
@@ -1323,20 +1333,20 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                 uint64_t t = ((uint64_t)it2->second.ts.tv_sec)*1000 + ((uint64_t)it2->second.ts.tv_nsec)/1000000;
                 if(it2->second.y_max=="200")
                 {
-                   /* add_wave_to_chart_Obs(mc_chart1_line,
+                    add_wave_to_chart_Obs(mc_chart1_line,
                                       t,it2->second.val,
                                       ui->rt_chart1,
                                       rtchart1_wave_list,
-                                      rtchart1_time_list);*/
+                                      rtchart1_time_list);
                     ++mc_chart1_line;
                 }
                 else if (it2->second.y_max=="1000")
                 {
-                   /* add_wave_to_chart_Obs(mc_chart2_line,
+                    add_wave_to_chart_Obs(mc_chart2_line,
                                       t,it2->second.val,
                                       ui->rt_chart2,
                                       rtchart2_wave_list,
-                                      rtchart2_time_list);*/
+                                      rtchart2_time_list);
                     ++mc_chart2_line;
                 }
                 else
@@ -1385,6 +1395,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             }*/
             ui->WidgetContents->update();
             ui->WidgetContents->setMinimumHeight(90*row+10);
+
 //            qDebug()<<ui->WidgetContents->height();
 
         }

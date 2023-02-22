@@ -335,6 +335,47 @@ color:rgb(255, 255, 255);</string>
              <height>0</height>
             </size>
            </property>
+           <property name="styleSheet">
+            <string notr="true">QScrollArea{
+background-color: rgb(4, 5, 7);
+}
+
+QScrollBar:vertical{
+      width: 22px;
+	background-color:rgb(11, 42, 78);
+    padding-top:0px;
+    padding-bottom:50px;
+
+    }
+QScrollBar::handle:vertical{
+      width: 22px;
+	background-color: rgb(17, 74, 140);
+	border-radius: 10px;
+	min-height:20;
+    }
+QScrollBar::handle:hover{
+      width: 22px;
+	background-color: rgb(12, 69, 135);
+	border-radius: 10px;
+    }
+
+QScrollBar::add-line:vertical{
+      width: 22px;
+	height:22px;
+	background-color: rgb(17, 74, 140);
+	border-radius: 10px;
+	min-height:20;
+    }
+QScrollBar::sub-line:vertical{
+      width: 0px;
+	height:0px;
+	background-color: rgb(17, 74, 140);
+	border-radius: 10px;
+	min-height:20;
+    }
+
+</string>
+           </property>
            <property name="verticalScrollBarPolicy">
             <enum>Qt::ScrollBarAsNeeded</enum>
            </property>
@@ -384,35 +425,13 @@ color:rgb(255, 255, 255);</string>
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,3,1">
+      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,1">
        <property name="topMargin">
         <number>10</number>
        </property>
        <property name="bottomMargin">
         <number>0</number>
        </property>
-       <item>
-        <widget class="mc_loop" name="loop1" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>250</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-        </widget>
-       </item>
        <item>
         <widget class="mc_loop" name="loop2" native="true">
          <property name="sizePolicy">
@@ -433,6 +452,34 @@ color:rgb(255, 255, 255);</string>
            <pointsize>11</pointsize>
           </font>
          </property>
+         <widget class="mc_loop" name="loop1" native="true">
+          <property name="geometry">
+           <rect>
+            <x>-10</x>
+            <y>0</y>
+            <width>189</width>
+            <height>250</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>250</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+         </widget>
         </widget>
        </item>
        <item>

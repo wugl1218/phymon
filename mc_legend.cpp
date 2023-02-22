@@ -106,16 +106,15 @@ void mc_legend::paintEvent(QPaintEvent *event)
 {
     Common* common = Common::instance();
     QPainter painter(this);
-    QPen nopen(Qt::NoPen);
     if(entries.name.size() == 0)return;
-    if(entries.name=="null")
-    {
-            QColor blackColor =QColor(04,05,07);
-            QPen black(blackColor);
-            painter.setPen(nopen);
-            painter.drawRect(0,0,width(),height());
-            return;
-    }
+    QPen nopen(Qt::NoPen);
+    QColor blackColor =QColor(04,05,07);
+    QPen black(blackColor);
+    painter.setPen(nopen);
+    painter.drawRect(0,0,width(),height());
+    QFont font ;
+    font.setPixelSize(22);
+    painter.setFont(font);
 
     painter.setRenderHint(QPainter::Antialiasing, true);
     QPen pen(text_color);
@@ -126,6 +125,7 @@ void mc_legend::paintEvent(QPaintEvent *event)
         QBrush brush(entries.color);
         painter.setBrush(brush);
         painter.setPen(nopen);
+
         painter.drawRoundedRect(0,0,square_width,square_height,10,10);
         if(entries.name.size() > 0)
         {
