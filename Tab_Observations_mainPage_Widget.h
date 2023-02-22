@@ -5,6 +5,7 @@
 #include "dds/sub/TDataReader.hpp"
 #include "mc_chart.h"
 #include "mc_loop.h"
+#include "qboxlayout.h"
 #include "qgroupbox.h"
 #include "qtablewidget.h"
 #include "qtimer.h"
@@ -37,6 +38,10 @@ public:
     std::string CapturedIssues_model;
     Dialog_loopselection lsd;
     Dialog_visualization_config vsd;
+    QList<QHBoxLayout*> RTO_wave_list;
+    QList<mc_chart*> RTO_chart_list;
+    QList<QWidget*>RTO_option_list;
+
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;

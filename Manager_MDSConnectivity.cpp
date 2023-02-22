@@ -262,7 +262,7 @@ void Manager_MDSConnectivity::step()
                 dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> patient_samples = common->topalarm_reader.select().condition(cond2).read();
                 bool is_erase=0;
 
-                if(patient_samples.length() == 0||m> i->sec)
+                if(patient_samples.length() == 0||m> i->sec)//警告不存在或過期
                 {
                     i =common->md->mdsm.patient_alarm.erase(i);
                     is_erase=1;break;

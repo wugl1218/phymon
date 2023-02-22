@@ -8,6 +8,11 @@
 #include <QWidget>
 #include <stdint.h>
 #include <QTimer>
+#include "mc_wavepanel_add.h"
+#include "dds/core/corefwd.hpp"
+#include "dds/sub/TDataReader.hpp"
+
+#define MAX_WAVE 6
 
 struct stDisplayItems
 {
@@ -15,7 +20,9 @@ struct stDisplayItems
     std::string display_desc;
     std::string wave_type;
     std::string mdc_code;
-
+    int y_max;
+    int y_min;
+    int y_step;
 };
 
 class mc_wavepanel : public QWidget
@@ -31,23 +38,43 @@ public:
     std::vector<std::string> m_WaveRtItems;
     std::vector<std::string> m_WaveObItems;
     std::vector<stDisplayItems> m_DisplayItems;
-    std::vector<std::string> GetDisplayIntersec(std::string model, std::string type);
+    std::vector<stDisplayItems> GetDisplayIntersec(std::string model, std::string type);
     std::string m_DeviceName;
-    //int m_LowerCount;
+    int m_RtLowerCount;
+    int m_ObLowerCount;
+    mc_wavepanel_add *m_WaveItem[MAX_WAVE];
+    QList<QHBoxLayout*> m_RTO_wave_list;
+    QList<mc_chart*> m_RTO_chart_list;
+    QList<QWidget*> m_RTO_option_list;
+
+    QList<std::vector<float>> m_rtchart1_wave_list;
+    QList<uint64_t> m_rtchart1_time_list;
+
+    void add_wave_to_chart_RTO(int series_index, std::string model, std::string code,
+                               dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
+                               mc_chart *chart,
+                               QList<std::vector<float>> &wave_list,
+                               QList<uint64_t> &time_list);
+    void set_wave_ui(QList<QHBoxLayout*> wave_list) {m_RTO_wave_list = wave_list;};
+    void set_chart_ui(QList<mc_chart*> chart_list) {m_RTO_chart_list = chart_list;};
+    void set_option_ui(QList<QWidget*> option_list) {m_RTO_option_list = option_list;};
+
 signals:
 
 private:
     QLabel* corner;
-    QVBoxLayout* main_layout;
-    QVBoxLayout* item_layout;
-    QHBoxLayout* header_layout;
-    QWidget* header_bar;
+    //QVBoxLayout* verticalLayout;
+    //QVBoxLayout* main_layout;
+    //QVBoxLayout* item_layout;
+    //QHBoxLayout* header_layout;
+    //QWidget* header_bar;
     mc_btn_Clickable* controls_btn;
     uint8_t controls_on;
     Dialog_wave_selection menu;
-
+    bool m_bDrawlayout;
     void render_controls_btn();
     void push_add_item();
+
 private slots:
     void controls_clicked();
     void UpdateWave();

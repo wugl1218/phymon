@@ -58,10 +58,10 @@ background-color: rgb(7, 22, 40);</string>
        <widget class="QWidget" name="template_patient" native="true">
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>20</y>
-          <width>181</width>
-          <height>131</height>
+          <x>260</x>
+          <y>30</y>
+          <width>321</width>
+          <height>251</height>
          </rect>
         </property>
         <property name="palette">
