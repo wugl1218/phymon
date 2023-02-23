@@ -13,6 +13,7 @@ Common* _common = NULL;
 Common::Common(MainDialog* m)
     : msg(m),
       rd(m),
+      select_menu(m),
     mds_type(dds::core::xtypes::StructType("")),
     techalert_type(dds::core::xtypes::StructType("")),
     time_type(dds::core::xtypes::StructType("")),
@@ -341,8 +342,6 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         {
             has_vt = 1;
             vt = it2->second.val;
-            sec = it->second.ts.tv_sec;
-            nsec = it->second.ts.tv_nsec;
         }
         else if(it2->second.desc.compare("Respiratory rate") == 0)
         {
@@ -400,8 +399,9 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         e.val = (vt/1000.0)*rr;
         e.model = "Savina";
         e.y_max = "200";
-        e.ts.tv_sec=sec;
-        e.ts.tv_nsec=nsec;
+        e.is_matecares =1;
+//        e.ts.tv_sec=sec;
+//        e.ts.tv_nsec=nsec;
 
         entries->emplace(mv_order, e);
         e.code = "RSI";
@@ -410,8 +410,9 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         e.val = vt/rr;
         e.model = "Savina";
         e.y_max = "200";
-        e.ts.tv_sec=sec;
-        e.ts.tv_nsec=nsec;
+        e.is_matecares =1;
+//        e.ts.tv_sec=sec;
+//        e.ts.tv_nsec=nsec;
         entries->emplace(rsi_order, e);
     }
 /*    if(has_ipart && has_epart)

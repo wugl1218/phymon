@@ -15,6 +15,7 @@ DEFINES += RTI_UNIX \
 
 SOURCES += \
     BarcodeDaemon.cpp \
+    Dialog_select_menu.cpp \
     Dialog_topalarm_mute.cpp \
     Manager_MDSConnectivity_Card.cpp \
     Manager_Patient_Card.cpp \
@@ -66,6 +67,7 @@ SOURCES += \
 HEADERS += \
     BarcodeDaemon.h \
     CSS_Infusion.h \
+    Dialog_select_menu.h \
     Dialog_topalarm_mute.h \
     Manager_MDSConnectivity_Card.h \
     Manager_Patient_Card.h \
@@ -120,6 +122,7 @@ FORMS += \
     Dialog_msg.ui \
     Dialog_network.ui \
     Dialog_release.ui \
+    Dialog_select_menu.ui \
     Dialog_topalarm_mute.ui \
     Dialog_visualization_config.ui \
     Dialog_visualization_selection.ui \

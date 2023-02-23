@@ -39,6 +39,8 @@ public:
     std::string CapturedIssues_channel_id;
     Dialog_loopselection lsd;
     Dialog_visualization_config vsd;
+    std::vector<mc_legend*> legends;
+
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
@@ -55,7 +57,6 @@ private:
     QList<uint64_t> rtchart1_time_list;
     QList<uint64_t> rtchart2_time_list;
     QList<QColor> line_color_list;
-    std::vector<mc_legend*> legends;
     int mc_chart1_line =0;
     int mc_chart2_line =0;
 
@@ -109,7 +110,8 @@ private:
 private slots:
     void update_triggered();
     void chart_update_triggered();
-    void on_series_pressed(std::string model,std::string mdccode);
+    void on_series_pressed(std::string name,std::string model,std::string mdccode,
+                           std::string y_min,std::string y_max,std::string unit);
 /*
     void on_device1_tableWidget_cellClicked(int row, int column);
 

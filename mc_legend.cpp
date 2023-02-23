@@ -65,12 +65,13 @@ QColor mc_legend::get_series_color()
     return entries.color;
 }
 
-void mc_legend::set_series_text(
-                                std::string text,
+void mc_legend::set_series_text(std::string text,
                                 std::string model,
                                 std::string unit,
                                 std::string mdccode,
-                                float val)
+                                float val,
+                                std::string y_min,
+                                std::string y_max)
 {
 
     entries.name = text;
@@ -78,6 +79,8 @@ void mc_legend::set_series_text(
     entries.unit = unit;
     entries.val = val;
     entries.mdccode = mdccode;
+    entries.y_min = y_min;
+    entries.y_max = y_max;
 
     update();
 }
@@ -130,12 +133,6 @@ void mc_legend::paintEvent(QPaintEvent *event)
         if(entries.name.size() > 0)
         {
 
-            if(entries.name.compare("I:E Ratio") == 0);
-            else if(entries.name.compare("Flow peak") == 0)
-            {
-                entries.unit = "L/min";
-                entries.val = (entries.val*60.0)/1000.0;
-            }
             std::string name =entries.name;
             name.append(" (");
             name.append(entries.model);
@@ -164,10 +161,13 @@ void mc_legend::mouseMoveEvent(QMouseEvent *event)
 void mc_legend::mousePressEvent(QMouseEvent *event)
 {
 
-
+    std::string name =entries.name;
     std::string mdccode =entries.mdccode;
     std::string model =entries.model;
-    emit on_series_select(model,mdccode);
+    std::string y_min=entries.y_min;
+    std::string y_max=entries.y_max;
+    std::string unit=entries.unit;
+    emit on_series_select(name,model,mdccode,y_min,y_max,unit);
 }
 
 

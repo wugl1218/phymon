@@ -3,7 +3,9 @@
 #include <QPointF>
 #include <QDateTime>
 #include "MainDialog.h"
+#include "Tab_Observations_historyPage_Widget.h"
 #include "Tab_Observations_mainPage_Widget.h"
+#include "ui_Tab_Observations_historyPage_Widget.h"
 #include "ui_Tab_Observations_mainPage_Widget.h"
 #include "Common.h"
 
@@ -383,21 +385,27 @@ void Tab_Observations_mainPage_Widget::clear_points()
 
 }
 
-void Tab_Observations_mainPage_Widget::on_series_pressed(std::string model, std::string mdccode)
+void Tab_Observations_mainPage_Widget::on_series_pressed(std::string name,std::string model, std::string mdccode,
+                                                         std::string y_min,std::string y_max,std::string unit)
 {
     Common* common = Common::instance();
     auto fit = common->md->dm.devices.find(model);
     if(fit == common->md->dm.devices.end())return;
     if(mdccode=="")return;
-    common->history_model = model;
-    common->history_mdccode=mdccode;
     qDebug()<<"on_series_pressed==================";
     qDebug()<<"mdccode="<<QString::fromStdString(mdccode);
     qDebug()<<"model="<<QString::fromStdString(model);
+    common->history_model = model;
+    common->history_mdccode=mdccode;
+    common->history_name=name;
+    common->history_unit=unit;
+    common->history_page->ui->chart->set_view_range_min_y(QString::fromStdString(y_min).toInt());
+    common->history_page->ui->chart->set_view_range_max_y(QString::fromStdString(y_max).toInt());
     for(int i=0;i<(int)legends.size();i++)
         if( legends[i] == sender() )
         {
             common->history_datasource = "Observation";
+            common->history_page->set_text();
             emit changeToHistoryPage();
         }
 /*    if(sender() == ui->legend)
@@ -579,13 +587,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
             }
         }
     }
-/*    uint32_t current_time1 = Common::get_time_ms();
-   if(Common::get_elapsed_time(current_time1, last_query_time1) > 1000)
-    {
-        last_query_time1 = current_time1;
-        ++time_running;
-    }
-    if(time_running>10);*/
+
  /*   querystr = "vmd_id MATCH '";
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");
@@ -793,8 +795,7 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
 //    add_wave_to_chart(0,"Savina","DRAEGER_MEASURED_CP1_Plateau",common->observation_reader_2,ui->rt_chart1,true,rtchart1_wave_list,rtchart1_time_list);
 //    add_wave_to_chart(1,"Savina","MDC_PRESS_AWAY",common->observation_reader_2,ui->rt_chart1,true,rtchart1_wave_list,rtchart1_time_list);
 //    add_wave_to_chart(0,"Savina","FOYA_MEASURED_FlowPeak",common->observation_reader_2,ui->rt_chart2,true,rtchart2_wave_list,rtchart2_time_list);
-    ui->rt_chart1->trim_left();
-    ui->rt_chart2->trim_left();
+
 //    ui->legend->update();
 /*
     if(captured)
@@ -1180,227 +1181,227 @@ void Tab_Observations_mainPage_Widget::set_checked(QWidget* w, uint8_t checked)
 void Tab_Observations_mainPage_Widget::update_triggered()
 {
     Common* common = Common::instance();
-    if(active)
-    {
-        if(common->patient_id.size() == 0)
-            return;
+    if(common->patient_id.size() == 0)
+        return;
 
-        //if(common->device_checkstate.size() == 0)
-            common->populate_device_checkstate();
-        //if(common->item_checkstate.size() == 0)
-            common->populate_item_checkstate();
-            //對每個已偵測到的Device作處理
-        for(auto it=common->md->dm.devices.begin();it!=common->md->dm.devices.end();it++)
+    //if(common->device_checkstate.size() == 0)
+        common->populate_device_checkstate();
+    //if(common->item_checkstate.size() == 0)
+        common->populate_item_checkstate();
+        //對每個已偵測到的Device作處理
+    for(auto it=common->md->dm.devices.begin();it!=common->md->dm.devices.end();it++)
+    {
+        //確認Device已選取
+        auto dit = common->device_checkstate.find(it->second.model);
+        if(dit != common->device_checkstate.end() && dit->second == 0)
         {
-            //確認Device已選取
-            auto dit = common->device_checkstate.find(it->second.model);
-            if(dit != common->device_checkstate.end() && dit->second == 0)
+            continue;
+        }
+        std::string querystr = "vmd_id MATCH '";
+        querystr.append(common->vmd_id);
+        querystr.append("' AND patient_id MATCH '");
+        querystr.append(common->patient_id);
+        querystr.append("' AND model MATCH '");
+        querystr.append(it->second.model);
+        querystr.append("'");
+        dds::sub::cond::QueryCondition qcond(
+                    dds::sub::Query(common->history_observation_reader, querystr),
+                    dds::sub::status::DataState(
+                    dds::sub::status::SampleState::any(),
+                    dds::sub::status::ViewState::any(),
+                    dds::sub::status::InstanceState::alive()));
+        dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->history_observation_reader.select().condition(qcond).read();
+        std::multimap<int, mc_entry> entries;
+        std::multimap<std::string, mc_entry> left_over;
+        for(auto& sample : samples)
+        {
+            if(sample.info().valid())
             {
-                continue;
-            }
-            std::string querystr = "vmd_id MATCH '";
-            querystr.append(common->vmd_id);
-            querystr.append("' AND patient_id MATCH '");
-            querystr.append(common->patient_id);
-            querystr.append("' AND model MATCH '");
-            querystr.append(it->second.model);
-            querystr.append("'");
-            dds::sub::cond::QueryCondition qcond(
-                        dds::sub::Query(common->history_observation_reader, querystr),
-                        dds::sub::status::DataState(
-                        dds::sub::status::SampleState::any(),
-                        dds::sub::status::ViewState::any(),
-                        dds::sub::status::InstanceState::alive()));
-            dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->history_observation_reader.select().condition(qcond).read();
-            std::multimap<int, mc_entry> entries;
-            std::multimap<std::string, mc_entry> left_over;
-            for(auto& sample : samples)
-            {
-                if(sample.info().valid())
+                dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
+                mc_entry e;
+                e.code = data.value<std::string>("code");
+                e.mdccode = data.value<std::string>("mdc_code");
+                e.model = data.value<std::string>("model");
+                e.desc = data.value<std::string>("description");
+                e.unit = data.value<std::string>("unit");
+                e.val = data.value<float>("value");
+                e.abbv = data.value<std::string>("abbreviation");
+                std::string vt_desc;
+
+                if(e.model.compare("Savina") == 0)
+                    vt_desc = "Tidal volume in mL";
+                else
+                    vt_desc = "Tidal volume";
+
+                std::string querystr = "mdc_code MATCH '";
+                querystr.append(e.mdccode);
+                querystr.append("' AND model MATCH '");
+                querystr.append(e.model);
+                querystr.append("' AND wave_type MATCH 'Obs'");
+                dds::sub::cond::QueryCondition qcond(
+                            dds::sub::Query(common->m_DisplayItem_reader, querystr),
+                            dds::sub::status::DataState(
+                            dds::sub::status::SampleState::any(),
+                            dds::sub::status::ViewState::any(),
+                            dds::sub::status::InstanceState::alive()));
+                dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = common->m_DisplayItem_reader.select().condition(qcond).read();
+                for(auto& sample : samples)
                 {
                     dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
-                    mc_entry e;
-                    e.code = data.value<std::string>("code");
-                    e.mdccode = data.value<std::string>("mdc_code");
-                    e.model = data.value<std::string>("model");
-                    e.desc = data.value<std::string>("description");
-                    e.unit = data.value<std::string>("unit");
-                    e.val = data.value<float>("value");
-                    e.abbv = data.value<std::string>("abbreviation");
-                    std::string vt_desc;
-
-                    if(e.model.compare("Savina") == 0)
-                        vt_desc = "Tidal volume in mL";
-                    else
-                        vt_desc = "Tidal volume";
-
-                    if(e.desc==vt_desc)
-                        e.y_max = "1000";
-                    else
-                        e.y_max = "200";
-
-                    rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
-                    e.ts.tv_sec = loaned_member.get().value<int32_t>("sec");
-                    e.ts.tv_nsec = loaned_member.get().value<uint32_t>("nanosec");
-                    loaned_member.return_loan();
-                    if(common->item_checkstate.size() == 0)
+                    e.y_max = data.value<std::string>("y_min");
+                    e.y_max = data.value<std::string>("y_max");
+                }
+                rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
+                e.ts.tv_sec = loaned_member.get().value<int32_t>("sec");
+                e.ts.tv_nsec = loaned_member.get().value<uint32_t>("nanosec");
+                loaned_member.return_loan();
+                if(common->item_checkstate.size() == 0)
+                {
+                    auto it2 = common->special_items.find(it->second.model);
+                    if(it2 != common->special_items.end())
                     {
-                        auto it2 = common->special_items.find(it->second.model);
-                        if(it2 != common->special_items.end())
+                        int i=0;
+                        for(;i<(int)it2->second.size();i++)
                         {
-                            int i=0;
-                            for(;i<(int)it2->second.size();i++)
-                            {
-                                if(it2->second[i].compare(e.desc) == 0)
-                                    break;
-                            }
-                            if(i != (int)it2->second.size())
-                                entries.emplace(i, e);
-                            else
-                                left_over.emplace(e.desc, e);
-                        }
-                    }
-                    else
-                    {
-                        qDebug()<<"=============================2";
-                        qDebug()<<"=entries.size()="<<entries.size();
-                        std::string str = it->second.model;
-                        str.append(",");
-                        str.append(e.desc);
-                        bool is_continue =0;
-                        for(auto it3=entries.begin();it3!=entries.end();it3++)
-                            if(it3->second.desc==e.desc)
-                                {
-                                is_continue=1;
+                            if(it2->second[i].compare(e.desc) == 0)
                                 break;
-                                }
-                        if(is_continue)
-                            continue;
-                        auto it2 = common->item_checkstate.find(str);
-                        if(it2==common->item_checkstate.end())
-                            entries.emplace(9999, e);
-                        else if(it2->second.checked)
-                            entries.emplace(it2->second.order, e);
+                        }
+                        if(i != (int)it2->second.size())
+                            entries.emplace(i, e);
                         else
                             left_over.emplace(e.desc, e);
                     }
                 }
-            }
-            if(it->second.model.compare("Savina") == 0 ||
-               it->second.model.compare("Savina 300") == 0)
-            {
-                common->remove_savina_items(&entries);
-                common->add_savina_items(it->second.model, &entries, &left_over);
-            }
-            int row=0;
-            mc_chart1_line =0;
-            mc_chart2_line =0;
-            for(int i=0;i<(int)legends.size();i++)
-                delete legends[i];
-            legends.clear();
-            qDebug()<<"=entries.size()="<<entries.size();
-
-            for(auto it2=entries.begin();it2!=entries.end();it2++)
-            {
-                char tempbuf[128];
-                std::string desc;
-                if(it2->second.abbv.size() == 0)
-                    desc = it2->second.desc;
-                else
-                    desc = it2->second.abbv;
-                if(it2->second.desc.compare("I:E Ratio") == 0)
-                    strcpy(tempbuf, it2->second.code.c_str());
-                else if(it2->second.desc.compare("Flow peak") == 0)
-                {
-                    it2->second.unit = "L/min";
-                    QString str = QString::number((it2->second.val*60.0)/1000.0, 'f', 2);
-                    it2->second.val = str.toInt();
-                }
-                mc_legend *legend1 = new mc_legend(ui->WidgetContents);
-                legend1->setGeometry(0,
-                                     (10+80)*row,
-                                     220, 80);
-                legend1->set_text_color(QColor(0,0,0,255));
-                legend1->set_series_color(line_color_list[row]);
-                legend1->set_series_text(desc,
-                                         it2->second.model,
-                                         it2->second.unit,
-                                         it2->second.mdccode,
-                                         it2->second.val);
-                legend1->show();
-                connect(legend1, SIGNAL(on_series_select(std::string,std::string)), this, SLOT(on_series_pressed(std::string,std::string)));
-                legends.push_back(legend1);
-                uint64_t t = ((uint64_t)it2->second.ts.tv_sec)*1000 + ((uint64_t)it2->second.ts.tv_nsec)/1000000;
-                if(it2->second.y_max=="200")
-                {
-                    add_wave_to_chart_Obs(mc_chart1_line,
-                                      t,it2->second.val,
-                                      ui->rt_chart1,
-                                      rtchart1_wave_list,
-                                      rtchart1_time_list);
-                    ++mc_chart1_line;
-                }
-                else if (it2->second.y_max=="1000")
-                {
-                    add_wave_to_chart_Obs(mc_chart2_line,
-                                      t,it2->second.val,
-                                      ui->rt_chart2,
-                                      rtchart2_wave_list,
-                                      rtchart2_time_list);
-                    ++mc_chart2_line;
-                }
-                else
-                    {
-                    qDebug()<<QString::fromStdString(it2->second.desc);
-                    qDebug()<<QString::fromStdString(it2->second.abbv);
-                    qDebug()<<"y_max error ============================================================";
-                    }
-//                table_widgets[table_index]->setItem(row, 0, item0);
-//                table_widgets[table_index]->setItem(row, 1, item1);
-//                table_widgets[table_index]->item(row, 1)->setFont(QFont("Arial[Mono]",48));
-//                table_widgets[table_index]->setRowHeight(row,80);
-//                if(row % 2 ==1)
-//                    {
-//                    item0->setBackground(QBrush(QColor(11, 42, 78)));
-//                    item1->setBackground(QBrush(QColor(11, 42, 78)));
-//                }
-
-                row++;
-            }
-            for (int i =0;i<row;++i) //目前顏色尚未使用固定
-            {
-                if(mc_chart1_line>=i)
-                {
-                    ui->rt_chart1->set_series_color(i, line_color_list[i]);
-                }
                 else
                 {
-                    ui->rt_chart2->set_series_color(i-mc_chart1_line-1, line_color_list[i]);
+                    std::string str = it->second.model;
+                    str.append(",");
+                    str.append(e.desc);
+                    bool is_continue =0;
+                    for(auto it3=entries.begin();it3!=entries.end();it3++)
+                        if(it3->second.desc==e.desc)
+                            {
+                            is_continue=1;
+                            break;
+                            }
+                    if(is_continue)
+                        continue;
+                    auto it2 = common->item_checkstate.find(str);
+                    if(it2==common->item_checkstate.end())
+                        entries.emplace(9999, e);
+                    else if(it2->second.checked)
+                        entries.emplace(it2->second.order, e);
+                    else
+                        left_over.emplace(e.desc, e);
                 }
             }
-          /*  for (int i=row+1;i<21;++i)
-            {
-                mc_legend *legend1 = new mc_legend(ui->WidgetContents);
-                legend1->setGeometry(0,
-                                     (10+80)*row,
-                                     220, 80);
-                legend1->set_text_color(QColor(0,0,0,255));
-                legend1->set_series_color(line_color_list[row]);
-                legend1->set_series_text("null",
-                                         "",
-                                         "",
-                                         "",
-                                         0);
-                legend1->show();
-            }*/
-            ui->WidgetContents->update();
-            ui->WidgetContents->setMinimumHeight(90*row+10);
-
-//            qDebug()<<ui->WidgetContents->height();
-
         }
-
+        if(it->second.model.compare("Savina") == 0 ||
+           it->second.model.compare("Savina 300") == 0)
+        {
+            common->remove_savina_items(&entries);
+            common->add_savina_items(it->second.model, &entries, &left_over);
+        }
+        int row=0;
+        mc_chart1_line =0;
+        mc_chart2_line =0;
+        for(int i=0;i<(int)legends.size();i++)
+            delete legends[i];
+        legends.clear();
+        bool has_matecare_time =0;
+        struct timespec matecare_time;
+        for(auto it2=entries.begin();it2!=entries.end();)
+        {
+            char tempbuf[128];
+            std::string desc;
+            if(it2->second.abbv.size() == 0)
+                desc = it2->second.desc;
+            else
+                desc = it2->second.abbv;
+            if(it2->second.desc.compare("I:E Ratio") == 0)
+                strcpy(tempbuf, it2->second.code.c_str());
+            else if(it2->second.desc.compare("Flow peak") == 0)
+            {
+                it2->second.unit = "L/min";
+                QString str = QString::number((it2->second.val*60.0)/1000.0, 'f', 2);
+                it2->second.val = str.toFloat();
+            }
+            if(!has_matecare_time)
+            {
+                has_matecare_time=1;
+                matecare_time.tv_sec=it2->second.ts.tv_sec;
+                matecare_time.tv_nsec=it2->second.ts.tv_nsec;
+            }
+            if(it2->second.is_matecares &&has_matecare_time)
+            {
+                it2->second.ts.tv_sec=matecare_time.tv_sec;
+                it2->second.ts.tv_nsec=matecare_time.tv_nsec;
+            }
+            else if (it2->second.is_matecares &&!has_matecare_time)
+                continue;
+            mc_legend *legend1 = new mc_legend(ui->WidgetContents);
+            legend1->setGeometry(0,
+                                 (10+80)*row,
+                                 220, 80);
+            legend1->set_text_color(QColor(0,0,0,255));
+            legend1->set_series_color(line_color_list[row]);
+            legend1->set_series_text(desc,
+                                     it2->second.model,
+                                     it2->second.unit,
+                                     it2->second.mdccode,
+                                     it2->second.val,
+                                     it2->second.y_min,
+                                     it2->second.y_max);
+            legend1->show();
+            connect(legend1, SIGNAL(on_series_select(std::string,std::string,std::string,std::string,std::string,std::string)),
+                    this, SLOT(on_series_pressed(std::string,std::string,std::string,std::string,std::string,std::string)));
+            legends.push_back(legend1);
+            uint64_t t = ((uint64_t)it2->second.ts.tv_sec)*1000 + ((uint64_t)it2->second.ts.tv_nsec)/1000000;
+            if(it2->second.y_max=="200")
+            {
+                add_wave_to_chart_Obs(mc_chart1_line,
+                                  t,it2->second.val,
+                                  ui->rt_chart1,
+                                  rtchart1_wave_list,
+                                  rtchart1_time_list);
+                ++mc_chart1_line;
+            }
+            else if (it2->second.y_max=="1000")
+            {
+                add_wave_to_chart_Obs(mc_chart2_line,
+                                  t,it2->second.val,
+                                  ui->rt_chart2,
+                                  rtchart2_wave_list,
+                                  rtchart2_time_list);
+                ++mc_chart2_line;
+            }
+            else
+                {
+                qDebug()<<QString::fromStdString(it2->second.mdccode);
+                qDebug()<<QString::fromStdString(it2->second.desc);
+                qDebug()<<QString::fromStdString(it2->second.abbv);
+                qDebug()<<QString::fromStdString(it2->second.y_max);
+                qDebug()<<"y_max error ============================================================";
+                }
+            row++;
+            it2++;
+        }
+        for (int i =0;i<row;++i) //目前顏色尚未使用固定
+        {
+            if(mc_chart1_line>=i)
+            {
+                ui->rt_chart1->set_series_color(i, line_color_list[i]);
+            }
+            else
+            {
+                ui->rt_chart2->set_series_color(i-mc_chart1_line-1, line_color_list[i]);
+            }
+        }
+        ui->WidgetContents->update();
+        ui->WidgetContents->setMinimumHeight(90*row+10);
     }
+    ui->rt_chart1->trim_left();
+    ui->rt_chart2->trim_left();
 }
 
 void Tab_Observations_mainPage_Widget::showEvent(QShowEvent *event)
@@ -1578,7 +1579,10 @@ void Tab_Observations_mainPage_Widget::add_wave_to_chart_Obs(int series_index,
     int line_break_delta;
     line_break_delta=50000;
     chart->set_line_break_delta(50000);
-
+    time_t now = time(NULL)-6;
+    time_t future = time(NULL)+6;
+//    if((t < now)||t>future)
+//        return;
 //    uint64_t t = ((uint64_t)sec)*1000 + ((uint64_t)nsec)/1000000;
     std::vector<float> vals;
     vals.push_back(val);

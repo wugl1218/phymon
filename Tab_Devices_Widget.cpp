@@ -415,7 +415,6 @@ void Tab_Devices_Widget::update_devices(std::map<std::string, Device>* btns)
 
 void Tab_Devices_Widget::btn_clicked()
 {
-    printf("agooda btn_clicked\n");
     QPushButton* s = (QPushButton*)sender();
     dev_index = s->property("index").value<int>();
     for(int i=0;i<(int)devices.size();i++)

@@ -1,4 +1,5 @@
 #include "Tab_Observations_historyPage_Widget.h"
+#include "Tab_Observations_mainPage_Widget.h"
 #include "qtimer.h"
 #include "ui_Tab_Observations_historyPage_Widget.h"
 #include <QScrollBar>
@@ -90,6 +91,7 @@ void Tab_Observations_historyPage_Widget::on_worker()
 {
     Common* common = Common::instance();
     uint64_t now = time(NULL);
+    set_text();
     if(ui->chart->get_view_range_max_x() != ui->chart->get_right_bounds() &&
        ui->chart->get_view_range_max_x() != ui->chart->get_custom_right_bound() && !reposition)
         right_locked = 0;
@@ -918,19 +920,6 @@ Tab_Observations_historyPage_Widget::~Tab_Observations_historyPage_Widget()
 void Tab_Observations_historyPage_Widget::showEvent(QShowEvent *event)
 {
     Common* common = Common::instance();
-
-    if(common->history_mdccode.compare("MDC_PRESS_AWAY")==0)
-        ui->PAWpushButton->setStyleSheet(common->css.Checked_ButtonStyle);
-    else
-        ui->PAWpushButton->setStyleSheet(common->css.unChecked_ButtonStyle);
-    if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
-        ui->FLOWpushButton->setStyleSheet(common->css.Checked_ButtonStyle);
-    else
-        ui->FLOWpushButton->setStyleSheet(common->css.unChecked_ButtonStyle);
-    if(common->history_mdccode.compare("FOYA_MEASURED_VolumeInspirationBegan") == 0)
-        ui->RVpushButton->setStyleSheet(common->css.Checked_ButtonStyle);
-    else
-        ui->RVpushButton->setStyleSheet(common->css.unChecked_ButtonStyle);
     update_timer.start(1000);
     worker.start(33);
     reposition = 1;
@@ -1001,85 +990,33 @@ void Tab_Observations_historyPage_Widget::on_return_pushButton_clicked()
 {
     emit changeToPrevPage();
 }
-
-void Tab_Observations_historyPage_Widget::on_PAWpushButton_clicked()
+void Tab_Observations_historyPage_Widget::on_MenuButton_clicked()
 {
     Common* common = Common::instance();
-
-    if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
-        return;
-    ui->PAWpushButton->setStyleSheet(common->css.Checked_ButtonStyle);
-    ui->FLOWpushButton->setStyleSheet(common->css.unChecked_ButtonStyle);
-    ui->RVpushButton->setStyleSheet(common->css.unChecked_ButtonStyle);
-    common->history_mdccode = "MDC_PRESS_AWAY";
-    common->history_datasource="RTObservation";
-
-    //update_timer.start(1000);
-    reposition = 1;
-    if(common->history_model.compare("Savina") == 0)
+    std::vector<btn> btn;
+//    for(auto it=common->observation_main_page->legends.begin();it!=common->observation_main_page->legends.end();++it)
+        for(int i=0;i<common->observation_main_page->legends.size();++i)
     {
-        if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(60.0f);
-            ui->chart->set_view_range_min_y(0.0f);
-            ui->chart->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
-        }
-        else if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(100.0f);
-            ui->chart->set_view_range_min_y(-100.0f);
-            ui->chart->set_series_color(0, QColor(0x5c, 0xe5, 0x5f));
-        }
-        else if(common->history_mdccode.compare("FOYA_MEASURED_VolumeInspirationBegan") == 0)
-        {
-            ui->chart->set_view_range_max_y(1000);
-            ui->chart->set_view_range_min_y(0);
-            ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
-        }
+        class btn b;
+        b.name=common->observation_main_page->legends[i]->get_series_text();
+        b.index=i;
+        if(common->observation_main_page->legends[i]->get_mdccode()==common->history_mdccode)
+            b.is_select=1;
+        else
+            b.is_select=0;
+        btn.push_back(b);
     }
-    else if(common->history_model.compare("Savina 300") == 0)
-    {
-        if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(60.0f);
-            ui->chart->set_view_range_min_y(-5.0f);
-            ui->chart->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
-        }
-        else if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(100.0f);
-            ui->chart->set_view_range_min_y(-100.0f);
-            ui->chart->set_series_color(0, QColor(0x5c, 0xe5, 0x5f));
-        }
-        else if(common->history_mdccode.compare("FOYA_MEASURED_VolumeInspirationBegan") == 0)
-        {
-            ui->chart->set_view_range_max_y(1000);
-            ui->chart->set_view_range_min_y(0);
-            ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
-        }
-    }
-    ui->label->setText(common->history_model.c_str());
-    ui->chart->clear_points(0);
-    ui->chart->clear_selection();
-    pts.clear();
-    right_locked = 1;
-    uint64_t now = time(NULL);
-    now*=1000;
-    ui->chart->set_view_range_max_x(now);
-    ui->chart->set_view_range_min_x(now-60*1000);
-    ui->chart->set_custom_right_bound(now);
-    ui->chart->set_custom_left_bound(now-180*1000);
-}
+    common->select_menu.make_btn(btn);
+    common->select_menu.exec();
+    int i = common->select_menu.get_btn();
+    auto it=common->observation_main_page->legends[i];
+    common->history_mdccode=it->get_mdccode();
+    common->history_model = it->get_model();
+    ui->chart->set_view_range_min_y(QString::fromStdString(it->get_y_min()).toInt());
+    ui->chart->set_view_range_max_y(QString::fromStdString(it->get_y_max()).toInt());
 
-
-void Tab_Observations_historyPage_Widget::on_FLOWpushButton_clicked()
-{
-    Common* common = Common::instance();
-    if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
+/*    if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
         return;
-    ui->PAWpushButton->setStyleSheet(common->css.unChecked_ButtonStyle);
-    ui->FLOWpushButton->setStyleSheet(common->css.Checked_ButtonStyle);
-    ui->RVpushButton->setStyleSheet(common->css.unChecked_ButtonStyle);
     common->history_mdccode = "MDC_FLOW_AWAY";
     common->history_datasource="RTObservation";
 
@@ -1137,76 +1074,7 @@ void Tab_Observations_historyPage_Widget::on_FLOWpushButton_clicked()
     ui->chart->set_view_range_max_x(now);
     ui->chart->set_view_range_min_x(now-60*1000);
     ui->chart->set_custom_right_bound(now);
-    ui->chart->set_custom_left_bound(now-180*1000);
-}
-
-
-void Tab_Observations_historyPage_Widget::on_RVpushButton_clicked()
-{
-    Common* common = Common::instance();
-    if(common->history_mdccode.compare("FOYA_MEASURED_VolumeInspirationBegan") == 0)
-        return;
-    ui->PAWpushButton->setStyleSheet(common->css.unChecked_ButtonStyle);
-    ui->FLOWpushButton->setStyleSheet(common->css.unChecked_ButtonStyle);
-    ui->RVpushButton->setStyleSheet(common->css.Checked_ButtonStyle);
-    common->history_mdccode = "FOYA_MEASURED_VolumeInspirationBegan";
-    common->history_datasource="RTObservation";
-
-    //update_timer.start(1000);
-    reposition = 1;
-    if(common->history_model.compare("Savina") == 0)
-    {
-        if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(60.0f);
-            ui->chart->set_view_range_min_y(0.0f);
-            ui->chart->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
-        }
-        else if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(100.0f);
-            ui->chart->set_view_range_min_y(-100.0f);
-            ui->chart->set_series_color(0, QColor(0x5c, 0xe5, 0x5f));
-        }
-        else if(common->history_mdccode.compare("FOYA_MEASURED_VolumeInspirationBegan") == 0)
-        {
-            ui->chart->set_view_range_max_y(1000);
-            ui->chart->set_view_range_min_y(0);
-            ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
-        }
-    }
-    else if(common->history_model.compare("Savina 300") == 0)
-    {
-        if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(60.0f);
-            ui->chart->set_view_range_min_y(-5.0f);
-            ui->chart->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
-        }
-        else if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(100.0f);
-            ui->chart->set_view_range_min_y(-100.0f);
-            ui->chart->set_series_color(0, QColor(0x5c, 0xe5, 0x5f));
-        }
-        else if(common->history_mdccode.compare("FOYA_MEASURED_VolumeInspirationBegan") == 0)
-        {
-            ui->chart->set_view_range_max_y(1000);
-            ui->chart->set_view_range_min_y(0);
-            ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
-        }
-    }
-    ui->label->setText(common->history_model.c_str());
-    ui->chart->clear_points(0);
-    ui->chart->clear_selection();
-    pts.clear();
-    right_locked = 1;
-    uint64_t now = time(NULL);
-    now*=1000;
-    ui->chart->set_view_range_max_x(now);
-    ui->chart->set_view_range_min_x(now-60*1000);
-    ui->chart->set_custom_right_bound(now);
-    ui->chart->set_custom_left_bound(now-180*1000);
+    ui->chart->set_custom_left_bound(now-180*1000);*/
 }
 
 
@@ -1603,4 +1471,20 @@ void Tab_Observations_historyPage_Widget::update_jumper_date()
 void Tab_Observations_historyPage_Widget::on_day_dropdown_currentIndexChanged(int index)
 {
     check_and_modify_jumper_time();
+}
+void Tab_Observations_historyPage_Widget::set_text()
+{
+    Common* common = Common::instance();
+    QString qstr = QString::fromStdString(common->history_model)
+            +"("+QString::fromStdString(common->history_name);
+    if(common->history_unit.size()>0)
+            qstr += ","+QString::fromStdString(common->history_unit);
+    QString datasource;
+    if(common->history_datasource=="Observation")
+        datasource="Numeric Trend";
+    else
+        datasource="Wave";
+    qstr += ","+datasource+")";
+    ui->label->setText(qstr);
+    ui->label->update();
 }

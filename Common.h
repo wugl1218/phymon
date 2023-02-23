@@ -20,6 +20,8 @@
 
 //by philo
 #include "Dialog_msg.h"
+#include "Dialog_select_menu.h"
+
 #include "Dialog_release.h"
 #include "Tab_Observations_Widget.h"
 #include "Tab_Utilities_exporterPage_Widget.h"
@@ -53,6 +55,7 @@ public:
     std::string y_min;
     std::string display_index;
     std::string display_desc;
+    bool is_matecares;
     float val;
     struct timespec ts;
 };
@@ -124,6 +127,7 @@ public:
     CBLInterface *cbl;
     UtilsInterface *utils;
     Dialog_msg msg;
+    Dialog_select_menu select_menu;
     Dialog_release rd;
     CSS css;
     int max_undo_history_entries;
@@ -136,6 +140,9 @@ public:
     std::string history_model;
     std::string history_mdccode;
     std::string history_datasource;
+    std::string history_name;
+    std::string history_unit;
+
     std::map<std::string, std::vector<std::string>> special_items;
     bool is_server=1;
     QByteArray ReadAsciiFile(const QString &filename);

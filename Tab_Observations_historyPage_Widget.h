@@ -18,7 +18,6 @@
 #define MC_JUMPER_STATE_MIN_DOWN_SPD0   10
 #define MC_JUMPER_STATE_MIN_DOWN_SPD1   11
 #define MC_JUMPER_STATE_MIN_DOWN_SPD2   12
-
 namespace Ui {
 class Tab_Observations_historyPage_Widget;
 }
@@ -30,16 +29,17 @@ class Tab_Observations_historyPage_Widget : public QWidget
 public:
     explicit Tab_Observations_historyPage_Widget(QWidget *parent = nullptr);
     ~Tab_Observations_historyPage_Widget();
+    Ui::Tab_Observations_historyPage_Widget *ui;
     void clear_selection();
     void reset_time_jumper();
     void step();
+    void set_text();
 
 protected:
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);
 
 private:
-    Ui::Tab_Observations_historyPage_Widget *ui;
     QTimer* test_timer;
     uint64_t current_time;
     QTimer update_timer;
@@ -74,9 +74,7 @@ private slots:
     void on_series_select(int series_index);
     void on_point_select(int series_index, uint64_t timestamp, float val, int screenspace_x, int screenspace_y);
     void update_triggered();
-    void on_PAWpushButton_clicked();
-    void on_FLOWpushButton_clicked();
-    void on_RVpushButton_clicked();
+    void on_MenuButton_clicked();
     void on_worker();
     void on_apply_btn_clicked();
     void on_hour_up_pressed();

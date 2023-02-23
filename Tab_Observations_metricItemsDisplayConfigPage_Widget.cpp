@@ -7,6 +7,7 @@
 #define MC_ENTRY_HEIGHT 64
 #define MC_SCROLLBAR_WIDTH 15
 #define MC_ENTRY_WIDTH 805
+#define MC_ENTRY_MAX 21
 
 Tab_Observations_metricItemsDisplayConfigPage_Widget::Tab_Observations_metricItemsDisplayConfigPage_Widget(QWidget *parent) :
     QWidget(parent),
@@ -391,9 +392,26 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::swap_entries(int sour
     int i = e->table_index;
     int tab = e->tab_index;
     std::string label = e->get_text();
-    delete e;
     if(source_type == MC_ENTRY_LEFT)
     {
+
+        int all_right_lines=0;
+        for(int i=0;i<4;++i)
+        {
+            all_right_lines += right_lines[i].size();
+            qDebug()<<"right_lines[i].size()"<<i<<"==="<<right_lines[i].size();
+            qDebug()<<all_right_lines;
+        }
+        qDebug()<<all_right_lines;
+        if(all_right_lines >= MC_ENTRY_MAX)
+        {
+            Common* common = Common::instance();
+            QString qstr="Select up to "+QString::number(MC_ENTRY_MAX);
+            common->msg.setText(qstr);
+            common->msg.exec();
+            return;
+        }
+        delete e;
         left_lines[tab].erase(left_lines[tab].begin() + i);
         e = new mc_selection_entry(rightscrollarea[tab]);
         right_lines[tab].push_back(e);
@@ -406,6 +424,7 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::swap_entries(int sour
     }
     else
     {
+        delete e;
         right_lines[tab].erase(right_lines[tab].begin() + i);
         e = new mc_selection_entry(leftscrollarea[tab]);
         left_lines[tab].push_back(e);
@@ -420,9 +439,25 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::swap_entries(int sour
 
 void Tab_Observations_metricItemsDisplayConfigPage_Widget::select_all_pressed(int tab)
 {
+    Common* common = Common::instance();
     int num_swapped = 0;
     while(left_lines[tab].size() > 0)
     {
+        int all_right_lines=0;
+        for(int i=0;i<4;++i)
+        {
+            all_right_lines += right_lines[i].size();
+            qDebug()<<"right_lines[i].size()"<<i<<"==="<<right_lines[i].size();
+            qDebug()<<all_right_lines;
+        }
+        qDebug()<<all_right_lines;
+        if(all_right_lines >= MC_ENTRY_MAX)
+        {
+            QString qstr="Select up to "+QString::number(MC_ENTRY_MAX);
+            common->msg.setText(qstr);
+            common->msg.exec();
+            break;
+        }
         swap_entries(MC_ENTRY_LEFT, (mc_selection_entry*)left_lines[tab][0]);
         refresh_geometry(&right_lines[tab]);
         refresh_geometry(&left_lines[tab]);
@@ -430,7 +465,6 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::select_all_pressed(in
         leftscrollarea[tab]->adjustSize();
         num_swapped++;
     }
-    Common* common = Common::instance();
     HistoryEntry en;
     en.cmd = HIS_TYPE_SELECTALL;
     en.param_str[0] = checkboxes[tab]->text().toStdString();

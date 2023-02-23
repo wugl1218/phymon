@@ -17,6 +17,8 @@ public:
     std::string model;
     std::string unit;
     std::string mdccode;
+    std::string y_max;
+    std::string y_min;
     float val;
 
     QColor color;
@@ -43,9 +45,16 @@ public:
                          std::string model,
                          std::string unit,
                          std::string mdccode,
-                         float val);
+                         float val,
+                         std::string y_min,
+                         std::string y_max);
     std::string get_series_text();
     void remove_series();
+    std::string get_mdccode(){return entries.mdccode;};
+    std::string get_model(){return entries.model;};
+    std::string get_y_min(){return entries.y_min;};
+    std::string get_y_max(){return entries.y_max;};
+
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -54,16 +63,16 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 signals:
-    void on_series_select(std::string model,std::string mdccode);
+    void on_series_select(std::string name,std::string model,std::string mdccode,std::string y_min,std::string y_max,
+                          std::string unit);
 
 private:
     int square_width;
     int square_height;
-
+    mc_legend_entry entries;
     int vertical_spacing;
     int font_size;
     QColor text_color;
-    mc_legend_entry entries;
 };
 
 #endif // MC_LEGEND_H
