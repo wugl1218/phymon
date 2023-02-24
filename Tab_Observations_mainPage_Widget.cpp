@@ -246,11 +246,52 @@ void Tab_Observations_mainPage_Widget::SetWavePanelSlots()
     ui->wavePanel->set_name_ui(RTO_name_list);
     ui->wavePanel->set_frame_ui(ui->item, ui->loop_frame, ui->add_frame);
     connect(ui->add_btn, SIGNAL(clicked()), this, SLOT(on_add_btn_clicked));
+
+    ui->minus_1->setProperty("index", 0);
+    connect(ui->minus_1, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
+    ui->minus_2->setProperty("index", 1);
+    connect(ui->minus_2, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
+    ui->minus_3->setProperty("index", 2);
+    connect(ui->minus_3, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
+    ui->minus_4->setProperty("index", 3);
+    connect(ui->minus_4, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
+    ui->minus_5->setProperty("index", 4);
+    connect(ui->minus_5, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
+    ui->minus_6->setProperty("index", 5);
+    connect(ui->minus_6, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
+
+    ui->enlarge_1->setProperty("index", 0);
+    connect(ui->enlarge_1, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked));
+    ui->enlarge_2->setProperty("index", 1);
+    connect(ui->enlarge_2, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked));
+    ui->enlarge_3->setProperty("index", 2);
+    connect(ui->enlarge_3, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked));
+    ui->enlarge_4->setProperty("index", 3);
+    connect(ui->enlarge_4, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked));
+    ui->enlarge_5->setProperty("index", 4);
+    connect(ui->enlarge_5, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked));
+    ui->enlarge_6->setProperty("index", 5);
+    connect(ui->enlarge_6, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked));
 }
 void Tab_Observations_mainPage_Widget::on_add_btn_clicked()
 {
     ui->wavePanel->mc_add_clicked(ui->wavePanel);
 
+}
+void Tab_Observations_mainPage_Widget::on_del_btn_clicked()
+{
+    qDebug()<<"=================================================122q1";
+
+    qDebug()<<"***** del";
+    mc_btn_Clickable* b = (mc_btn_Clickable*)sender();
+    int index = b->property("index").value<int>();
+    ui->wavePanel->mc_del_clicked(index);
+}
+void Tab_Observations_mainPage_Widget::on_enlarge_btn_clicked()
+{
+    mc_btn_Clickable* b = (mc_btn_Clickable*)sender();
+    int index = b->property("index").value<int>();
+    ui->wavePanel->mc_enlarge_clicked(index);
 }
 void Tab_Observations_mainPage_Widget::visualizetion_clicked()
 {

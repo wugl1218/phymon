@@ -37,7 +37,7 @@ public:
     std::vector<std::string> QueryRtItems(std::string DeviceName);
     std::vector<std::string> QueryObItems(std::string DeviceName);
     bool QueryDisplayItems(void);
-    void WriteNurseDB(stDisplayItems item);
+    void WriteNurseDB(stDisplayItems item, bool bDel = false);
     QTimer m_Timer;
     std::vector<std::string> m_WaveRtItems;
     std::vector<std::string> m_WaveObItems;
@@ -78,6 +78,8 @@ public:
         m_add_frame = add_frame;
     };
     void mc_add_clicked(mc_wavepanel* wp);
+    void mc_del_clicked(int index);
+    void mc_enlarge_clicked(int inxex);
 
 signals:
 

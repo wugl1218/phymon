@@ -113,6 +113,8 @@ private:
     void SetWavePanelSlots();
 private slots:
     void on_add_btn_clicked();
+    void on_del_btn_clicked();
+    void on_enlarge_btn_clicked();
     void update_triggered();
     void chart_update_triggered();
     void on_series_pressed(int);
