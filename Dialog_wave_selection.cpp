@@ -29,6 +29,7 @@ void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<stDisplayI
     QWidget* w = new QWidget();
     w->setStyleSheet("background-color: rgb(0,73,159);");
     ui->tabWidget->addTab(w, tab_name);
+    //ui->tabWidget->addTab(w, "MP40");
     QVBoxLayout* main_layout = new QVBoxLayout(w);
     main_layout->setContentsMargins(24,24,24,24);
     main_layout->setSpacing(11);
@@ -36,12 +37,13 @@ void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<stDisplayI
     g->setContentsMargins(0,0,0,0);
     g->setSpacing(0);
     main_layout->addLayout(g, 1);
+    m_selected_index = -1;
     int i=0;
     int r=0;
     int c=0;
     std::string even_style = "background-color: rgb(0,93,206); color: rgb(255,255,255);";
     std::string odd_style = "background-color: rgb(0,83,183); color: rgb(255,255,255);";
-    for(;i<(int)items->size();i++)
+    for(;i<(int)items->size() - has_loop;i++)
     {
         if(i>=30)
             break;
@@ -57,6 +59,7 @@ void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<stDisplayI
             b->setStyleSheet(even_style.c_str());
         else
             b->setStyleSheet(odd_style.c_str());
+        b->setProperty("index", i);
         connect(b, SIGNAL(clicked()), this, SLOT(clicked()));
         c++;
         if(c>=3)
@@ -93,6 +96,7 @@ void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<stDisplayI
         f.setPixelSize(19);
         b->setFont(f);
         b->setStyleSheet(odd_style.c_str());
+        b->setProperty("index", (int)items->size() - 1);
         connect(b, SIGNAL(clicked()), this, SLOT(clicked()));
     }
     if (items->size() > 30)
@@ -132,6 +136,7 @@ void Dialog_wave_selection::clicked()
     mc_btn_Clickable* b = (mc_btn_Clickable*)sender();
     selected_item = b->text().toStdString();
     selected_tab_name = ui->tabWidget->tabText(ui->tabWidget->currentIndex()).toStdString();
+    m_selected_index = b->property("index").value<int>();
     close();
 }
 

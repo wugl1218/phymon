@@ -23,7 +23,7 @@ public:
 
     std::string selected_tab_name;
     std::string selected_item;
-
+    int m_selected_index;
 private slots:
     void clicked();
 

@@ -20,26 +20,80 @@ mc_wavepanel::mc_wavepanel(QWidget *parent)
     m_RtLowerCount = m_ObLowerCount = 0;
     m_bDrawlayout = false;
 }
-
+void mc_wavepanel::WriteNurseDB(stDisplayItems item)
+{
+    Common* common = Common::instance();
+    rapidjson::Document d;
+    d.SetObject();
+    d.AddMember("data_source", "RTO", d.GetAllocator());
+    d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("model", rapidjson::Value().SetString(item.model.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("mdc_code", rapidjson::Value().SetString(item.mdc_code.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("display_desc", rapidjson::Value().SetString(item.display_desc.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("y_max", rapidjson::Value().SetString(item.y_max.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("y_min", rapidjson::Value().SetString(item.y_min.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("y_step", rapidjson::Value().SetString(item.y_step.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("visibility", 1, d.GetAllocator());
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    d.Accept(writer);
+    std::string dummy, dummy2;
+    if (item.record_id.length())
+        dummy2 = item.record_id;
+    common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), dummy2, dummy);
+    qDebug()<<"*** WriteNurseDB saveMutableDocument error="<< dummy.c_str()<< " desc="<<item.display_desc.c_str()<<" record_id="<<item.record_id.c_str();
+}//ppee
 void mc_wavepanel::add_clicked()
 {
     menu.clear_tabs();
-    stDisplayItems item;// Agooda 20230224 Qt can not use item = {0};
+    stDisplayItems item, loop_item;// Agooda 20230224 Qt can not use item = {0};
     std::vector<stDisplayItems> items = GetDisplayIntersec("Savina", "RTO");
-
-    for (int i = 0; i < items.size(); i++)
-        printf("*** items[%d]=%s\n", i, items[i].display_desc.c_str());
-
-    for (int i = 0; i < 20; i++)
+    std::vector<dbDisplayItems> select_items = CheckNurseDB();
+    std::vector<stDisplayItems> unselect_items;
+    int loops = 0, loops_existed = false;
+    if (m_DeviceName == "Savina" || m_DeviceName == "Savina 300")
+        loops = 1;
+    for (auto all: items)
     {
-        char buf[10];
-        sprintf(buf, "ECG%02d", i);
-        item.display_desc = buf;
-        items.push_back(item);
+        bool existed = false;
+        for (auto picked: select_items)
+        {
+            if (m_DeviceName == picked.model && picked.display_desc == "loops")
+            {
+                loops = (picked.visibility) ? 0:1;
+                loop_item.record_id = picked.record_id;
+                loops_existed = true;
+            }
+            if (all.mdc_code == picked.mdc_code && all.model == picked.model)
+            {
+                if (picked.visibility)
+                    existed = true;
+                else
+                    all.record_id = picked.record_id;
+                break;
+            }
+        }
+        if (!existed)
+            unselect_items.push_back(all);
     }
-    menu.add_tab(m_DeviceName.c_str(), &items, 1);
+    qDebug()<<"==== unselect_items.size="<<unselect_items.size();
+    if (loops)
+    {
+        if (loops_existed)
+            unselect_items.push_back(loop_item);
+        else
+        {
+            item.display_desc = "loops";
+            item.model = m_DeviceName;
+            unselect_items.push_back(item);
+        }
+    }
+    menu.add_tab(m_DeviceName.c_str(), &unselect_items, loops);
     menu.exec();
-    printf("selected item=%s, selected tab=%s\n", menu.selected_item.c_str(), menu.selected_tab_name.c_str());
+    printf("selected item=%s, index=%d\n", menu.selected_item.c_str(), menu.m_selected_index);
+    if (menu.m_selected_index < 0 || menu.m_selected_index > (int)items.size())
+        return;
+    WriteNurseDB(items[menu.m_selected_index]);
 }
 
 void mc_wavepanel::mc_add_clicked(mc_wavepanel* wp)
@@ -50,7 +104,6 @@ void mc_wavepanel::mc_add_clicked(mc_wavepanel* wp)
 
 void mc_wavepanel::push_add_item()
 {
-
     for (int i = 1; i < 6;i++)
     {
         m_RTO_chart_list[i]->hide();
@@ -86,15 +139,18 @@ void mc_wavepanel::push_add_item()
         }
     //}
 }
-void mc_wavepanel::CheckNurseDB()
+std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
 {
+    std::vector<dbDisplayItems> items;
     Common* common = Common::instance();
     dbDisplayItems item;
-    std::string dummy;
-    std::string sql = "SELECT display_desc, y_max, y_min, model, y_step, display_index, visibility, mdc_code FROM _ WHERE data_source='RTO' AND patient_id='";
+    std::string dummy;//ppee
+    //std::string sql = "SELECT meta().id FROM _ WHERE data_source='RTO' AND patient_id='";
+    std::string sql = "SELECT display_desc, y_max, y_min, model, y_step, display_index, visibility, mdc_code, meta().id FROM _ WHERE data_source='RTO' AND patient_id='";
     sql.append(common->patient_id);
-    sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
+    sql.append("'");
     cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
+
     int error=0;
     while (dummy!="IP200"&&error<5)
     {
@@ -108,14 +164,17 @@ void mc_wavepanel::CheckNurseDB()
         item.display_desc = result.valueAtIndex(0).asstring();
         item.y_max = result.valueAtIndex(1).asInt();
         item.y_min = result.valueAtIndex(2).asInt();
-        item.model = result.valueAtIndex(3).asInt();
+        item.model = result.valueAtIndex(3).asstring();
         item.y_step = result.valueAtIndex(4).asInt();
         item.display_index = result.valueAtIndex(5).asInt();
         item.visibility = result.valueAtIndex(6).asInt();
         item.mdc_code = result.valueAtIndex(7).asstring();
+        item.record_id = result.valueAtIndex(8).asstring();
         m_nurse_items.push_back(item);
+        qDebug()<<"====CheckNurseDB display_desc="<<item.display_desc.c_str()<<" item.visibility="<<item.visibility;
     }
     qDebug()<<"===== m_nurse_items.size="<< m_nurse_items.size();
+    return items;
 }
 void mc_wavepanel::InitPanelLayout()
 {
@@ -169,9 +228,9 @@ void mc_wavepanel::UpdateWave()
     if (!m_bDrawlayout && common->patient_id.size())
     {
         std::string dummy;
-        std::string sql = "SELECT display_desc, y_max, y_min, model, y_step, display_index, visibility FROM _ WHERE data_source='RTO' AND patient_id='";
+        std::string sql = "SELECT display_desc,y_max,y_min,model,y_step,display_index,visibility FROM _ WHERE data_source='RTO' AND patient_id='";
         sql.append(common->patient_id);
-        sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
+        sql.append("'");
         cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
         int error=0;
         while (dummy!="IP200"&&error<5)
@@ -180,6 +239,7 @@ void mc_wavepanel::UpdateWave()
             qDebug()<<QString::fromStdString(dummy);
             fflog_out(common->log,dummy.c_str());error++;
         }
+
         for(auto& result: results2)
         {
             item.display_desc = result.valueAtIndex(0).asstring();
@@ -361,7 +421,7 @@ bool mc_wavepanel::QueryDisplayItems(void)
     try
     {
         std::string CapturedIssues_model;
-        std::vector<stDisplayItems> items;
+        std::vector<stDisplayItems> *items = new std::vector<stDisplayItems>;//Agooda20230224:stack is not enough, will cause exception, need heap
         Common* common = Common::instance();
         dds::sub::cond::ReadCondition *item_cond;
 
@@ -391,11 +451,13 @@ bool mc_wavepanel::QueryDisplayItems(void)
                 item.y_max = data.value<std::string>("y_max").c_str();      //Agooda 20230223:Qt's Bug:string is more stable than int
                 item.y_min = data.value<std::string>("y_min").c_str();
                 item.y_step = data.value<std::string>("y_step").c_str();
-                items.push_back(item);
+                items->push_back(item);
             }
         }
-        if (items.size() > m_DisplayItems.size())
-            m_DisplayItems = items;
+        if (items->size() > m_DisplayItems.size())
+            m_DisplayItems = *items;
+        else
+            delete items;
         delete item_cond;
         return true;
     }

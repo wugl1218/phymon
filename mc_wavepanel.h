@@ -20,6 +20,7 @@ struct dbDisplayItems
     std::string model;
     std::string display_desc;
     std::string mdc_code;
+    std::string record_id;
     int y_max;
     int y_min;
     int y_step;
@@ -36,6 +37,7 @@ public:
     std::vector<std::string> QueryRtItems(std::string DeviceName);
     std::vector<std::string> QueryObItems(std::string DeviceName);
     bool QueryDisplayItems(void);
+    void WriteNurseDB(stDisplayItems item);
     QTimer m_Timer;
     std::vector<std::string> m_WaveRtItems;
     std::vector<std::string> m_WaveObItems;
@@ -92,7 +94,7 @@ private:
     bool m_bDrawlayout;
     void render_controls_btn();
     void push_add_item();
-    void CheckNurseDB();
+    std::vector<dbDisplayItems> CheckNurseDB();
     void InitPanelLayout();
 private slots:
     void controls_clicked();

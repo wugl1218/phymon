@@ -49,6 +49,7 @@ struct stDisplayItems
     std::string y_max;
     std::string y_min;
     std::string y_step;
+    std::string record_id;
 };
 
 class mc_entry
