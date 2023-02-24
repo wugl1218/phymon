@@ -50,16 +50,19 @@ void mc_wavepanel::add_clicked()
     menu.clear_tabs();
     stDisplayItems item, loop_item;// Agooda 20230224 Qt can not use item = {0};
     std::vector<stDisplayItems> items = GetDisplayIntersec("Savina", "RTO");
-    std::vector<dbDisplayItems> select_items = CheckNurseDB();
     std::vector<stDisplayItems> unselect_items;
+    CheckNurseDB();
+
     int loops = 0, loops_existed = false;
     if (m_DeviceName == "Savina" || m_DeviceName == "Savina 300")
         loops = 1;
     for (auto all: items)
     {
         bool existed = false;
-        for (auto picked: select_items)
+        qDebug()<<"====all="<<all.display_desc.c_str();
+        for (auto picked: m_nurse_items)
         {
+            qDebug()<<"====picked="<<picked.display_desc.c_str();
             if (m_DeviceName == picked.model && picked.display_desc == "loops")
             {
                 loops = (picked.visibility) ? 0:1;
@@ -77,7 +80,7 @@ void mc_wavepanel::add_clicked()
         }
         if (!existed)
         {
-            all.record_id = select_items[0].record_id;
+            //all.record_id = m_nurse_items[0].record_id;
             unselect_items.push_back(all);
         }
     }
