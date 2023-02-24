@@ -392,22 +392,18 @@ void Tab_Observations_mainPage_Widget::on_series_pressed(std::string name,std::s
     auto fit = common->md->dm.devices.find(model);
     if(fit == common->md->dm.devices.end())return;
     if(mdccode=="")return;
-    qDebug()<<"on_series_pressed==================";
-    qDebug()<<"mdccode="<<QString::fromStdString(mdccode);
-    qDebug()<<"model="<<QString::fromStdString(model);
-    common->history_model = model;
-    common->history_mdccode=mdccode;
-    common->history_name=name;
-    common->history_unit=unit;
-    common->history_page->ui->chart->set_view_range_min_y(QString::fromStdString(y_min).toInt());
-    common->history_page->ui->chart->set_view_range_max_y(QString::fromStdString(y_max).toInt());
     for(int i=0;i<(int)legends.size();i++)
         if( legends[i] == sender() )
         {
             common->history_datasource = "Observation";
-            common->history_page->set_text();
             emit changeToHistoryPage();
         }
+    common->history_page->set_text(mdccode,
+                                   model,
+                                   name,
+                                   unit,
+                                   y_min,
+                                   y_max);
 /*    if(sender() == ui->legend)
     {
         if(model == 0)

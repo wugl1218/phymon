@@ -50,6 +50,8 @@ public:
                          std::string y_max);
     std::string get_series_text();
     void remove_series();
+    std::string get_name(){return entries.name;};
+    std::string get_unit(){return entries.unit;};
     std::string get_mdccode(){return entries.mdccode;};
     std::string get_model(){return entries.model;};
     std::string get_y_min(){return entries.y_min;};

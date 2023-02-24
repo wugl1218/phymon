@@ -91,7 +91,6 @@ void Tab_Observations_historyPage_Widget::on_worker()
 {
     Common* common = Common::instance();
     uint64_t now = time(NULL);
-    set_text();
     if(ui->chart->get_view_range_max_x() != ui->chart->get_right_bounds() &&
        ui->chart->get_view_range_max_x() != ui->chart->get_custom_right_bound() && !reposition)
         right_locked = 0;
@@ -1010,10 +1009,13 @@ void Tab_Observations_historyPage_Widget::on_MenuButton_clicked()
     common->select_menu.exec();
     int i = common->select_menu.get_btn();
     auto it=common->observation_main_page->legends[i];
-    common->history_mdccode=it->get_mdccode();
-    common->history_model = it->get_model();
-    ui->chart->set_view_range_min_y(QString::fromStdString(it->get_y_min()).toInt());
-    ui->chart->set_view_range_max_y(QString::fromStdString(it->get_y_max()).toInt());
+    set_text(it->get_mdccode(),
+             it->get_model(),
+             it->get_name(),
+             it->get_unit(),
+             it->get_y_min(),
+             it->get_y_max());
+
 
 /*    if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
         return;
@@ -1472,19 +1474,29 @@ void Tab_Observations_historyPage_Widget::on_day_dropdown_currentIndexChanged(in
 {
     check_and_modify_jumper_time();
 }
-void Tab_Observations_historyPage_Widget::set_text()
+void Tab_Observations_historyPage_Widget::set_text(std::string mdccode,
+                                                   std::string model,
+                                                   std::string name,
+                                                   std::string unit,
+                                                   std::string y_min,
+                                                   std::string y_max)
 {
     Common* common = Common::instance();
-    QString qstr = QString::fromStdString(common->history_model)
-            +"("+QString::fromStdString(common->history_name);
+    common->history_mdccode=mdccode;
+    common->history_model = model;
+    common->history_name = name;
+    common->history_unit = unit;
+    ui->chart->set_view_range_min_y(QString::fromStdString(y_min).toInt());
+    ui->chart->set_view_range_max_y(QString::fromStdString(y_max).toInt());
+
+    QString qstr = QString::fromStdString(model)
+            +"("+QString::fromStdString(name);
     if(common->history_unit.size()>0)
-            qstr += ","+QString::fromStdString(common->history_unit);
+            qstr += "("+QString::fromStdString(unit)+")";
     QString datasource;
-    if(common->history_datasource=="Observation")
-        datasource="Numeric Trend";
-    else
-        datasource="Wave";
-    qstr += ","+datasource+")";
+    if(common->history_datasource=="RTObservation")
+        qstr += ",Wave";
+    qstr += ")";
     ui->label->setText(qstr);
     ui->label->update();
 }
