@@ -223,6 +223,7 @@ void Common::init_dds(int domain_id)
     rtobservation_topic = dds->getTopic("TP_RTObservation", rtobservation_type, "");
     rtobservation_reader = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
     rtobservation_reader_2 = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
+    rtobservation_wave_reader = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
 
     m_DisplayItem_type = dds->getTypeObject("MonitoringStation::DisplayItems");
     m_DisplayItem_topic = dds->getTopic("TP_DisplayItems", m_DisplayItem_type, "");

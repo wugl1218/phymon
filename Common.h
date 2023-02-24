@@ -40,6 +40,17 @@ class Tab_Observations_mainPage_Widget;
 class Tab_Observations_historyPage_Widget;
 class TOPAlarm;
 
+struct stDisplayItems
+{
+    std::string model;
+    std::string display_desc;
+    std::string wave_type;
+    std::string mdc_code;
+    std::string y_max;
+    std::string y_min;
+    std::string y_step;
+};
+
 class mc_entry
 {
 public:
@@ -206,6 +217,7 @@ public:
     dds::topic::Topic<dds::core::xtypes::DynamicData> rtobservation_topic = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader_2 = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_wave_reader = nullptr;
 
     dds::core::xtypes::DynamicType rtobservation_type;
 

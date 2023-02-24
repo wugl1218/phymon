@@ -22,7 +22,7 @@ void Dialog_wave_selection::clear_tabs()
         ui->tabWidget->removeTab(i);
 }
 
-void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<std::string>* items, uint8_t has_loop)
+void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<stDisplayItems>* items, uint8_t has_loop)
 {
     if (!items)
         return;
@@ -48,7 +48,7 @@ void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<std::strin
         mc_btn_Clickable* b = new mc_btn_Clickable();
         g->addWidget(b, r, c);
         b->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        b->setText((*items)[i].c_str());
+        b->setText((*items)[i].display_desc.c_str());
         b->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         QFont f = b->font();
         f.setPixelSize(19);

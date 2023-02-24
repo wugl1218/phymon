@@ -383,6 +383,33 @@ color:rgb(255, 255, 255);</string>
                  <pointsize>18</pointsize>
                 </font>
                </property>
+               <widget class="QWidget" name="option_8" native="true">
+                <property name="geometry">
+                 <rect>
+                  <x>90</x>
+                  <y>110</y>
+                  <width>123</width>
+                  <height>80</height>
+                 </rect>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_10">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                </layout>
+               </widget>
               </widget>
              </item>
             </layout>
@@ -510,7 +537,7 @@ color:rgb(255, 255, 255);</string>
            <number>0</number>
           </property>
           <item>
-           <widget class="QLabel" name="wavepenel">
+           <widget class="QLabel" name="Agooda">
             <property name="text">
              <string/>
             </property>
@@ -569,7 +596,7 @@ color:rgb(255, 255, 255);</string>
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="item" stretch="1,1,1,1,1,0,0">
+         <layout class="QVBoxLayout" name="item" stretch="0,0,0,0,0,0,0,0">
           <property name="spacing">
            <number>0</number>
           </property>
@@ -578,6 +605,9 @@ color:rgb(255, 255, 255);</string>
           </property>
           <item>
            <layout class="QHBoxLayout" name="wave_1" stretch="2,8">
+            <property name="spacing">
+             <number>0</number>
+            </property>
             <property name="topMargin">
              <number>0</number>
             </property>
@@ -586,57 +616,101 @@ color:rgb(255, 255, 255);</string>
             </property>
             <item>
              <widget class="QWidget" name="option_1" native="true">
-              <widget class="QLabel" name="minus_1">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>20</y>
-                 <width>51</width>
-                 <height>51</height>
-                </rect>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <property name="spacing">
+                <number>0</number>
                </property>
-               <property name="text">
-                <string/>
+               <property name="leftMargin">
+                <number>0</number>
                </property>
-               <property name="pixmap">
-                <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+               <property name="topMargin">
+                <number>0</number>
                </property>
-              </widget>
-              <widget class="QLabel" name="wave_name_1">
-               <property name="geometry">
-                <rect>
-                 <x>60</x>
-                 <y>0</y>
-                 <width>67</width>
-                 <height>17</height>
-                </rect>
+               <property name="rightMargin">
+                <number>0</number>
                </property>
-               <property name="font">
-                <font>
-                 <family>Arial</family>
-                 <pointsize>9</pointsize>
-                </font>
+               <property name="bottomMargin">
+                <number>0</number>
                </property>
-               <property name="text">
-                <string>TextLabel</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="enlarge_1">
-               <property name="geometry">
-                <rect>
-                 <x>56</x>
-                 <y>20</y>
-                 <width>71</width>
-                 <height>51</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap resource="resource.qrc">:/icons/Enlarge.png</pixmap>
-               </property>
-              </widget>
+               <item>
+                <widget class="QLabel" name="minus_1">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="pixmap">
+                  <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,0">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="verticalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>68</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="wave_name_1">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Flow</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="enlarge_1">
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="pixmap">
+                    <pixmap resource="resource.qrc">:/icons/Enlarge.png</pixmap>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -654,64 +728,109 @@ color:rgb(255, 255, 255);</string>
           </item>
           <item>
            <layout class="QHBoxLayout" name="wave_2" stretch="2,8">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QWidget" name="option_2" native="true">
-              <widget class="QLabel" name="minus_2">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>20</y>
-                 <width>51</width>
-                 <height>51</height>
-                </rect>
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <property name="spacing">
+                <number>0</number>
                </property>
-               <property name="font">
-                <font>
-                 <family>Arial</family>
-                </font>
+               <property name="leftMargin">
+                <number>0</number>
                </property>
-               <property name="text">
-                <string/>
+               <property name="topMargin">
+                <number>0</number>
                </property>
-               <property name="pixmap">
-                <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+               <property name="rightMargin">
+                <number>0</number>
                </property>
-              </widget>
-              <widget class="QLabel" name="wave_name_2">
-               <property name="geometry">
-                <rect>
-                 <x>60</x>
-                 <y>0</y>
-                 <width>67</width>
-                 <height>17</height>
-                </rect>
+               <property name="bottomMargin">
+                <number>0</number>
                </property>
-               <property name="font">
-                <font>
-                 <family>Arial</family>
-                 <pointsize>9</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>TextLabel</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="enlarge_2">
-               <property name="geometry">
-                <rect>
-                 <x>60</x>
-                 <y>20</y>
-                 <width>61</width>
-                 <height>51</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap resource="resource.qrc">:/icons/Enlarge.png</pixmap>
-               </property>
-              </widget>
+               <item>
+                <widget class="QLabel" name="minus_2">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="pixmap">
+                  <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_3">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="verticalSpacer_3">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="wave_name_2">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Flow</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="enlarge_2">
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="pixmap">
+                    <pixmap resource="resource.qrc">:/icons/Enlarge.png</pixmap>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_4">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -721,59 +840,103 @@ color:rgb(255, 255, 255);</string>
           </item>
           <item>
            <layout class="QHBoxLayout" name="wave_3" stretch="2,8">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QWidget" name="option_3" native="true">
-              <widget class="QLabel" name="minus_3">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>20</y>
-                 <width>51</width>
-                 <height>61</height>
-                </rect>
+              <layout class="QHBoxLayout" name="horizontalLayout_9">
+               <property name="spacing">
+                <number>0</number>
                </property>
-               <property name="text">
-                <string/>
+               <property name="leftMargin">
+                <number>0</number>
                </property>
-               <property name="pixmap">
-                <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+               <property name="topMargin">
+                <number>0</number>
                </property>
-              </widget>
-              <widget class="QLabel" name="enlarge_3">
-               <property name="geometry">
-                <rect>
-                 <x>60</x>
-                 <y>26</y>
-                 <width>67</width>
-                 <height>51</height>
-                </rect>
+               <property name="rightMargin">
+                <number>0</number>
                </property>
-               <property name="text">
-                <string/>
+               <property name="bottomMargin">
+                <number>0</number>
                </property>
-               <property name="pixmap">
-                <pixmap resource="resource.qrc">:/icons/Enlarge.png</pixmap>
-               </property>
-              </widget>
-              <widget class="QLabel" name="wave_name_3">
-               <property name="geometry">
-                <rect>
-                 <x>60</x>
-                 <y>0</y>
-                 <width>65</width>
-                 <height>17</height>
-                </rect>
-               </property>
-               <property name="font">
-                <font>
-                 <family>Arial</family>
-                 <pointsize>9</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>TextLabel</string>
-               </property>
-              </widget>
+               <item>
+                <widget class="QLabel" name="minus_3">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="pixmap">
+                  <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_9">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="verticalSpacer_5">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="wave_name_3">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Flow</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="enlarge_3">
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="pixmap">
+                    <pixmap resource="resource.qrc">:/icons/Enlarge.png</pixmap>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_6">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -786,59 +949,103 @@ color:rgb(255, 255, 255);</string>
             <property name="spacing">
              <number>0</number>
             </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QWidget" name="option_4" native="true">
-              <widget class="QLabel" name="minus_4">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>10</y>
-                 <width>51</width>
-                 <height>61</height>
-                </rect>
+              <layout class="QHBoxLayout" name="horizontalLayout_11">
+               <property name="spacing">
+                <number>0</number>
                </property>
-               <property name="text">
-                <string/>
+               <property name="leftMargin">
+                <number>0</number>
                </property>
-               <property name="pixmap">
-                <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+               <property name="topMargin">
+                <number>0</number>
                </property>
-              </widget>
-              <widget class="QLabel" name="wave_name_4">
-               <property name="geometry">
-                <rect>
-                 <x>60</x>
-                 <y>10</y>
-                 <width>67</width>
-                 <height>17</height>
-                </rect>
+               <property name="rightMargin">
+                <number>0</number>
                </property>
-               <property name="font">
-                <font>
-                 <family>Arial</family>
-                 <pointsize>9</pointsize>
-                </font>
+               <property name="bottomMargin">
+                <number>0</number>
                </property>
-               <property name="text">
-                <string>TextLabel</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="enlarge_4">
-               <property name="geometry">
-                <rect>
-                 <x>60</x>
-                 <y>26</y>
-                 <width>67</width>
-                 <height>51</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap resource="resource.qrc">:/icons/Enlarge.png</pixmap>
-               </property>
-              </widget>
+               <item>
+                <widget class="QLabel" name="minus_4">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="pixmap">
+                  <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_10">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="verticalSpacer_7">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="wave_name_4">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Flow</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="enlarge_4">
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="pixmap">
+                    <pixmap resource="resource.qrc">:/icons/Enlarge.png</pixmap>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_8">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -851,59 +1058,109 @@ color:rgb(255, 255, 255);</string>
             <property name="spacing">
              <number>0</number>
             </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QWidget" name="option_5" native="true">
-              <widget class="QLabel" name="minus_5">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>20</y>
-                 <width>51</width>
-                 <height>51</height>
-                </rect>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_12">
+               <property name="spacing">
+                <number>0</number>
                </property>
-               <property name="text">
-                <string/>
+               <property name="leftMargin">
+                <number>0</number>
                </property>
-               <property name="pixmap">
-                <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+               <property name="topMargin">
+                <number>0</number>
                </property>
-              </widget>
-              <widget class="QLabel" name="wave_name_5">
-               <property name="geometry">
-                <rect>
-                 <x>60</x>
-                 <y>0</y>
-                 <width>67</width>
-                 <height>17</height>
-                </rect>
+               <property name="rightMargin">
+                <number>0</number>
                </property>
-               <property name="font">
-                <font>
-                 <family>Arial</family>
-                 <pointsize>9</pointsize>
-                </font>
+               <property name="bottomMargin">
+                <number>0</number>
                </property>
-               <property name="text">
-                <string>TextLabel</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="enlarge_5">
-               <property name="geometry">
-                <rect>
-                 <x>60</x>
-                 <y>20</y>
-                 <width>67</width>
-                 <height>51</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap resource="resource.qrc">:/icons/Enlarge.png</pixmap>
-               </property>
-              </widget>
+               <item>
+                <widget class="QLabel" name="minus_5">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="pixmap">
+                  <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_11">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="verticalSpacer_9">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="wave_name_5">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Flow</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="enlarge_5">
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="pixmap">
+                    <pixmap resource="resource.qrc">:/icons/Enlarge.png</pixmap>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_10">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -918,57 +1175,98 @@ color:rgb(255, 255, 255);</string>
             </property>
             <item>
              <widget class="QWidget" name="option_6" native="true">
-              <widget class="QLabel" name="label_4">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>10</y>
-                 <width>51</width>
-                 <height>51</height>
-                </rect>
+              <layout class="QHBoxLayout" name="horizontalLayout_13">
+               <property name="spacing">
+                <number>0</number>
                </property>
-               <property name="text">
-                <string/>
+               <property name="leftMargin">
+                <number>0</number>
                </property>
-               <property name="pixmap">
-                <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+               <property name="topMargin">
+                <number>0</number>
                </property>
-              </widget>
-              <widget class="QLabel" name="label_5">
-               <property name="geometry">
-                <rect>
-                 <x>60</x>
-                 <y>0</y>
-                 <width>67</width>
-                 <height>17</height>
-                </rect>
+               <property name="rightMargin">
+                <number>0</number>
                </property>
-               <property name="font">
-                <font>
-                 <family>Arial</family>
-                 <pointsize>9</pointsize>
-                </font>
+               <property name="bottomMargin">
+                <number>0</number>
                </property>
-               <property name="text">
-                <string>TextLabel</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="label_6">
-               <property name="geometry">
-                <rect>
-                 <x>60</x>
-                 <y>20</y>
-                 <width>67</width>
-                 <height>51</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap resource="resource.qrc">:/icons/Enlarge.png</pixmap>
-               </property>
-              </widget>
+               <item>
+                <widget class="QLabel" name="minus_6">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="pixmap">
+                  <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_13">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="verticalSpacer_11">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="wave_name_6">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Flow</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="enlarge_6">
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="pixmap">
+                    <pixmap resource="resource.qrc">:/icons/Enlarge.png</pixmap>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_12">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -984,126 +1282,122 @@ color:rgb(255, 255, 255);</string>
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="2,8">
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QWidget" name="widget" native="true">
-              <widget class="QLabel" name="label_2">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>100</y>
-                 <width>51</width>
-                 <height>51</height>
-                </rect>
+           <widget class="QFrame" name="loop_frame">
+            <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,2,2">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="sizeConstraint">
+              <enum>QLayout::SetMaximumSize</enum>
+             </property>
+             <property name="topMargin">
+              <number>1</number>
+             </property>
+             <property name="bottomMargin">
+              <number>1</number>
+             </property>
+             <item>
+              <widget class="QWidget" name="widget" native="true">
+               <widget class="QLabel" name="loop_minus_2">
+                <property name="geometry">
+                 <rect>
+                  <x>0</x>
+                  <y>80</y>
+                  <width>51</width>
+                  <height>51</height>
+                 </rect>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="pixmap">
+                 <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+               <widget class="QWidget" name="verticalLayoutWidget">
+                <property name="geometry">
+                 <rect>
+                  <x>60</x>
+                  <y>0</y>
+                  <width>61</width>
+                  <height>251</height>
+                 </rect>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                </layout>
+               </widget>
+              </widget>
+             </item>
+             <item>
+              <widget class="mc_loop" name="loop2" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>250</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>Arial</family>
+                 <pointsize>9</pointsize>
+                </font>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="mc_loop" name="loop1" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>250</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>Arial</family>
+                 <pointsize>9</pointsize>
+                </font>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="add_frame">
+            <layout class="QHBoxLayout" name="wave_8">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="mc_btn_Clickable" name="add_btn">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>60</height>
+                </size>
                </property>
                <property name="text">
                 <string/>
                </property>
                <property name="pixmap">
-                <pixmap resource="resource.qrc">:/icons/minus_icon.png</pixmap>
+                <pixmap resource="resource.qrc">:/icons/add_icon.png</pixmap>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
-              <widget class="QLabel" name="label_3">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>10</y>
-                 <width>67</width>
-                 <height>17</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>TextLabel</string>
-               </property>
-              </widget>
-             </widget>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout">
-              <item>
-               <widget class="mc_loop" name="loop2" native="true">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>125</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>125</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="mc_loop" name="loop1" native="true">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>125</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>125</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="wave_8">
-          <property name="topMargin">
-           <number>10</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="add_btn">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="resource.qrc">:/icons/add_icon.png</pixmap>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -1144,6 +1438,11 @@ color:rgb(255, 255, 255);</string>
    <extends>QWidget</extends>
    <header>mc_wavepanel.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>mc_btn_Clickable</class>
+   <extends>QLabel</extends>
+   <header>mc_btn_clickable.h</header>
   </customwidget>
  </customwidgets>
  <resources>

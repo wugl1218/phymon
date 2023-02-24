@@ -14,6 +14,7 @@
 #include <QAbstractButton>
 #include "Dialog_loopselection.h"
 #include "Dialog_visualization_config.h"
+#include <QLabel>
 class mc_loop_entry
 {
 public:
@@ -40,7 +41,10 @@ public:
     Dialog_visualization_config vsd;
     QList<QHBoxLayout*> RTO_wave_list;
     QList<mc_chart*> RTO_chart_list;
-    QList<QWidget*>RTO_option_list;
+    QList<QWidget*> RTO_option_list;
+    QList<QLabel*> RTO_minus_list;
+    QList<QLabel*> RTO_enlarge_list;
+    QList<QLabel*> RTO_name_list;
 
 protected:
     void showEvent(QShowEvent *event) override;
@@ -106,7 +110,9 @@ private:
                                mc_chart *chart,
                                QList<std::vector<float>> &wave_list,
                                QList<uint64_t> &time_list);
+    void SetWavePanelSlots();
 private slots:
+    void on_add_btn_clicked();
     void update_triggered();
     void chart_update_triggered();
     void on_series_pressed(int);
