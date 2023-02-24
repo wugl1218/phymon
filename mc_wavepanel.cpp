@@ -42,7 +42,9 @@ void mc_wavepanel::WriteNurseDB(stDisplayItems item)
         dummy2 = item.record_id;
     common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), dummy2, dummy);
     qDebug()<<"*** WriteNurseDB saveMutableDocument error="<< dummy.c_str()<< " desc="<<item.display_desc.c_str()<<" record_id="<<item.record_id.c_str();
-}//ppee
+    //int64_t now = time(NULL);
+    //common->cbl->setDocExpiration(common->display_items_db, item.record_id, now, dummy);
+}
 void mc_wavepanel::add_clicked()
 {
     menu.clear_tabs();
@@ -74,7 +76,10 @@ void mc_wavepanel::add_clicked()
             }
         }
         if (!existed)
+        {
+            all.record_id = select_items[0].record_id;
             unselect_items.push_back(all);
+        }
     }
     qDebug()<<"==== unselect_items.size="<<unselect_items.size();
     if (loops)
@@ -93,7 +98,7 @@ void mc_wavepanel::add_clicked()
     printf("selected item=%s, index=%d\n", menu.selected_item.c_str(), menu.m_selected_index);
     if (menu.m_selected_index < 0 || menu.m_selected_index > (int)items.size())
         return;
-    WriteNurseDB(items[menu.m_selected_index]);
+    WriteNurseDB(unselect_items[menu.m_selected_index]);
 }
 
 void mc_wavepanel::mc_add_clicked(mc_wavepanel* wp)
@@ -141,11 +146,9 @@ void mc_wavepanel::push_add_item()
 }
 std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
 {
-    std::vector<dbDisplayItems> items;
     Common* common = Common::instance();
     dbDisplayItems item;
     std::string dummy;//ppee
-    //std::string sql = "SELECT meta().id FROM _ WHERE data_source='RTO' AND patient_id='";
     std::string sql = "SELECT display_desc, y_max, y_min, model, y_step, display_index, visibility, mdc_code, meta().id FROM _ WHERE data_source='RTO' AND patient_id='";
     sql.append(common->patient_id);
     sql.append("'");
@@ -171,10 +174,10 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
         item.mdc_code = result.valueAtIndex(7).asstring();
         item.record_id = result.valueAtIndex(8).asstring();
         m_nurse_items.push_back(item);
-        qDebug()<<"====CheckNurseDB display_desc="<<item.display_desc.c_str()<<" item.visibility="<<item.visibility;
+        //qDebug()<<"====CheckNurseDB display_desc="<<item.display_desc.c_str()<<" item.record_id="<<item.record_id.c_str();
     }
     qDebug()<<"===== m_nurse_items.size="<< m_nurse_items.size();
-    return items;
+    return m_nurse_items;
 }
 void mc_wavepanel::InitPanelLayout()
 {
