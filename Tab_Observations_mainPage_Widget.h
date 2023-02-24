@@ -110,8 +110,8 @@ private:
 private slots:
     void update_triggered();
     void chart_update_triggered();
-    void on_series_pressed(std::string name,std::string model,std::string mdccode,
-                           std::string y_min,std::string y_max,std::string unit);
+    void on_series_pressed(std::string name, std::string model, std::string mdccode,
+                           std::string y_min, std::string y_max, std::string unit, std::string datasource);
 /*
     void on_device1_tableWidget_cellClicked(int row, int column);
 

@@ -20,8 +20,8 @@ Tab_Observations_historyPage_Widget::Tab_Observations_historyPage_Widget(QWidget
     ui->chart->set_scrollable(1);
     ui->chart->set_num_labels_y(5);
     ui->chart->set_num_labels_x(5);
-    ui->chart->set_min_zoom(60*1000);
-    ui->chart->set_max_zoom(10*1000);
+    ui->chart->set_min_zoom(30*60*1000);
+    ui->chart->set_max_zoom(01*10*1000);
     ui->chart->set_axis_visible(1);
     ui->chart->set_selection_width(40);
     ui->chart->set_selection_type(MC_SELECT_POINT);
@@ -120,7 +120,12 @@ void Tab_Observations_historyPage_Widget::on_worker()
                     {
                     line_break_delta=50000;
                     ui->chart->set_line_break_delta(50000);
-                    array =common->Restful_API(timebuf,timebuf1,"Observation");
+                    if(common->history_mdccode=="MATECARES_RSI")
+                        array =common->Restful_API_RRandVT(timebuf,timebuf1,"Observation",common->history_model,0);
+                    else if(common->history_mdccode=="MATECARES_MV")
+                        array =common->Restful_API_RRandVT(timebuf,timebuf1,"Observation",common->history_model,1);
+                    else
+                        array =common->Restful_API(timebuf,timebuf1,"Observation");
                     }
                 else
                     {
@@ -140,7 +145,6 @@ void Tab_Observations_historyPage_Widget::on_worker()
                     {
                         float val = value["value"].toDouble();
                                             values.append(val);
-
                     }
                     else
                         values = value["values"].toArray();
@@ -153,7 +157,7 @@ void Tab_Observations_historyPage_Widget::on_worker()
                         continue;
                     auto next = it;
                     next++;
-                    if(next==vals.end()  || next->first - it->first > LINE_BREAK_DELTA)
+                    if(next==vals.end()  || next->first - it->first > line_break_delta)
                     {
                         new_pts.emplace(it->first, it->second[0].toDouble());
                     }
@@ -195,7 +199,12 @@ void Tab_Observations_historyPage_Widget::on_worker()
                     {
                     line_break_delta=50000;
                     ui->chart->set_line_break_delta(50000);
-                    array =common->Restful_API(timebuf,timebuf1,"Observation");
+                    if(common->history_mdccode=="MATECARES_RSI")
+                        array =common->Restful_API_RRandVT(timebuf,timebuf1,"Observation",common->history_model,0);
+                    else if(common->history_mdccode=="MATECARES_MV")
+                        array =common->Restful_API_RRandVT(timebuf,timebuf1,"Observation",common->history_model,1);
+                    else
+                        array =common->Restful_API(timebuf,timebuf1,"Observation");
                     }
                 else
                     {
@@ -228,7 +237,7 @@ void Tab_Observations_historyPage_Widget::on_worker()
                         continue;
                     auto next = it;
                     next++;
-                    if(next==vals.end() || next->first - it->first > LINE_BREAK_DELTA)
+                    if(next==vals.end() || next->first - it->first > line_break_delta)
                     {
                         new_pts.emplace(it->first, it->second[0].toDouble());
                     }
@@ -260,13 +269,24 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 right_locked = 1;
             else if(ui->chart->get_view_range_min_x() < last_left_bound + 30*1000)
             {
+                int line_break_delta;
+                if(common->history_datasource=="Observation")
+                    {
+                    line_break_delta=50000;
+                    ui->chart->set_line_break_delta(50000);
+                    }
+                else
+                    {
+                    line_break_delta=3000;
+                    ui->chart->set_line_break_delta(3000);
+                    }
                 ui->chart->set_custom_left_bound(last_left_bound - 30*1000);
                 uint64_t custom_right_bound = last_left_bound - 30*1000 + 180*1000;
                 if(custom_right_bound > now*1000)
                     custom_right_bound = now*1000;
                 ui->chart->set_custom_right_bound(custom_right_bound);
                 std::string dummy;
-                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values,value FROM _ WHERE data_source='";
+                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values,value,description FROM _ WHERE data_source='";
                 sql.append(common->history_datasource);
                 sql.append("' AND source_timestamp.sec>=");
 
@@ -277,9 +297,17 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 sql.append(" AND source_timestamp.sec<=");
                 sprintf(timebuf1, "%llu", last_left_bound/1000 - 30 + 180);
                 sql.append(timebuf1);
-                sql.append(" AND mdc_code='");
-                sql.append(common->history_mdccode);
-                sql.append("' AND patient_id='");
+                if(common->history_mdccode=="MATECARES_RSI"||common->history_mdccode=="MATECARES_MV")
+                {
+                    sql.append(" AND (mdc_code='DRAEGER_MEASURED_CP1_TidalVolume' OR mdc_code='MDC_RESP_RATE') ");
+                }
+                else
+                    {
+                    sql.append(" AND mdc_code='");
+                    sql.append(common->history_mdccode);
+                    sql.append("' ");
+                    }
+                sql.append("AND patient_id='");
                 sql.append(common->patient_id);
                 sql.append("' AND model='");
                 sql.append(common->history_model);
@@ -293,45 +321,67 @@ void Tab_Observations_historyPage_Widget::on_worker()
                     }
     //           printf("unlocked query took %u milliseconds.\n", query_end-query_start);*/
 
-                std::multimap<uint64_t, std::array<float,25>> vals;
+                std::multimap<uint64_t, std::vector<float>> vals;
+                std::map<uint64_t,float> RR;
+                std::map<uint64_t,float> VT;
                 for(auto& result: results)
                 {
-                    int32_t sec = result.valueAtIndex(0).asInt();
-                    uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
-                    fleece::Array values;
-                    std::array<float,25> value;
-                    float val;
-                    qDebug()<<QString::fromStdString(common->history_datasource);
-                    if(common->history_datasource=="RTObservation")
+                    if(common->history_mdccode=="MATECARES_RSI"||common->history_mdccode=="MATECARES_MV")
                     {
-                        values = result.valueAtIndex(2).asArray();
-                        for(int i=0;i<(int)values.count();++i)
-                            value[i]=values[i].asFloat();
+                        int32_t sec = result.valueAtIndex(0).asInt();
+                        uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
+                        uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                        float val = result.valueAtIndex(3).asFloat();
+                        std::string desc = result.valueAtIndex(4).asstring();
+                        if (desc=="Respiratory rate")
+                            RR.emplace(key,val);
+                        else if(desc=="Tidal volume in mL")
+                            VT.emplace(key,val);
+                        else if(desc=="Tidal volume")
+                            VT.emplace(key,val);
                     }
                     else
                     {
-                        val = result.valueAtIndex(3).asFloat();
-                        value[0] = val;
+                        int32_t sec = result.valueAtIndex(0).asInt();
+                        uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
+                        fleece::Array values;
+                        std::vector<float> value;
+                        float val;
+                        if(common->history_datasource=="RTObservation")
+                        {
+                            values = result.valueAtIndex(2).asArray();
+                            for(int i=0;i<(int)values.count();++i)
+                                value.push_back(values[i].asFloat());
+                        }
+                        else
+                        {
+                            val = result.valueAtIndex(3).asFloat();
+                            value.push_back(val);
+
+                        }
+                        uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                        vals.emplace(key, value);
                     }
-                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
-                    vals.emplace(key, value);
                 }
-           /*     char timebuf[64];
-                char timebuf1[64];
-                sprintf(timebuf, "%llu", last_left_bound/1000 - 30);
-                sprintf(timebuf1, "%llu", last_left_bound/1000 - 30 + 180);
-                std::multimap<uint64_t, QJsonArray> vals;
-                QJsonArray array =common->Restful_API(timebuf,timebuf1,"RTObservation");
-                for (int i=0; i<array.count();++i)
+                if(common->history_mdccode=="MATECARES_RSI"||common->history_mdccode=="MATECARES_MV")
                 {
-                    QJsonValue value = array.at(i).toObject();
-                    QJsonValue source_timestamp =value["source_timestamp"];
-                    uint32_t sec = source_timestamp["sec"].toInteger();
-                    uint32_t nanosec = source_timestamp["nanosec"].toInteger();
-                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
-                    QJsonArray values = value["values"].toArray();
-                    vals.emplace(key, values);
-                }*/
+                    for (auto it=RR.begin();it!=RR.end();++it)
+                        {
+                        auto it2=VT.find(it->first);
+                        if(it2==VT.end())continue;
+
+                        float RR_val=it->second;
+                        float VT_val=it2->second;
+                        float return_val;
+                        if(common->history_mdccode=="MATECARES_MV")
+                            return_val=(VT_val/1000.0)*RR_val;
+                        else
+                            return_val=VT_val/RR_val;
+                        std::vector<float> value;
+                        value.push_back(return_val);
+                        vals.emplace(it->first,value);
+                    }
+                }
                 std::multimap<uint64_t, float> new_pts;
                 for(auto it=vals.begin();it!=vals.end();it++)
                 {
@@ -358,9 +408,6 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 for(auto it=new_pts.begin();it!=new_pts.end();it++)
                     {
                     ui->chart->add_point(0, it->first, it->second);
-                    qDebug()<<"it->first="<<it->first;
-                    qDebug()<<"it->second="<<it->second;
-
                     }
                 ui->chart->set_view_range_min_x(a);
                 ui->chart->set_view_range_max_x(b);
@@ -369,13 +416,24 @@ void Tab_Observations_historyPage_Widget::on_worker()
             }
             else if(ui->chart->get_view_range_max_x() > last_right_bound - 30*1000)
             {
+                int line_break_delta;
+                if(common->history_datasource=="Observation")
+                    {
+                    line_break_delta=50000;
+                    ui->chart->set_line_break_delta(50000);
+                    }
+                else
+                    {
+                    line_break_delta=3000;
+                    ui->chart->set_line_break_delta(3000);
+                    }
                 uint64_t new_right_bounds = last_right_bound + 30*1000;
                 if(new_right_bounds > now*1000)
                     new_right_bounds = now*1000;
                 ui->chart->set_custom_left_bound(new_right_bounds - 180*1000);
                 ui->chart->set_custom_right_bound(new_right_bounds);
                 std::string dummy;
-                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values,value FROM _ WHERE data_source='";
+                std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values,value,description FROM _ WHERE data_source='";
                 sql.append(common->history_datasource);
                 sql.append("' AND source_timestamp.sec>=");
                 char timebuf[64];
@@ -384,9 +442,17 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 sql.append(" AND source_timestamp.sec<=");
                 sprintf(timebuf, "%llu", new_right_bounds/1000);
                 sql.append(timebuf);
-                sql.append(" AND mdc_code='");
-                sql.append(common->history_mdccode);
-                sql.append("' AND patient_id='");
+                if(common->history_mdccode=="MATECARES_RSI"||common->history_mdccode=="MATECARES_MV")
+                {
+                    sql.append(" AND (mdc_code='DRAEGER_MEASURED_CP1_TidalVolume' OR mdc_code='MDC_RESP_RATE') ");
+                }
+                else
+                    {
+                    sql.append(" AND mdc_code='");
+                    sql.append(common->history_mdccode);
+                    sql.append("' ");
+                    }
+                sql.append("AND patient_id='");
                 sql.append(common->patient_id);
                 sql.append("' AND model='");
                 sql.append(common->history_model);
@@ -405,28 +471,66 @@ void Tab_Observations_historyPage_Widget::on_worker()
     //            uint32_t query_end = Common::get_time_ms();
     //            printf("unlocked query took %u milliseconds.\n", query_end-query_start);
 
-                std::multimap<uint64_t, std::array<float,25>> vals;
+                std::multimap<uint64_t, std::vector<float>> vals;
+                std::map<uint64_t,float> RR;
+                std::map<uint64_t,float> VT;
                 for(auto& result: results)
                 {
-                    int32_t sec = result.valueAtIndex(0).asInt();
-                    uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
-                    fleece::Array values;
-                    std::array<float,25> value;
-                    float val;
-                    qDebug()<<QString::fromStdString(common->history_datasource);
-                    if(common->history_datasource=="RTObservation")
+                    if(common->history_mdccode=="MATECARES_RSI"||common->history_mdccode=="MATECARES_MV")
                     {
-                        values = result.valueAtIndex(2).asArray();
-                        for(int i=0;i<(int)values.count();++i)
-                            value[i]=values[i].asFloat();
+                        int32_t sec = result.valueAtIndex(0).asInt();
+                        uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
+                        uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                        float val = result.valueAtIndex(3).asFloat();
+                        std::string desc = result.valueAtIndex(4).asstring();
+                        if (desc=="Respiratory rate")
+                            RR.emplace(key,val);
+                        else if(desc=="Tidal volume in mL")
+                            VT.emplace(key,val);
+                        else if(desc=="Tidal volume")
+                            VT.emplace(key,val);
                     }
                     else
                     {
-                        val = result.valueAtIndex(3).asFloat();
-                        value[0] = val;
+                        int32_t sec = result.valueAtIndex(0).asInt();
+                        uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
+                        fleece::Array values;
+                        std::vector<float> value;
+                        float val;
+                        if(common->history_datasource=="RTObservation")
+                        {
+                            values = result.valueAtIndex(2).asArray();
+                            for(int i=0;i<(int)values.count();++i)
+                                value.push_back(values[i].asFloat());
+                        }
+                        else
+                        {
+                            val = result.valueAtIndex(3).asFloat();
+                            value.push_back(val);
+
+                        }
+                        uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                        vals.emplace(key, value);
                     }
-                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
-                    vals.emplace(key, value);
+                }
+                if(common->history_mdccode=="MATECARES_RSI"||common->history_mdccode=="MATECARES_MV")
+                {
+                    for (auto it=RR.begin();it!=RR.end();++it)
+                        {
+                        auto it2=VT.find(it->first);
+                        if(it2==VT.end())continue;
+
+                        float RR_val=it->second;
+                        float VT_val=it2->second;
+                        float return_val;
+                        if(common->history_mdccode=="MATECARES_MV")
+                            return_val=(VT_val/1000.0)*RR_val;
+                        else
+                            return_val=VT_val/RR_val;
+                        std::vector<float> value;
+                        value.push_back(return_val);
+                        vals.emplace(it->first,value);
+                    }
                 }
                 std::multimap<uint64_t, float> new_pts;
                 for(auto it=vals.begin();it!=vals.end();it++)
@@ -454,8 +558,6 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 for(auto it=new_pts.begin();it!=new_pts.end();it++)
                     {
                     ui->chart->add_point(0, it->first, it->second);
-                    qDebug()<<"it->first="<<it->first;
-                    qDebug()<<"it->second="<<it->second;
                     }
                 ui->chart->set_view_range_min_x(a);
                 ui->chart->set_view_range_max_x(b);
@@ -488,14 +590,20 @@ void Tab_Observations_historyPage_Widget::update_triggered()
                 {
                 line_break_delta=50000;
                 ui->chart->set_line_break_delta(50000);
-                array =common->Restful_API(timebuf,timebuf1,"Observation");
+                if(common->history_mdccode=="MATECARES_RSI")
+                    array =common->Restful_API_RRandVT(timebuf,timebuf1,"Observation",common->history_model,0);
+                else if(common->history_mdccode=="MATECARES_MV")
+                    array =common->Restful_API_RRandVT(timebuf,timebuf1,"Observation",common->history_model,1);
+                else
+                    array =common->Restful_API(timebuf,timebuf1,"Observation");
                 }
             else
                 {
                 line_break_delta=3000;
                 ui->chart->set_line_break_delta(3000);
                 array =common->Restful_API(timebuf,timebuf1,"RTObservation");
-                }         for (int i=0; i<array.count();++i)
+                }
+            for (int i=0; i<array.count();++i)
             {
                 QJsonValue value = array.at(i).toObject();
                 QJsonValue source_timestamp =value["source_timestamp"];
@@ -554,20 +662,27 @@ void Tab_Observations_historyPage_Widget::update_triggered()
             char timebuf[64];
             sprintf(timebuf, "%llu", now);
             std::string dummy;
-            std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values,value FROM _ WHERE data_source='";
+            std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values,value,description FROM _ WHERE data_source='";
             sql.append(common->history_datasource);
             sql.append("' AND source_timestamp.sec>=");
             sql.append(timebuf);
-            sql.append(" AND mdc_code='");
-            sql.append(common->history_mdccode);
-            sql.append("' AND patient_id='");
+            if(common->history_mdccode=="MATECARES_RSI"||common->history_mdccode=="MATECARES_MV")
+            {
+                sql.append(" AND (mdc_code='DRAEGER_MEASURED_CP1_TidalVolume' OR mdc_code='MDC_RESP_RATE') ");
+            }
+            else
+                {
+                sql.append(" AND mdc_code='");
+                sql.append(common->history_mdccode);
+                sql.append("' ");
+                }
+            sql.append("AND patient_id='");
             sql.append(common->patient_id);
             sql.append("' AND model='");
             sql.append(common->history_model);
             sql.append("' AND vmd_id='");
             sql.append(common->vmd_id);
             sql.append("'");
-
             uint32_t query_start = Common::get_time_ms();
             cbl::ResultSet results2 = common->cbl->queryDocuments(common->db, sql, dummy);
             int error=0;while (dummy!="IP200"&&error<5)
@@ -576,28 +691,65 @@ void Tab_Observations_historyPage_Widget::update_triggered()
                 qDebug()<<QString::fromStdString(dummy);
                 fflog_out(common->log,dummy.c_str());error++;
                 }
-            std::multimap<uint64_t, std::array<float,25>> vals;
+            std::multimap<uint64_t, std::vector<float>> vals;
+            std::map<uint64_t,float> RR;
+            std::map<uint64_t,float> VT;
             for(auto& result: results2)
             {
-                int32_t sec = result.valueAtIndex(0).asInt();
-                uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
-                fleece::Array values;
-                std::array<float,25> value;
-                float val;
-                qDebug()<<QString::fromStdString(common->history_datasource);
-                if(common->history_datasource=="RTObservation")
+                if(common->history_mdccode=="MATECARES_RSI"||common->history_mdccode=="MATECARES_MV")
                 {
-                    values = result.valueAtIndex(2).asArray();
-                    for(int i=0;i<(int)values.count();++i)
-                        value[i]=values[i].asFloat();
+                    int32_t sec = result.valueAtIndex(0).asInt();
+                    uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
+                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                    float val = result.valueAtIndex(3).asFloat();
+                    std::string desc = result.valueAtIndex(4).asstring();
+                    if (desc=="Respiratory rate")
+                        RR.emplace(key,val);
+                    else if(desc=="Tidal volume in mL")
+                        VT.emplace(key,val);
+                    else if(desc=="Tidal volume")
+                        VT.emplace(key,val);
                 }
                 else
                 {
-                    val = result.valueAtIndex(3).asFloat();
-                    value[0] = val;
+                    int32_t sec = result.valueAtIndex(0).asInt();
+                    uint32_t nanosec = result.valueAtIndex(1).asUnsigned();
+                    fleece::Array values;
+                    std::vector<float> value;
+                    float val;
+                    if(common->history_datasource=="RTObservation")
+                    {
+                        values = result.valueAtIndex(2).asArray();
+                        for(int i=0;i<(int)values.count();++i)
+                            value.push_back(values[i].asFloat());
+                    }
+                    else
+                    {
+                        val = result.valueAtIndex(3).asFloat();
+                        value.push_back(val);
+
+                    }
+                    uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
+                    vals.emplace(key, value);
                 }
-                uint64_t key = (uint64_t)sec*1000 + nanosec/1000000;
-                vals.emplace(key, value);
+            }
+            if(common->history_mdccode=="MATECARES_RSI"||common->history_mdccode=="MATECARES_MV")
+            {
+                for (auto it=RR.begin();it!=RR.end();++it)
+                    {
+                    auto it2=VT.find(it->first);
+                    if(it2==VT.end())continue;
+                    float RR_val=it->second;
+                    float VT_val=it2->second;
+                    float return_val;
+                    if(common->history_mdccode=="MATECARES_MV")
+                        return_val=(VT_val/1000.0)*RR_val;
+                    else
+                        return_val=VT_val/RR_val;
+                    std::vector<float> value;
+                    value.push_back(return_val);
+                    vals.emplace(it->first,value);
+                }
             }
             std::multimap<uint64_t, float> new_pts;
             for(auto it=vals.begin();it!=vals.end();it++)
@@ -623,8 +775,6 @@ void Tab_Observations_historyPage_Widget::update_triggered()
             for(auto it=new_pts.begin();it!=new_pts.end();it++)
                 {
                 ui->chart->add_point(0, it->first, it->second);
-                qDebug()<<"it->first="<<it->first;
-                qDebug()<<"it->second="<<it->second;
                 }
             uint64_t viewable = ui->chart->get_view_range_max_x() - ui->chart->get_view_range_min_x();
             ui->chart->set_view_range_max_x(ui->chart->get_right_bounds());
@@ -647,14 +797,6 @@ void Tab_Observations_historyPage_Widget::update_triggered()
         last_left_bound = ui->chart->get_right_bounds() - 180*1000;
         ui->chart->set_custom_left_bound(last_left_bound);
         ui->chart->set_custom_right_bound(last_right_bound);*/
-        uint64_t now = time(NULL);
-        now*=1000;
-        ui->chart->set_view_range_max_x(now);
-        ui->chart->set_view_range_min_x(now - 60*1000);
-        last_right_bound = now;
-        last_left_bound = now - 180*1000;
-        ui->chart->set_custom_left_bound(last_left_bound);
-        ui->chart->set_custom_right_bound(last_right_bound);
     }
 observation:
     if(common->patient_id.size() == 0)
@@ -966,17 +1108,16 @@ void Tab_Observations_historyPage_Widget::showEvent(QShowEvent *event)
             ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
         }
     }
-    ui->label->setText(common->history_model.c_str());
     ui->chart->clear_points(0);
     ui->chart->clear_selection();
     pts.clear();
     right_locked = 1;
     uint64_t now = time(NULL);
     now*=1000;
-    ui->chart->set_view_range_max_x(now);
-    ui->chart->set_view_range_min_x(now-60*1000);
+ /*   ui->chart->set_view_range_max_x(now);
+    ui->chart->set_view_range_min_x(now-1*60*1000);
     ui->chart->set_custom_right_bound(now);
-    ui->chart->set_custom_left_bound(now-180*1000);
+    ui->chart->set_custom_left_bound(now-3*60*1000);*/
 }
 
 void Tab_Observations_historyPage_Widget::hideEvent(QHideEvent *event)
@@ -1009,12 +1150,14 @@ void Tab_Observations_historyPage_Widget::on_MenuButton_clicked()
     common->select_menu.exec();
     int i = common->select_menu.get_btn();
     auto it=common->observation_main_page->legends[i];
-    set_text(it->get_mdccode(),
-             it->get_model(),
-             it->get_name(),
-             it->get_unit(),
-             it->get_y_min(),
-             it->get_y_max());
+    set_title_text(it->get_mdccode(),
+                   it->get_model(),
+                   it->get_name(),
+                   it->get_y_min(),
+                   it->get_y_max(),
+                   it->get_unit(),
+                   it->get_datasource());
+    ui->chart->clear_points(0);
 
 
 /*    if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
@@ -1121,6 +1264,7 @@ void Tab_Observations_historyPage_Widget::on_apply_btn_clicked()
         ui->chart->set_view_range_max_x(target_time + viewable/2);
     ui->chart->set_view_range_min_x(ui->chart->get_view_range_max_x() - viewable);
     last_left_bound = ui->chart->get_view_range_min_x();
+
 }
 
 static uint8_t mc_is_too_far_past(time_t timeval)
@@ -1474,29 +1618,48 @@ void Tab_Observations_historyPage_Widget::on_day_dropdown_currentIndexChanged(in
 {
     check_and_modify_jumper_time();
 }
-void Tab_Observations_historyPage_Widget::set_text(std::string mdccode,
-                                                   std::string model,
-                                                   std::string name,
-                                                   std::string unit,
-                                                   std::string y_min,
-                                                   std::string y_max)
+void Tab_Observations_historyPage_Widget::set_title_text(std::string mdccode,
+                                                         std::string model,
+                                                         std::string name,
+                                                         std::string y_min,
+                                                         std::string y_max,
+                                                         std::string unit,
+                                                         std::string datasource)
 {
     Common* common = Common::instance();
-    common->history_mdccode=mdccode;
-    common->history_model = model;
-    common->history_name = name;
-    common->history_unit = unit;
+    common->history_mdccode    = mdccode;
+    common->history_model      = model;
+    common->history_name       = name;
     ui->chart->set_view_range_min_y(QString::fromStdString(y_min).toInt());
     ui->chart->set_view_range_max_y(QString::fromStdString(y_max).toInt());
+    common->history_unit       = unit;
+    common->history_datasource = datasource;
+
 
     QString qstr = QString::fromStdString(model)
             +"("+QString::fromStdString(name);
     if(common->history_unit.size()>0)
             qstr += "("+QString::fromStdString(unit)+")";
-    QString datasource;
-    if(common->history_datasource=="RTObservation")
+    if(datasource=="RTObservation")
         qstr += ",Wave";
     qstr += ")";
+    uint64_t now = time(NULL);
+    now*=1000;
+
+    if(datasource=="RTObservation")
+    {
+        ui->chart->set_view_range_max_x(now);
+        ui->chart->set_view_range_min_x(now-1*60*1000);
+        ui->chart->set_custom_right_bound(now);
+        ui->chart->set_custom_left_bound(now-3*60*1000);
+    }
+    else
+    {
+        ui->chart->set_view_range_max_x(now);
+        ui->chart->set_view_range_min_x(now-30*60*1000);
+        ui->chart->set_custom_right_bound(now);
+        ui->chart->set_custom_left_bound(now-32*60*1000);
+    }
     ui->label->setText(qstr);
     ui->label->update();
 }

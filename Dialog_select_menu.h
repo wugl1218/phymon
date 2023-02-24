@@ -36,6 +36,9 @@ private:
     Ui::Dialog_select_menu *ui;
 signals:
     void clicked();
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+
 };
 
 #endif // DIALOG_SELECT_MENU_H

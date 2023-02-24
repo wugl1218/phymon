@@ -386,24 +386,27 @@ void Tab_Observations_mainPage_Widget::clear_points()
 }
 
 void Tab_Observations_mainPage_Widget::on_series_pressed(std::string name,std::string model, std::string mdccode,
-                                                         std::string y_min,std::string y_max,std::string unit)
+                                                         std::string y_min,std::string y_max,std::string unit,
+                                                         std::string datasource)
 {
     Common* common = Common::instance();
     auto fit = common->md->dm.devices.find(model);
     if(fit == common->md->dm.devices.end())return;
     if(mdccode=="")return;
-    for(int i=0;i<(int)legends.size();i++)
-        if( legends[i] == sender() )
-        {
-            common->history_datasource = "Observation";
-            emit changeToHistoryPage();
-        }
-    common->history_page->set_text(mdccode,
-                                   model,
-                                   name,
-                                   unit,
-                                   y_min,
-                                   y_max);
+
+    common->history_page->set_title_text(mdccode,
+                                         model,
+                                         name,
+                                         y_min,
+                                         y_max,
+                                         unit,
+                                         datasource);
+    emit changeToHistoryPage();
+    //    for(int i=0;i<(int)legends.size();i++)
+    //        if( legends[i] == sender() )
+    //        {
+    //            common->history_datasource = "Observation";
+    //        }
 /*    if(sender() == ui->legend)
     {
         if(model == 0)
@@ -1347,10 +1350,13 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                                      it2->second.mdccode,
                                      it2->second.val,
                                      it2->second.y_min,
-                                     it2->second.y_max);
+                                     it2->second.y_max,
+                                     "Observation");
             legend1->show();
-            connect(legend1, SIGNAL(on_series_select(std::string,std::string,std::string,std::string,std::string,std::string)),
-                    this, SLOT(on_series_pressed(std::string,std::string,std::string,std::string,std::string,std::string)));
+            connect(legend1, SIGNAL(on_series_select(std::string,std::string,std::string,
+                                                     std::string,std::string,std::string,std::string)),
+                    this, SLOT(on_series_pressed(std::string,std::string,std::string,
+                                                 std::string,std::string,std::string,std::string)));
             legends.push_back(legend1);
             uint64_t t = ((uint64_t)it2->second.ts.tv_sec)*1000 + ((uint64_t)it2->second.ts.tv_nsec)/1000000;
             if(it2->second.y_max=="200")

@@ -19,6 +19,7 @@ public:
     std::string mdccode;
     std::string y_max;
     std::string y_min;
+    std::string datasource;
     float val;
 
     QColor color;
@@ -40,14 +41,14 @@ public:
 
     void set_series_color(QColor color);
     QColor get_series_color();
-    void set_series_text(
-                         std::string text,
+    void set_series_text(std::string text,
                          std::string model,
                          std::string unit,
                          std::string mdccode,
                          float val,
                          std::string y_min,
-                         std::string y_max);
+                         std::string y_max,
+                         std::string datasource);
     std::string get_series_text();
     void remove_series();
     std::string get_name(){return entries.name;};
@@ -56,6 +57,7 @@ public:
     std::string get_model(){return entries.model;};
     std::string get_y_min(){return entries.y_min;};
     std::string get_y_max(){return entries.y_max;};
+    std::string get_datasource(){return entries.datasource;};
 
 
 protected:
@@ -66,7 +68,7 @@ protected:
 
 signals:
     void on_series_select(std::string name,std::string model,std::string mdccode,std::string y_min,std::string y_max,
-                          std::string unit);
+                          std::string unit,std::string datasource);
 
 private:
     int square_width;

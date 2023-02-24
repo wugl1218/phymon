@@ -59,3 +59,7 @@ void Dialog_select_menu::btn_clicked()
     qDebug()<<"select_btn"<<select_btn;
     close();
 }
+void Dialog_select_menu::mousePressEvent(QMouseEvent *event)
+{
+
+}

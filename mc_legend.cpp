@@ -71,7 +71,9 @@ void mc_legend::set_series_text(std::string text,
                                 std::string mdccode,
                                 float val,
                                 std::string y_min,
-                                std::string y_max)
+                                std::string y_max,
+                                std::string datasource
+                               )
 {
 
     entries.name = text;
@@ -81,6 +83,7 @@ void mc_legend::set_series_text(std::string text,
     entries.mdccode = mdccode;
     entries.y_min = y_min;
     entries.y_max = y_max;
+    entries.datasource = datasource;
 
     update();
 }
@@ -167,7 +170,8 @@ void mc_legend::mousePressEvent(QMouseEvent *event)
     std::string y_min=entries.y_min;
     std::string y_max=entries.y_max;
     std::string unit=entries.unit;
-    emit on_series_select(name,model,mdccode,y_min,y_max,unit);
+    std::string datasource=entries.datasource;
+    emit on_series_select(name,model,mdccode,y_min,y_max,unit,datasource);
 }
 
 

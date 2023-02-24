@@ -33,12 +33,13 @@ public:
     void clear_selection();
     void reset_time_jumper();
     void step();
-    void set_text(std::string mdccode,
-                  std::string model,
-                  std::string name,
-                  std::string unit,
-                  std::string y_min,
-                  std::string y_max);
+    void set_title_text(std::string mdccode,
+                        std::string model,
+                        std::string name,
+                        std::string y_min,
+                        std::string y_max,
+                        std::string unit,
+                        std::string datasource);
 
 protected:
     void showEvent(QShowEvent *event);

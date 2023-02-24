@@ -399,20 +399,21 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         e.val = (vt/1000.0)*rr;
         e.model = "Savina";
         e.y_max = "200";
+        e.y_min = "0";
+        e.mdccode ="MATECARES_MV";
         e.is_matecares =1;
-//        e.ts.tv_sec=sec;
-//        e.ts.tv_nsec=nsec;
-
         entries->emplace(mv_order, e);
+
         e.code = "RSI";
         e.desc = "RSI";
         e.unit = "";
         e.val = vt/rr;
         e.model = "Savina";
         e.y_max = "200";
+        e.y_min = "0";
+        e.mdccode ="MATECARES_RSI";
         e.is_matecares =1;
-//        e.ts.tv_sec=sec;
-//        e.ts.tv_nsec=nsec;
+
         entries->emplace(rsi_order, e);
     }
 /*    if(has_ipart && has_epart)
@@ -802,34 +803,10 @@ QJsonArray Common::Restful_API(char queryStartTime[64] ,char queryEndTime[64],st
     delete manager;
     manager = nullptr;
     return array;
-    /*        switch(value.type()) //測試 QJsonValue資料型態
-            {
-            case QJsonValue::Bool:
-                qDebug() << value.toBool();
-                break;
-            case QJsonValue::Double:
-                qDebug() << value.toDouble();
-                break;
-            case QJsonValue::String:
-                qDebug() << value.toString();
-                break;
-            case QJsonValue::Null:
-                qDebug() << " ";
-                break;
-            case QJsonValue::Array:
-                //转化为数组
-                qDebug() << value.toArray();
-                break;
-            case QJsonValue::Object:
-                qDebug() <<value.toObject();
-                break;
 
-            default:
-                qDebug() << "未知类型";
-            }*/
 }
 QJsonArray Common::Restful_API_Orderby(char queryStartTime[64] ,char queryEndTime[64],std::string dataSource,std::string model,std::string orderStr)
-{ //使用於 Tab_Observations_historyPage中 NS端資料庫搜尋
+{ //使用於 Tab_Utilities_alarmHistoryPage_Widget NS端資料庫搜尋
     Common* common = Common::instance();
     // URL
     QString restfulUrl = "http://";
@@ -876,34 +853,10 @@ QJsonArray Common::Restful_API_Orderby(char queryStartTime[64] ,char queryEndTim
     delete manager;
     manager = nullptr;
     return array;
-    /*        switch(value.type()) //測試 QJsonValue資料型態
-            {
-            case QJsonValue::Bool:
-                qDebug() << value.toBool();
-                break;
-            case QJsonValue::Double:
-                qDebug() << value.toDouble();
-                break;
-            case QJsonValue::String:
-                qDebug() << value.toString();
-                break;
-            case QJsonValue::Null:
-                qDebug() << " ";
-                break;
-            case QJsonValue::Array:
-                //转化为数组
-                qDebug() << value.toArray();
-                break;
-            case QJsonValue::Object:
-                qDebug() <<value.toObject();
-                break;
 
-            default:
-                qDebug() << "未知类型";
-            }*/
 }
 QJsonArray Common::Restful_API_Alarm(char queryStartTime[64] ,char queryEndTime[64],std::string dataSource,std::string model,std::string orderStr)
-{ //使用於 Tab_Observations_historyPage中 NS端資料庫搜尋
+{ //使用於 Tab_Utilities_alarmHistoryPage_Widget NS端資料庫搜尋
     Common* common = Common::instance();
     // URL
     QString restfulUrl = "http://";
@@ -950,6 +903,118 @@ QJsonArray Common::Restful_API_Alarm(char queryStartTime[64] ,char queryEndTime[
     delete manager;
     manager = nullptr;
     return array;
+    /*        switch(value.type()) //測試 QJsonValue資料型態
+            {
+            case QJsonValue::Bool:
+                qDebug() << value.toBool();
+                break;
+            case QJsonValue::Double:
+                qDebug() << value.toDouble();
+                break;
+            case QJsonValue::String:
+                qDebug() << value.toString();
+                break;
+            case QJsonValue::Null:
+                qDebug() << " ";
+                break;
+            case QJsonValue::Array:
+                //转化为数组
+                qDebug() << value.toArray();
+                break;
+            case QJsonValue::Object:
+                qDebug() <<value.toObject();
+                break;
+
+            default:
+                qDebug() << "未知类型";
+            }*/
+}
+QJsonArray Common::Restful_API_RRandVT(char queryStartTime[64] ,char queryEndTime[64],std::string dataSource,std::string model,bool is_MV)
+{ //使用於 Tab_Observations_historyPage中 MV與RSI計算 NS端資料庫搜尋
+    Common* common = Common::instance();
+    // URL
+    QString restfulUrl = "http://";
+    restfulUrl.append(QString::fromStdString(common->restful_API_url));
+    restfulUrl.append("/Common/VmdSync/getFree");
+    // 構造請求
+    QNetworkRequest request;
+    request.setUrl(QUrl(restfulUrl));
+    request.setRawHeader("API-Key", "dm1kX3N5bmM=");
+    QNetworkAccessManager *manager = new QNetworkAccessManager(md);
+    // 發送請求
+    QByteArray post_index ="free=";
+               post_index.append("SELECT ")
+                         .append("VMDSync.`value`,VMDSync.source_timestamp,VMDSync.description ")
+                         .append("FROM VMDSync ")
+                         .append("WHERE VMDSync.source_timestamp.sec BETWEEN ")
+                         .append(queryStartTime).append("  AND ")
+                         .append(queryEndTime).append(" ")
+                         .append("AND  VMDSync.patient_id= '")
+                         .append(common->patient_id).append("' ")
+                         .append("AND  VMDSync.data_source= '")
+                         .append(dataSource).append("' ")
+                         .append("AND  VMDSync.model= '")
+                         .append(model).append("' ")
+                         .append("AND  (VMDSync.mdc_code= 'DRAEGER_MEASURED_CP1_TidalVolume' OR VMDSync.mdc_code='MDC_RESP_RATE')");
+    qDebug()<<post_index;
+ /*   qDebug()<<"patient_id="<<QString::fromStdString(common->patient_id);
+    qDebug()<<"history_mdccode="<<QString::fromStdString(common->history_mdccode);
+    qDebug()<<"history_model="<<QString::fromStdString(common->history_model);
+    qDebug()<<"queryStartTime="<<queryStartTime;
+    qDebug()<<"queryEndTime="<<queryEndTime;
+    qDebug()<<"dataSource="<<QString::fromStdString(dataSource); */
+    QNetworkReply *pReplay = manager->post(request,post_index);
+    // 開啟一個局部的事件循環，等待響應結束，退出
+    QEventLoop eventLoop;
+    QObject::connect(manager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
+    eventLoop.exec();
+    // 獲取響應信息
+    QByteArray bytes = pReplay->readAll();
+    QJsonParseError jsonParseError;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes, &jsonParseError);
+    qDebug() << jsonParseError.errorString();
+    QJsonObject jsonobject = jsonDoc.object();
+    QJsonArray array =jsonobject["row"].toArray();
+    pReplay->deleteLater();
+    delete manager;
+    manager = nullptr;
+
+    std::map<uint32_t,QJsonValue> RR;
+    std::map<uint32_t,QJsonValue> VT;
+    for (int i=0; i<array.count();++i)
+    {
+        QJsonValue value = array.at(i).toObject();
+
+        QString desc = value["description"].toString();
+        QJsonValue source_timestamp =value["source_timestamp"];
+        uint32_t sec = source_timestamp["sec"].toInteger();
+        float val = value["value"].toDouble();
+        if (desc=="Respiratory rate")
+            RR.emplace(sec,value);
+        else if(desc=="Tidal volume in mL")
+            VT.emplace(sec,value);
+        else if(desc=="Tidal volume")
+            VT.emplace(sec,value);
+    }
+    QJsonArray return_array;
+    for (auto it=RR.begin();it!=RR.end();++it)
+        {
+        auto it2=VT.find(it->first);
+        if(it2==VT.end())continue;
+
+        float RR_val=it->second["value"].toDouble();
+        float VT_val=it2->second["value"].toDouble();
+        float return_val;
+        if(is_MV)
+            return_val=(VT_val/1000.0)*RR_val;
+        else
+            return_val=VT_val/RR_val;
+        QJsonObject json;
+        json.insert("source_timestamp", it->second["source_timestamp"]);
+        json.insert("value", return_val);
+        return_array.push_back(json);
+    }
+    return return_array;
     /*        switch(value.type()) //測試 QJsonValue資料型態
             {
             case QJsonValue::Bool:

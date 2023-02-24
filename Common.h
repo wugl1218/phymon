@@ -32,7 +32,7 @@
 #define STATIONARY_CHECK_DISTANCE 10.0f
 #define VELOCITY_MULTIPLIER 1.4
 #define DEFAULT_FRICTION 0.35
-#define LINE_BREAK_DELTA 3000
+#define LINE_BREAK_DELTA 50000
 
 class MainDialog;
 class Tab_Devices_Widget;
@@ -154,6 +154,7 @@ public:
     QJsonArray Restful_API(char queryStartTime[64] , char queryEndTime[64], std::string dataSource);
     QJsonArray Restful_API_Orderby(char queryStartTime[64] , char queryEndTime[64], std::string dataSource, std::string model, std::string orderStr);
     QJsonArray Restful_API_Alarm(char queryStartTime[64] , char queryEndTime[64], std::string dataSource, std::string model, std::string orderStr);
+    QJsonArray Restful_API_RRandVT(char queryStartTime[64] , char queryEndTime[64], std::string dataSource, std::string model, bool is_MV);
 
     dds::domain::DomainParticipant participant = nullptr;
     dds::pub::Publisher publisher = nullptr;
