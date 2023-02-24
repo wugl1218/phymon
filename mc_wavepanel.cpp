@@ -59,10 +59,8 @@ void mc_wavepanel::add_clicked()
     for (auto all: items)
     {
         bool existed = false;
-        qDebug()<<"====all="<<all.display_desc.c_str();
         for (auto picked: m_nurse_items)
         {
-            qDebug()<<"====picked="<<picked.display_desc.c_str();
             if (m_DeviceName == picked.model && picked.display_desc == "loops")
             {
                 loops = (picked.visibility) ? 0:1;
@@ -102,17 +100,23 @@ void mc_wavepanel::add_clicked()
     if (menu.m_selected_index < 0 || menu.m_selected_index > (int)items.size())
         return;
     WriteNurseDB(unselect_items[menu.m_selected_index]);
+    push_add_item();
 }
 
 void mc_wavepanel::mc_add_clicked(mc_wavepanel* wp)
 {
-    qDebug()<<"===== mc_add_clicked";
     wp->add_clicked();
 }
 
 void mc_wavepanel::push_add_item()
 {
-    for (int i = 1; i < 6;i++)
+    bool loops = false;
+    CheckNurseDB();
+    for (auto item: m_nurse_items)
+        if (item.display_desc == "loops")
+            loops = true;
+    qDebug()<<"=====m_nurse_items.size="<< m_nurse_items.size()<<" loops="<<loops;
+    for (int i = m_nurse_items.size(); i < MAX_WAVE;i++)
     {
         m_RTO_chart_list[i]->hide();
         m_RTO_option_list[i]->hide();
@@ -120,20 +124,30 @@ void mc_wavepanel::push_add_item()
         m_RTO_enlarge_list[i]->hide();
         m_RTO_name_list[i]->hide();
     }
-    //for (int i = 1; i < 6;i++)
-    //    m_RTO_name_list[i]->setText("FLOW");
+    if (!loops)
+        m_loop_frame->setHidden(1);
+    if (m_nurse_items.size() ==  MAX_WAVE || (m_nurse_items.size() == 4 && loops))
+        m_add_frame->setHidden(1);
 
-    //for (auto &item: m_RTO_wave_list)
-    //{
-        mc_chart *pChart = m_RTO_chart_list[0];
+    for (int i = 0; i < (int)m_nurse_items.size();i++)
+        m_main_item->setStretch(i,1);
+    for (int i = m_nurse_items.size(); i < m_main_item->count();i++)
+        if (i != 6)     //skip loops
+            m_main_item->setStretch(i,0);
+    if (!m_nurse_items.size())      // add_item only
+        m_main_item->setStretch(7,1);
+
+    for (int i = 0; i < (int)m_nurse_items.size();i++)
+    {
+        mc_chart *pChart = m_RTO_chart_list[i];
         pChart->set_axis_visible(1);
         pChart->set_selection_width(40);
         pChart->set_selection_type(MC_SELECT_SERIES);
         pChart->set_series_width(0,2);
         pChart->set_scrollable(0);
         pChart->set_zoomable(0);
-        pChart->set_view_range_max_y(100);
-        pChart->set_view_range_min_y(-100);
+        pChart->set_view_range_max_y(m_nurse_items[i].y_max);
+        pChart->set_view_range_min_y(m_nurse_items[i].y_min);
         pChart->set_num_labels_x(5);
         pChart->set_num_labels_y(5);
         pChart->set_series_color(0, QColor(255,255,255));
@@ -142,10 +156,10 @@ void mc_wavepanel::push_add_item()
         {
             std::vector<float> vals;
             uint64_t time;
-            m_rtchart1_wave_list<<vals;
-            m_rtchart1_time_list<<time;
+            m_rtchart_wave_list[i]<<vals;
+            m_rtchart_time_list[i]<<time;
         }
-    //}
+    }
 }
 std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
 {
@@ -233,43 +247,20 @@ void mc_wavepanel::UpdateWave()
 
     if (!m_bDrawlayout && common->patient_id.size())
     {
-        std::string dummy;
-        std::string sql = "SELECT display_desc,y_max,y_min,model,y_step,display_index,visibility FROM _ WHERE data_source='RTO' AND patient_id='";
-        sql.append(common->patient_id);
-        sql.append("'");
-        cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-        int error=0;
-        while (dummy!="IP200"&&error<5)
-        {
-            results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-            qDebug()<<QString::fromStdString(dummy);
-            fflog_out(common->log,dummy.c_str());error++;
-        }
-
-        for(auto& result: results2)
-        {
-            item.display_desc = result.valueAtIndex(0).asstring();
-            item.y_max = result.valueAtIndex(1).asInt();
-            item.y_min = result.valueAtIndex(2).asInt();
-            item.model = result.valueAtIndex(3).asInt();
-            item.y_step = result.valueAtIndex(4).asInt();
-            item.display_index = result.valueAtIndex(5).asInt();
-            item.visibility = result.valueAtIndex(6).asInt();
-            m_nurse_items.push_back(item);
-        }
         push_add_item();
         m_bDrawlayout = true;
     }
-/*    if (m_bDrawlayout)
+    if (m_bDrawlayout)
     {
         qDebug()<<"===== add_wave_to_chart_RTO\n";
-        add_wave_to_chart_RTO(0,
-                          "Savina","00",
-                          common->rtobservation_wave_reader,
-                          m_RTO_chart_list[0],
-                          m_rtchart1_wave_list,
-                          m_rtchart1_time_list);
-    }*/
+        for (int i = 0; i < (int) m_nurse_items.size();i++)
+            add_wave_to_chart_RTO(0,
+                        m_DeviceName, m_nurse_items[i].mdc_code,
+                        common->rtobservation_wave_reader,
+                        m_RTO_chart_list[i],
+                        m_rtchart_wave_list[i],
+                        m_rtchart_time_list[i]);
+    }
 }
 
 std::vector<std::string> mc_wavepanel::QueryRtItems(std::string DeviceName)
@@ -504,7 +495,7 @@ std::vector<stDisplayItems> mc_wavepanel::GetDisplayIntersec(std::string model, 
     }
     return items;
 }
-void mc_wavepanel::add_wave_to_chart_RTO(int series_index, std::string model, std::string code,
+void mc_wavepanel::add_wave_to_chart_RTO(int series_index, std::string model, std::string mdc_code,
                                                              dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
                                                              mc_chart* chart,
                                                              QList<std::vector<float>> &wave_list,
@@ -522,8 +513,8 @@ void mc_wavepanel::add_wave_to_chart_RTO(int series_index, std::string model, st
     querystr.append(common->patient_id);
     querystr.append("' AND model MATCH '");
     querystr.append(model);
-    querystr.append("' AND code MATCH '");
-    querystr.append(code);
+    querystr.append("' AND mdc_code MATCH '");
+    querystr.append(mdc_code);
     querystr.append("'");
     qDebug()<<QString::fromStdString(querystr);
 

@@ -57,10 +57,10 @@ public:
     QList<QLabel*> m_RTO_enlarge_list;
     QList<QLabel*> m_RTO_name_list;
     std::vector<dbDisplayItems> m_nurse_items;
-    QList<std::vector<float>> m_rtchart1_wave_list;
-    QList<uint64_t> m_rtchart1_time_list;
+    QList<std::vector<float>> m_rtchart_wave_list[MAX_WAVE];
+    QList<uint64_t> m_rtchart_time_list[MAX_WAVE];
 
-    void add_wave_to_chart_RTO(int series_index, std::string model, std::string code,
+    void add_wave_to_chart_RTO(int series_index, std::string model, std::string mdc_code,
                                dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
                                mc_chart *chart,
                                QList<std::vector<float>> &wave_list,

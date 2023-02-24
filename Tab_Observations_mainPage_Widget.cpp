@@ -200,7 +200,7 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     //for (int i = 1; i < ui->item->count() - 2;i++)
     //    ui->item->setStretch(i,0);
     //ui->item->setStretch(i,0);
-    ui->loop_frame->setHidden(1);
+    //ui->loop_frame->setHidden(1);
     //ui->item->setStretch(ui->item->count() - 1,1);
     //ui->add_frame->setHidden(0);
    //ui->label_2->hide();
@@ -244,6 +244,7 @@ void Tab_Observations_mainPage_Widget::SetWavePanelSlots()
                 <<ui->wave_name_5
                 <<ui->wave_name_6;
     ui->wavePanel->set_name_ui(RTO_name_list);
+    ui->wavePanel->set_frame_ui(ui->item, ui->loop_frame, ui->add_frame);
     connect(ui->add_btn, SIGNAL(clicked()), this, SLOT(on_add_btn_clicked));
 }
 void Tab_Observations_mainPage_Widget::on_add_btn_clicked()
