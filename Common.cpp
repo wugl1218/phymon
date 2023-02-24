@@ -210,6 +210,7 @@ void Common::init_dds(int domain_id)
     visualizetion_observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
     observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
     observation_reader_2 = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
+    observation_wave_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
 
     chansettings_type = dds->getTypeObject("dds_collector::ChannelSettings");
     chansettings_topic = dds->getTopic("TP_ChannelSettings", chansettings_type, "");

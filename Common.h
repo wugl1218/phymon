@@ -205,6 +205,7 @@ public:
     dds::sub::DataReader<dds::core::xtypes::DynamicData> visualizetion_observation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> observation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> observation_reader_2 = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> observation_wave_reader = nullptr;
     dds::core::xtypes::DynamicType observation_type;
 
     dds::topic::Topic<dds::core::xtypes::DynamicData> chansettings_topic = nullptr;

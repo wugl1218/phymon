@@ -13,9 +13,7 @@ mc_wavepanel::mc_wavepanel(QWidget *parent)
 {
     m_DeviceName = "Savina";
     controls_on = 1;
-    //connect(controls_btn, SIGNAL(clicked()), this, SLOT(controls_clicked()));
-
-    m_Timer.setInterval(50);
+    m_Timer.setInterval(250);
     connect(&m_Timer, SIGNAL(timeout()), this, SLOT(UpdateWave()));
     m_Timer.start();
     m_RtLowerCount = m_ObLowerCount = 0;
@@ -82,12 +80,8 @@ void mc_wavepanel::add_clicked()
             }
         }
         if (!existed)
-        {
-            //all.record_id = m_nurse_items[0].record_id;
             unselect_items.push_back(all);
-        }
     }
-    //qDebug()<<"==== unselect_items.size="<<unselect_items.size();
     if (loops)
     {
         if (loops_existed)
@@ -104,7 +98,6 @@ void mc_wavepanel::add_clicked()
     printf("selected item=%s, index=%d\n", menu.selected_item.c_str(), menu.m_selected_index);
     if (menu.m_selected_index < 0 || menu.m_selected_index > (int)items.size())
         return;
-    //qDebug()<<"====max="<<unselect_items[menu.m_selected_index].y_max.c_str()<<" min="<<unselect_items[menu.m_selected_index].y_min.c_str();
     WriteNurseDB(unselect_items[menu.m_selected_index]);
     push_add_item();
 }
@@ -119,7 +112,6 @@ void mc_wavepanel::mc_del_clicked(int index)
     item.display_desc = m_nurse_items[index].display_desc;
     item.mdc_code = m_nurse_items[index].mdc_code;
     item.record_id = m_nurse_items[index].record_id;
-    //qDebug()<<"==== del index="<<index<<" display_desc="<<item.display_desc.c_str()<<" mdc_code="<<item.mdc_code.c_str()<<" record="<<item.record_id.c_str();
     WriteNurseDB(item, true);
     push_add_item();
 }
@@ -172,6 +164,9 @@ void mc_wavepanel::push_add_item()
 
     for (int i = 0; i < (int)m_nurse_items.size();i++)
     {
+        if (m_nurse_items[i].display_desc == "loops")
+            continue;
+
         std::string temp = m_nurse_items[i].display_desc;
         temp += "(";
         temp += m_nurse_items[i].model;
@@ -179,10 +174,13 @@ void mc_wavepanel::push_add_item()
         m_RTO_name_list[i]->setText(temp.c_str());
 
         mc_chart *pChart = m_RTO_chart_list[i];
+        pChart->clear_points(0);
         pChart->set_axis_visible(1);
         pChart->set_selection_width(40);
         pChart->set_selection_type(MC_SELECT_SERIES);
         pChart->set_series_width(0,2);
+        pChart->set_view_range_max_y(m_nurse_items[i].y_max);
+        pChart->set_view_range_min_y(m_nurse_items[i].y_min);
         pChart->set_scrollable(0);
         pChart->set_zoomable(0);
         pChart->set_num_labels_x(5);
@@ -212,7 +210,6 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
     while (dummy!="IP200"&&error<5)
     {
         results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-        //qDebug()<<QString::fromStdString(dummy);
         fflog_out(common->log,dummy.c_str());error++;
     }
     m_nurse_items.clear();
@@ -230,17 +227,13 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
         item.mdc_code = result.valueAtIndex(7).asstring();
         item.record_id = result.valueAtIndex(8).asstring();
         m_nurse_items.push_back(item);
-        //qDebug()<<"====CheckNurseDB item.y_max="<<QString::fromStdString(result.valueAtIndex(1).asstring())<<" item.y_min="<<item.y_min;
-        //qDebug()<<"====CheckNurseDB item.display_desc="<<QString::fromStdString(item.display_desc);
     }
-    qDebug()<<"===== m_nurse_items.size="<< m_nurse_items.size();
     return m_nurse_items;
 }
 void mc_wavepanel::InitPanelLayout()
 {
     Common* common = Common::instance();
     dbDisplayItems item;
-    //qDebug()<<"===== count="<<m_main_item->count()<<"\n";
     if (!m_nurse_items.size())
     {
         for (int i = 0; i < m_main_item->count() - 1;i++)
@@ -291,23 +284,16 @@ void mc_wavepanel::UpdateWave()
     }
     if (m_bDrawlayout)
     {
-        for (int i = 0; i < (int)m_nurse_items.size();i++)
-        {
-            if (m_nurse_items[i].display_desc != "loops")
-            {
-                mc_chart *pChart = m_RTO_chart_list[i];
-                //qDebug()<<"===max="<<m_nurse_items[i].y_max<<" min="<<m_nurse_items[i].y_min;
-                pChart->set_view_range_max_y(m_nurse_items[i].y_max);
-                pChart->set_view_range_min_y(m_nurse_items[i].y_min);
-            }
-        }
         for (int i = 0; i < (int) m_nurse_items.size();i++)
+        {
             add_wave_to_chart_RTO(0,
                         m_DeviceName, m_nurse_items[i].mdc_code,
                         common->rtobservation_wave_reader,
                         m_RTO_chart_list[i],
                         m_rtchart_wave_list[i],
                         m_rtchart_time_list[i]);
+            m_RTO_chart_list[i]->trim_left();
+        }
     }
 }
 
@@ -344,13 +330,12 @@ std::vector<std::string> mc_wavepanel::QueryRtItems(std::string DeviceName)
         querystr.append("'");
         dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples2;
         dds::sub::cond::QueryCondition qcond2(
-                dds::sub::Query(common->rtobservation_reader_2, querystr),
+                dds::sub::Query(common->rtobservation_wave_reader, querystr),
                 dds::sub::status::DataState(
                 dds::sub::status::SampleState::any(),
                 dds::sub::status::ViewState::any(),
                 dds::sub::status::InstanceState::alive()));
-        samples2 = common->rtobservation_reader_2.select().condition(qcond2).read();
-        //qDebug()<<"==== QueryRtItems samples2.length() ="<<samples2.length() << " querystr="<<querystr.c_str();
+        samples2 = common->rtobservation_wave_reader.select().condition(qcond2).read();
         if(samples2.length() == 0)
             return items;
         for(auto& sample : samples2)
@@ -359,7 +344,6 @@ std::vector<std::string> mc_wavepanel::QueryRtItems(std::string DeviceName)
             {   //need "DisplayDesc"
                 dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
                 std::string mdc_code=data.value<std::string>("mdc_code").c_str();
-                //printf("****agooda m_WaveRtItems mdc_code=%s\n", mdc_code.c_str());
                 items.push_back(mdc_code);
             }
         }
@@ -418,12 +402,12 @@ std::vector<std::string> mc_wavepanel::QueryObItems(std::string DeviceName)
         querystr.append("'");
         dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples2;
         dds::sub::cond::QueryCondition qcond2(
-                dds::sub::Query(common->observation_reader, querystr),
+                dds::sub::Query(common->observation_wave_reader, querystr),
                 dds::sub::status::DataState(
                 dds::sub::status::SampleState::any(),
                 dds::sub::status::ViewState::any(),
                 dds::sub::status::InstanceState::alive()));
-        samples2 = common->observation_reader.select().condition(qcond2).read();
+        samples2 = common->observation_wave_reader.select().condition(qcond2).read();
         if(samples2.length() == 0)
             return items;
         for(auto& sample : samples2)
@@ -614,6 +598,7 @@ void mc_wavepanel::add_wave_to_chart_RTO(int series_index, std::string model, st
             }
             if(vals.size() > 0)
             {
+                qDebug()<<"val.size="<<vals.size();
                 qDebug()<<"val="<<vals[0];
                 qDebug()<<"t="<<t;
 
