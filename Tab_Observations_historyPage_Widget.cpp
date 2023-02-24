@@ -6,6 +6,7 @@
 #include "Common.h"
 #include <QButtonGroup>
 #include "fleece/slice.hh"
+#define HISTORY_TIME 30*60
 
 
 Tab_Observations_historyPage_Widget::Tab_Observations_historyPage_Widget(QWidget *parent) :
@@ -84,7 +85,6 @@ Tab_Observations_historyPage_Widget::Tab_Observations_historyPage_Widget(QWidget
     reset_time_jumper();
     ui->chart->set_view_range_max_y(1000);
     ui->chart->set_view_range_min_y(0);
-
 }
 
 void Tab_Observations_historyPage_Widget::on_worker()
@@ -102,17 +102,17 @@ void Tab_Observations_historyPage_Widget::on_worker()
                ui->chart->get_view_range_max_x() == ui->chart->get_custom_right_bound()) &&
                ui->chart->get_right_bounds() >= (now-2)*1000)
                 right_locked = 1;
-            else if(ui->chart->get_view_range_min_x() < last_left_bound + 30*1000)
+            else if(ui->chart->get_view_range_min_x() < last_left_bound + HISTORY_TIME*1000)
             {
-                ui->chart->set_custom_left_bound(last_left_bound - 30*1000);
-                uint64_t custom_right_bound = last_left_bound - 30*1000 + 180*1000;
+                ui->chart->set_custom_left_bound(last_left_bound - HISTORY_TIME*1000);
+                uint64_t custom_right_bound = last_left_bound - HISTORY_TIME*1000 + 3*60*1000;
                 if(custom_right_bound > now*1000)
                     custom_right_bound = now*1000;
                 ui->chart->set_custom_right_bound(custom_right_bound);
                 char timebuf[64];
                 char timebuf1[64];
-                sprintf(timebuf, "%llu", last_left_bound/1000 - 60);
-                sprintf(timebuf1, "%llu", last_left_bound/1000 + 180);
+                sprintf(timebuf, "%llu", last_left_bound/1000 - 5*60);
+                sprintf(timebuf1, "%llu", last_left_bound/1000 + HISTORY_TIME);
                 std::multimap<uint64_t, QJsonArray> vals;
                 QJsonArray array;
                 int line_break_delta;
@@ -180,18 +180,18 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 last_left_bound = ui->chart->get_custom_left_bound();
                 last_right_bound = ui->chart->get_custom_right_bound();
             }
-            else if(ui->chart->get_view_range_max_x() > last_right_bound - 30*1000)
+            else if(ui->chart->get_view_range_max_x() > last_right_bound - HISTORY_TIME*1000)
             {
-                uint64_t new_right_bounds = last_right_bound + 30*1000;
+                uint64_t new_right_bounds = last_right_bound + HISTORY_TIME*1000;
                 if(new_right_bounds > now*1000)
-                    new_right_bounds = now*1000;
-                ui->chart->set_custom_left_bound(new_right_bounds - 180*1000);
+                     new_right_bounds = now*1000;
+                ui->chart->set_custom_left_bound(new_right_bounds - (HISTORY_TIME+3)*1000);
                 ui->chart->set_custom_right_bound(new_right_bounds);
 
                 char timebuf[64];
                 char timebuf1[64];
-                sprintf(timebuf, "%llu", last_left_bound/1000 -60);
-                sprintf(timebuf1, "%llu", last_left_bound/1000  + 180);
+                sprintf(timebuf, "%llu", last_left_bound/1000 -HISTORY_TIME*0.3);
+                sprintf(timebuf1, "%llu", last_left_bound/1000  + HISTORY_TIME*1.5);
                 std::multimap<uint64_t, QJsonArray> vals;
                 QJsonArray array;
                 int line_break_delta;
@@ -581,7 +581,7 @@ void Tab_Observations_historyPage_Widget::update_triggered()
             now -=180;
             char timebuf[64];
             char timebuf1[64];
-            sprintf(timebuf, "%llu", now-30);
+            sprintf(timebuf, "%llu", now-HISTORY_TIME);
             sprintf(timebuf1, "%llu", now+180);
             std::multimap<uint64_t, QJsonArray> vals;
             QJsonArray array;
@@ -1130,6 +1130,29 @@ void Tab_Observations_historyPage_Widget::on_return_pushButton_clicked()
 {
     emit changeToPrevPage();
 }
+void Tab_Observations_historyPage_Widget::on_RangeButton_clicked()
+{
+    Common* common = Common::instance();
+    std::vector<btn> btn;
+//    for(auto it=common->observation_main_page->legends.begin();it!=common->observation_main_page->legends.end();++it)
+        for(int i=0;i<common->observation_main_page->legends.size();++i)
+    {
+        class btn b;
+        b.name=common->observation_main_page->legends[i]->get_series_text();
+        b.index=i;
+        if(common->observation_main_page->legends[i]->get_mdccode()==common->history_mdccode)
+            b.is_select=1;
+        else
+            b.is_select=0;
+        btn.push_back(b);
+    }
+    common->select_menu.make_btn(btn);
+    common->select_menu.exec();
+    int i = common->select_menu.get_btn();
+    auto it=common->observation_main_page->legends[i];
+
+
+}
 void Tab_Observations_historyPage_Widget::on_MenuButton_clicked()
 {
     Common* common = Common::instance();
@@ -1663,3 +1686,6 @@ void Tab_Observations_historyPage_Widget::set_title_text(std::string mdccode,
     ui->label->setText(qstr);
     ui->label->update();
 }
+
+
+

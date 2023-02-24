@@ -795,7 +795,7 @@ QJsonArray Common::Restful_API(char queryStartTime[64] ,char queryEndTime[64],st
     QByteArray bytes = pReplay->readAll();
     QJsonParseError jsonParseError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes, &jsonParseError);
-    qDebug() << jsonParseError.errorString();
+    //qDebug() << jsonParseError.errorString();
     QJsonObject jsonobject = jsonDoc.object();
     QJsonArray array =jsonobject["row"].toArray();
    // qDebug()<<array;
@@ -845,7 +845,7 @@ QJsonArray Common::Restful_API_Orderby(char queryStartTime[64] ,char queryEndTim
     QByteArray bytes = pReplay->readAll();
     QJsonParseError jsonParseError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes, &jsonParseError);
-    qDebug() << jsonParseError.errorString();
+    //qDebug() << jsonParseError.errorString();
     QJsonObject jsonobject = jsonDoc.object();
     QJsonArray array =jsonobject["row"].toArray();
     qDebug()<<array;
@@ -895,7 +895,7 @@ QJsonArray Common::Restful_API_Alarm(char queryStartTime[64] ,char queryEndTime[
     QByteArray bytes = pReplay->readAll();
     QJsonParseError jsonParseError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes, &jsonParseError);
-    qDebug() << jsonParseError.errorString();
+    //qDebug() << jsonParseError.errorString();
     QJsonObject jsonobject = jsonDoc.object();
     QJsonArray array =jsonobject["row"].toArray();
    // qDebug()<<array;
@@ -972,7 +972,7 @@ QJsonArray Common::Restful_API_RRandVT(char queryStartTime[64] ,char queryEndTim
     QByteArray bytes = pReplay->readAll();
     QJsonParseError jsonParseError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes, &jsonParseError);
-    qDebug() << jsonParseError.errorString();
+    //qDebug() << jsonParseError.errorString();
     QJsonObject jsonobject = jsonDoc.object();
     QJsonArray array =jsonobject["row"].toArray();
     pReplay->deleteLater();

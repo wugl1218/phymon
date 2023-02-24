@@ -70,7 +70,6 @@ private:
     void trigger_hour_down();
     void trigger_min_up();
     void trigger_min_down();
-
 signals:
     void changeToPrevPage();
 
@@ -93,6 +92,7 @@ private slots:
     void on_min_down_released();
     void on_day_dropdown_currentIndexChanged(int index);
 
+    void on_RangeButton_clicked();
 };
 
 #endif // TAB_OBSERVATIONS_HISTORYPAGE_WIDGET_H
