@@ -7,6 +7,8 @@
 
 #define LOWER_MAX       30
 #define WAVE_TIMER      250
+#define ADD_BTN_POS     MAX_WAVE + 1
+#define LOOPS_NAME      "loops"
 
 mc_wavepanel::mc_wavepanel(QWidget *parent)
     : QWidget{parent},
@@ -125,31 +127,44 @@ void mc_wavepanel::push_add_item()
 {
     bool loops = false;
     CheckNurseDB();
-    //for (auto item: m_nurse_items)
-    //    if (item.display_desc == "loops")
-    //        loops = true;
-    qDebug()<<"=====m_nurse_items.size="<< m_nurse_items.size()<<" loops="<<loops;
+    for (auto item: m_nurse_items)
+        if (item.display_desc == LOOPS_NAME)
+            loops = true;
+/*    qDebug()<<"=====m_nurse_items.size="<< m_nurse_items.size()<<" loops="<<loops;
     int total = m_nurse_items.size();
     dbDisplayItems virtural_item;
-    for (int i = 0; i < total - 1;i++)
+    for (int i = 0; i < total;i++)
     {
+        qDebug()<<"desc=" << m_nurse_items[i].display_desc.c_str() <<" model="<<m_nurse_items[i].model.c_str();
         if (m_nurse_items[i].display_desc == "loops")
         {
-            m_nurse_items[i] = virtural_item;
+            qDebug()<<"skip loops";
+            m_nurse_items[i] = m_nurse_items[0];
             continue;
         }
         virtural_item = m_nurse_items[i];
         m_nurse_items.push_back(virtural_item);
     }
+*/
+    for (int i = 0; i < ADD_BTN_POS;i++)        //Clear all buttons
+    {
+        m_RTO_chart_list[i]->hide();
+        m_RTO_option_list[i]->hide();
+        m_RTO_minus_list[i]->hide();
+        m_RTO_enlarge_list[i]->hide();
+        m_RTO_name_list[i]->hide();
+    }
     for (int i = 0; i < m_nurse_items.size();i++)
     {
+        if (m_nurse_items[i].display_desc == LOOPS_NAME)
+            continue;
         m_RTO_chart_list[i]->show();
         m_RTO_option_list[i]->show();
         m_RTO_minus_list[i]->show();
         m_RTO_enlarge_list[i]->show();
         m_RTO_name_list[i]->show();
     }
-    for (int i = m_nurse_items.size(); i < MAX_WAVE;i++)
+    for (int i = m_nurse_items.size(); i < m_nurse_items.size() && i < MAX_WAVE;i++)
     {
         m_RTO_chart_list[i]->hide();
         m_RTO_option_list[i]->hide();
@@ -162,7 +177,7 @@ void mc_wavepanel::push_add_item()
     else
         m_loop_frame->setHidden(1);
 
-    if (m_nurse_items.size() ==  MAX_WAVE || (m_nurse_items.size() == 4 && loops))
+    if (m_nurse_items.size() >=  MAX_WAVE || (m_nurse_items.size() == 4 && loops))
         m_add_frame->setHidden(1);
     else
         m_add_frame->setHidden(0);
@@ -170,24 +185,21 @@ void mc_wavepanel::push_add_item()
     for (int i = 0; i < (int)m_nurse_items.size();i++)
         m_main_item->setStretch(i,1);
     for (int i = m_nurse_items.size(); i < m_main_item->count();i++)
-        if (i != 6)     //skip loops
+        if (i != MAX_WAVE)          //skip loops
             m_main_item->setStretch(i,0);
     if (!m_nurse_items.size())      // add_item only
-        m_main_item->setStretch(7,1);
+        m_main_item->setStretch(ADD_BTN_POS,1);
     for(int t = 0;t < MAX_WAVE;t++)
     {
-        std::vector<float> vals;
-        uint64_t time;
         m_rtchart_wave_list[t].clear();
         m_rtchart_time_list[t].clear();
     }
     for (int i = 0; i < (int)m_nurse_items.size() && i <MAX_WAVE;i++)
     {
-        if (m_nurse_items[i].display_desc == "loops")
+        if (m_nurse_items[i].display_desc == LOOPS_NAME)
             continue;
 
-        std::string temp = m_nurse_items[i].display_desc;
-        temp += "(" + m_nurse_items[i].model + ")";
+        std::string temp = m_nurse_items[i].display_desc + "(" + m_nurse_items[i].model + ")";
         m_RTO_name_list[i]->setText(temp.c_str());
 
         mc_chart *pChart = m_RTO_chart_list[i];
@@ -204,13 +216,10 @@ void mc_wavepanel::push_add_item()
         pChart->set_num_labels_y(5);
         pChart->set_series_color(0, QColor(255,255,255));
 
-        for(int t = 0;t < MAX_WAVE;t++)
-        {
-            std::vector<float> vals;
-            uint64_t time;
-            m_rtchart_wave_list[i]<<vals;
-            m_rtchart_time_list[i]<<time;
-        }
+        std::vector<float> vals;
+        uint64_t time;
+        m_rtchart_wave_list[i]<<vals;
+        m_rtchart_time_list[i]<<time;
     }
 }
 std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
