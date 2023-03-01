@@ -1329,6 +1329,12 @@ color:rgb(255, 255, 255);</string>
           </item>
           <item>
            <widget class="QFrame" name="loop_frame">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>150</height>
+             </size>
+            </property>
             <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,2,2">
              <property name="spacing">
               <number>0</number>

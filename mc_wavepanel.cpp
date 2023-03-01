@@ -199,13 +199,13 @@ void mc_wavepanel::push_add_item()
     else
         m_add_frame->setHidden(0);
 
-    if (!m_nurse_items.size())      // add_item only
+    for (int i = 0; i < m_main_item->count();i++)       //clear all stretch
+        m_main_item->setStretch(i,0);
+    if (!m_nurse_items.size())                          // add_item only
         m_main_item->setStretch(ADD_BTN_POS,1);
-    else
-    {
-        for (int i = 0; i < m_main_item->count();i++)       //clear all stretch
-            m_main_item->setStretch(i,0);
-    }
+    else if (m_nurse_items.size() == 1 && m_nurse_items[0].display_desc == LOOPS_NAME)
+        m_main_item->setStretch(0,1);                   // loops only
+
     for(int t = 0;t < MAX_WAVE;t++)
     {
         m_rtchart_wave_list[t].clear();
@@ -612,7 +612,7 @@ void mc_wavepanel::add_wave_to_chart_RTO(int series_index, std::string model, st
             if(t > chart->get_view_range_max_x())
             {
                 chart->set_view_range_max_x(t);
-                chart->set_view_range_min_x(t-0.5*60*1000);
+                chart->set_view_range_min_x(t-0.25*60*1000);
             }
             if(vals.size() > 0)
             {

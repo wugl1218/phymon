@@ -103,7 +103,7 @@ private slots:
     void worker();
 
 private:
-    int line_break_delta =3000;
+    int line_break_delta =0;
     std::vector<std::multimap<uint64_t, float>> points;
     std::vector<QColor> colors;
     std::vector<int> widths;
