@@ -112,9 +112,25 @@ void mc_wavepanel::mc_add_clicked(mc_wavepanel* wp)
 void mc_wavepanel::mc_del_clicked(int index)
 {
     stDisplayItems item;
-    item.display_desc = m_nurse_items[index].display_desc;
-    item.mdc_code = m_nurse_items[index].mdc_code;
-    item.record_id = m_nurse_items[index].record_id;
+    if (index == MAX_WAVE)          //loops
+    {
+        for(int i = 0; i < (int) m_nurse_items.size();i++)
+            if (m_nurse_items[i].display_desc == LOOPS_NAME)
+            {
+                item.display_desc = m_nurse_items[i].display_desc;
+                item.mdc_code = m_nurse_items[i].mdc_code;
+                item.record_id = m_nurse_items[i].record_id;
+                item.model = m_nurse_items[i].model;
+                break;
+            }
+    }
+    else
+    {
+        item.display_desc = m_nurse_items[index].display_desc;
+        item.mdc_code = m_nurse_items[index].mdc_code;
+        item.record_id = m_nurse_items[index].record_id;
+        item.model = m_nurse_items[index].model;
+    }
     WriteNurseDB(item, true);
     push_add_item();
 }
@@ -130,8 +146,8 @@ void mc_wavepanel::push_add_item()
     for (auto item: m_nurse_items)
         if (item.display_desc == LOOPS_NAME)
             loops = true;
-/*    qDebug()<<"=====m_nurse_items.size="<< m_nurse_items.size()<<" loops="<<loops;
-    int total = m_nurse_items.size();
+    qDebug()<<"=====m_nurse_items.size="<< m_nurse_items.size()<<" loops="<<loops;
+/*    int total = m_nurse_items.size();
     dbDisplayItems virtural_item;
     for (int i = 0; i < total;i++)
     {
@@ -156,6 +172,7 @@ void mc_wavepanel::push_add_item()
     }
     for (int i = 0; i < m_nurse_items.size();i++)
     {
+        //qDebug()<<"=====i="<<i<<" desc="<< m_nurse_items[i].display_desc.c_str();
         if (m_nurse_items[i].display_desc == LOOPS_NAME)
             continue;
         m_RTO_chart_list[i]->show();
@@ -182,13 +199,13 @@ void mc_wavepanel::push_add_item()
     else
         m_add_frame->setHidden(0);
 
-    for (int i = 0; i < (int)m_nurse_items.size();i++)
-        m_main_item->setStretch(i,1);
-    for (int i = m_nurse_items.size(); i < m_main_item->count();i++)
-        if (i != MAX_WAVE)          //skip loops
-            m_main_item->setStretch(i,0);
     if (!m_nurse_items.size())      // add_item only
         m_main_item->setStretch(ADD_BTN_POS,1);
+    else
+    {
+        for (int i = 0; i < m_main_item->count();i++)       //clear all stretch
+            m_main_item->setStretch(i,0);
+    }
     for(int t = 0;t < MAX_WAVE;t++)
     {
         m_rtchart_wave_list[t].clear();

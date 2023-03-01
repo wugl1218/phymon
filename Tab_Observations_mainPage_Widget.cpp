@@ -259,6 +259,8 @@ void Tab_Observations_mainPage_Widget::SetWavePanelSlots()
     connect(ui->minus_5, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
     ui->minus_6->setProperty("index", 5);
     connect(ui->minus_6, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
+    ui->loop_minus_2->setProperty("index", 6);
+    connect(ui->loop_minus_2, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
 
     ui->enlarge_1->setProperty("index", 0);
     connect(ui->enlarge_1, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked));
@@ -280,8 +282,6 @@ void Tab_Observations_mainPage_Widget::on_add_btn_clicked()
 }
 void Tab_Observations_mainPage_Widget::on_del_btn_clicked()
 {
-    qDebug()<<"=================================================122q1";
-
     qDebug()<<"***** del";
     mc_btn_Clickable* b = (mc_btn_Clickable*)sender();
     int index = b->property("index").value<int>();

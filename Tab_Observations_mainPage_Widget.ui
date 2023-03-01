@@ -537,7 +537,7 @@ color:rgb(255, 255, 255);</string>
            <number>0</number>
           </property>
           <item>
-           <widget class="QLabel" name="Agooda">
+           <widget class="QLabel" name="corner">
             <property name="text">
              <string/>
             </property>
@@ -548,6 +548,12 @@ color:rgb(255, 255, 255);</string>
           </item>
           <item>
            <widget class="QWidget" name="widget_2" native="true">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>60</height>
+             </size>
+            </property>
             <property name="styleSheet">
              <string notr="true">background-color: rgb(19, 105, 205);</string>
             </property>
@@ -582,6 +588,12 @@ color:rgb(255, 255, 255);</string>
              </item>
              <item>
               <widget class="QLabel" name="label">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
                </property>
