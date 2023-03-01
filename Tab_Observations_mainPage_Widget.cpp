@@ -41,7 +41,7 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     ui->rt_chart1->set_zoomable(0);
     ui->rt_chart1->set_view_range_max_y(200);
     ui->rt_chart1->set_view_range_min_y(0);
-    ui->rt_chart1->set_num_labels_x(5);
+    ui->rt_chart1->set_num_labels_x(4);
     ui->rt_chart1->set_num_labels_y(5);
 
     ui->rt_chart2->set_axis_visible(1);
@@ -52,7 +52,7 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     ui->rt_chart2->set_zoomable(0);
     ui->rt_chart2->set_view_range_max_y(1000);
     ui->rt_chart2->set_view_range_min_y(0);
-    ui->rt_chart2->set_num_labels_x(5);
+    ui->rt_chart2->set_num_labels_x(4);
     ui->rt_chart2->set_num_labels_y(5);
 
 //    ui->legend->set_top_margin(10);
@@ -141,7 +141,6 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
                    <<QColor(170,70,90)
 
                    <<QColor(190,90,110);
-    ui->WidgetContents->setStyleSheet("background:rgb(4, 5, 7);");
 
 }
 
@@ -1341,8 +1340,11 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                 continue;
             mc_legend *legend1 = new mc_legend(ui->WidgetContents);
             legend1->setGeometry(0,
-                                 (10+80)*row,
-                                 220, 80);
+                                 10+(8+60)*row,
+                                 220, 60);
+            legend1->set_square_width(210);
+            legend1->set_square_height(60);
+            legend1->set_vertical_spacing(8);
             legend1->set_text_color(QColor(0,0,0,255));
             legend1->set_series_color(line_color_list[row]);
             legend1->set_series_text(desc,
@@ -1362,20 +1364,20 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             uint64_t t = ((uint64_t)it2->second.ts.tv_sec)*1000 + ((uint64_t)it2->second.ts.tv_nsec)/1000000;
             if(it2->second.y_max=="200")
             {
-             /*   add_wave_to_chart_Obs(mc_chart1_line,
+                add_wave_to_chart_Obs(mc_chart1_line,
                                   t,it2->second.val,
                                   ui->rt_chart1,
                                   rtchart1_wave_list,
-                                  rtchart1_time_list);*/
+                                  rtchart1_time_list);
                 ++mc_chart1_line;
             }
             else if (it2->second.y_max=="1000")
             {
-            /*    add_wave_to_chart_Obs(mc_chart2_line,
+                add_wave_to_chart_Obs(mc_chart2_line,
                                   t,it2->second.val,
                                   ui->rt_chart2,
                                   rtchart2_wave_list,
-                                  rtchart2_time_list);*/
+                                  rtchart2_time_list);
                 ++mc_chart2_line;
             }
             else
@@ -1401,7 +1403,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             }
         }
         ui->WidgetContents->update();
-        ui->WidgetContents->setMinimumHeight(90*row+10);
+        ui->WidgetContents->setMinimumHeight(10+(60+8)*row);
     }
     ui->rt_chart1->trim_left();
     ui->rt_chart2->trim_left();

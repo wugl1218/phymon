@@ -33,9 +33,9 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="8,3">
+  <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="4,3">
    <property name="spacing">
-    <number>0</number>
+    <number>20</number>
    </property>
    <property name="leftMargin">
     <number>0</number>
@@ -55,26 +55,50 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="real_timedata">
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>22</pointsize>
-         <bold>true</bold>
-        </font>
+      <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,1">
+       <property name="spacing">
+        <number>0</number>
        </property>
-       <property name="text">
-        <string>real-time data</string>
-       </property>
-      </widget>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/icons/top_left_corner.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="real_timedata">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>22</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(19, 105, 205);
+color: rgb(255, 255, 255);</string>
+         </property>
+         <property name="text">
+          <string>Numeric Trend</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QWidget" name="layout" native="true">
          <property name="styleSheet">
           <string notr="true">QWidget{
-background:rgb(4, 5, 7);
+background:rgb(7, 22, 40);
 }
 QScrollArea{
 background-color: rgb(4, 5, 7);
@@ -118,10 +142,19 @@ QScrollBar::sub-line:vertical{
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="4,0">
           <property name="spacing">
-           <number>4</number>
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
           </property>
           <property name="rightMargin">
-           <number>8</number>
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
           </property>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -376,7 +409,7 @@ color:rgb(255, 255, 255);</string>
            <widget class="QScrollArea" name="scrollArea">
             <property name="minimumSize">
              <size>
-              <width>220</width>
+              <width>240</width>
               <height>0</height>
              </size>
             </property>
@@ -397,8 +430,8 @@ color:rgb(255, 255, 255);</string>
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>218</width>
-               <height>140</height>
+               <width>238</width>
+               <height>133</height>
               </rect>
              </property>
              <property name="minimumSize">
@@ -412,7 +445,7 @@ color:rgb(255, 255, 255);</string>
                <number>0</number>
               </property>
               <property name="topMargin">
-               <number>0</number>
+               <number>10</number>
               </property>
               <property name="rightMargin">
                <number>0</number>
@@ -435,7 +468,7 @@ color:rgb(255, 255, 255);</string>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,1">
        <property name="topMargin">
-        <number>10</number>
+        <number>0</number>
        </property>
        <property name="bottomMargin">
         <number>0</number>

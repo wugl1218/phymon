@@ -34,6 +34,8 @@ public:
     int get_vertical_spacing();
     void set_square_width(int width);
     int get_square_width();
+    void set_square_height(int height);
+
     void set_font_size(int size);
     int get_font_size();
     void set_text_color(QColor color);

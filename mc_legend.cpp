@@ -7,7 +7,7 @@ mc_legend::mc_legend(QWidget *parent)
     :QWidget(parent)
 {
     square_width = 220;
-    square_height =80;
+    square_height =60;
     vertical_spacing = 10;
     font_size = 16;
 }
@@ -35,6 +35,11 @@ void mc_legend::set_square_width(int width)
 int mc_legend::get_square_width()
 {
     return square_width;
+}
+void mc_legend::set_square_height(int height)
+{
+    square_height = height;
+    update();
 }
 
 void mc_legend::set_font_size(int size)
@@ -142,13 +147,13 @@ void mc_legend::paintEvent(QPaintEvent *event)
             name.append(")");
             painter.setPen(pen);
             Common::draw_text(painter, 10,
-                              0 + 20,
+                              0 + 15,
                               Qt::AlignLeft | Qt::AlignVCenter, name.c_str());
             Common::draw_text(painter, 10,
-                              0 + 50,
+                              0 + 40,
                               Qt::AlignLeft | Qt::AlignVCenter, QString::number(entries.val));
-            Common::draw_text(painter, 135,
-                              0 + 50,
+            Common::draw_text(painter, 115,
+                              0 + 40,
                               Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(entries.unit));
 
         }

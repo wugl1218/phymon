@@ -57,6 +57,11 @@ Tab_Observations_metricItemsDisplayConfigPage_Widget::Tab_Observations_metricIte
     //connect(ui->devices_tableWidget, SIGNAL(cellClicked(int,int)), this, SLOT(toggleEnableItemStatus(int,int)));
     //connect(ui->devices_tableWidget, SIGNAL(cellClicked(int,int)), this, SLOT(toggleDeviceTabEnable(int,int)));
 
+    ui->tab0_selectall->hide();
+    ui->tab1_selectall->hide();
+    ui->tab2_selectall->hide();
+    ui->tab3_selectall->hide();
+
     connect(ui->restoreAllbtn, SIGNAL(clicked()), this, SLOT(on_restoreAll_pushButton_clicked()));
     connect(ui->restorebtn, SIGNAL(clicked()), this, SLOT(on_restore_pushButton_clicked()));
     connect(ui->savebtn, SIGNAL(clicked()), this, SLOT(on_save_pushButton_clicked()));

@@ -969,6 +969,12 @@ color:rgb(255, 255, 255);</string>
                  </property>
                  <item>
                   <widget class="QLabel" name="label">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>45</height>
+                    </size>
+                   </property>
                    <property name="font">
                     <font>
                      <family>Arial [Mono]</family>
@@ -1548,6 +1554,12 @@ color:rgb(255, 255, 255);</string>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_2">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>45</height>
+                    </size>
+                   </property>
                    <property name="font">
                     <font>
                      <family>Arial</family>
@@ -2267,6 +2279,12 @@ color:rgb(255, 255, 255);</string>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_3">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>45</height>
+                    </size>
+                   </property>
                    <property name="font">
                     <font>
                      <family>Arial</family>
@@ -2842,6 +2860,12 @@ color:rgb(255, 255, 255);
                  </property>
                  <item>
                   <widget class="QLabel" name="label_4">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>45</height>
+                    </size>
+                   </property>
                    <property name="font">
                     <font>
                      <family>Arial</family>
@@ -3566,6 +3590,12 @@ color:rgb(255, 255, 255);</string>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_5">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>45</height>
+                    </size>
+                   </property>
                    <property name="font">
                     <font>
                      <family>Arial</family>
@@ -4143,6 +4173,12 @@ color:rgb(255, 255, 255);</string>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_6">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>45</height>
+                    </size>
+                   </property>
                    <property name="font">
                     <font>
                      <family>Arial</family>
@@ -4872,6 +4908,12 @@ color:rgb(255, 255, 255);
                  </property>
                  <item>
                   <widget class="QLabel" name="label_7">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>45</height>
+                    </size>
+                   </property>
                    <property name="font">
                     <font>
                      <family>Arial</family>
@@ -5429,6 +5471,12 @@ color:rgb(255, 255, 255);</string>
               </property>
               <item>
                <widget class="QWidget" name="tab3top_QWidget_2" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>45</height>
+                 </size>
+                </property>
                 <property name="styleSheet">
                  <string notr="true">background:rgb(7, 22, 40);
 font-size:24px;
