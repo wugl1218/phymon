@@ -780,12 +780,8 @@ QJsonArray Common::Restful_API(char queryStartTime[64] ,char queryEndTime[64],st
     post_index.append(queryEndTime);
     post_index.append("&dataSource=");
     post_index.append(dataSource);
- /*   qDebug()<<"patient_id="<<QString::fromStdString(common->patient_id);
-    qDebug()<<"history_mdccode="<<QString::fromStdString(common->history_mdccode);
-    qDebug()<<"history_model="<<QString::fromStdString(common->history_model);
-    qDebug()<<"queryStartTime="<<queryStartTime;
-    qDebug()<<"queryEndTime="<<queryEndTime;
-    qDebug()<<"dataSource="<<QString::fromStdString(dataSource); */
+    //    qDebug()<<post_index;
+
     QNetworkReply *pReplay = manager->post(request,post_index);
     // 開啟一個局部的事件循環，等待響應結束，退出
     QEventLoop eventLoop;
@@ -880,12 +876,8 @@ QJsonArray Common::Restful_API_Alarm(char queryStartTime[64] ,char queryEndTime[
     post_index.append(dataSource);
     post_index.append("&orderStr=");
     post_index.append(orderStr);
- /*   qDebug()<<"patient_id="<<QString::fromStdString(common->patient_id);
-    qDebug()<<"history_mdccode="<<QString::fromStdString(common->history_mdccode);
-    qDebug()<<"history_model="<<QString::fromStdString(common->history_model);
-    qDebug()<<"queryStartTime="<<queryStartTime;
-    qDebug()<<"queryEndTime="<<queryEndTime;
-    qDebug()<<"dataSource="<<QString::fromStdString(dataSource); */
+    //    qDebug()<<post_index;
+
     QNetworkReply *pReplay = manager->post(request,post_index);
     // 開啟一個局部的事件循環，等待響應結束，退出
     QEventLoop eventLoop;
@@ -956,13 +948,7 @@ QJsonArray Common::Restful_API_RRandVT(char queryStartTime[64] ,char queryEndTim
                          .append("AND  VMDSync.model= '")
                          .append(model).append("' ")
                          .append("AND  (VMDSync.mdc_code= 'DRAEGER_MEASURED_CP1_TidalVolume' OR VMDSync.mdc_code='MDC_RESP_RATE')");
-    qDebug()<<post_index;
- /*   qDebug()<<"patient_id="<<QString::fromStdString(common->patient_id);
-    qDebug()<<"history_mdccode="<<QString::fromStdString(common->history_mdccode);
-    qDebug()<<"history_model="<<QString::fromStdString(common->history_model);
-    qDebug()<<"queryStartTime="<<queryStartTime;
-    qDebug()<<"queryEndTime="<<queryEndTime;
-    qDebug()<<"dataSource="<<QString::fromStdString(dataSource); */
+//    qDebug()<<post_index;
     QNetworkReply *pReplay = manager->post(request,post_index);
     // 開啟一個局部的事件循環，等待響應結束，退出
     QEventLoop eventLoop;

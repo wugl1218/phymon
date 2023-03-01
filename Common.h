@@ -32,7 +32,7 @@
 #define STATIONARY_CHECK_DISTANCE 10.0f
 #define VELOCITY_MULTIPLIER 0.1
 #define DEFAULT_FRICTION 0.35
-#define LINE_BREAK_DELTA 50000
+#define LINE_BREAK_DELTA 3000
 
 class MainDialog;
 class Tab_Devices_Widget;

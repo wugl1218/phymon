@@ -59,7 +59,11 @@ private:
     QList<QColor> line_color_list;
     int mc_chart1_line =0;
     int mc_chart2_line =0;
-
+    uint64_t last_rtchart1_paw_time;
+    std::vector<float> left_over_rtchart1_flow_vals;
+    uint64_t last_rtchart1_flow_time;
+    std::vector<float> left_over_rtchart2_vals;
+    uint64_t last_rtchart2_time;
 //    std::vector<float> left_over_rtchart1_paw_vals;
 //    uint64_t last_rtchart1_paw_time;
     int loop1_type;

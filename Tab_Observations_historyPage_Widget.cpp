@@ -6,7 +6,7 @@
 #include "Common.h"
 #include <QButtonGroup>
 #include "fleece/slice.hh"
-#define HISTORY_TIME 30*60
+#define HISTORY_TIME 30
 
 
 Tab_Observations_historyPage_Widget::Tab_Observations_historyPage_Widget(QWidget *parent) :
@@ -39,30 +39,6 @@ Tab_Observations_historyPage_Widget::Tab_Observations_historyPage_Widget(QWidget
     ui->chart->set_num_labels_x(5);
     ui->chart->set_view_range_min_y(-100.0f);
     ui->chart->set_view_range_max_y(100.0f);
-    //ui->chart->set_view_range_min_x(((uint64_t)1663667999-(8*60*60))*1000);
-    ui->chart->set_view_range_min_x(((uint64_t)1663667999-(8*60*60)+30*60)*1000);
-    ui->chart->set_view_range_max_x((uint64_t)1663667999*1000);
-    ui->chart->set_min_zoom(8*60*60*1000);
-    ui->chart->set_max_zoom(4*60*60*1000);
-    ui->chart->add_point(0, ((uint64_t)1663667999-(8*60*60))*1000, 80.0f);
-    ui->chart->add_point(0, ((uint64_t)1663667999-(8*60*60)+60*60)*1000, 40.0f);
-    ui->chart->add_point(0, ((uint64_t)1663667999-(8*60*60)+2*60*60)*1000, 20.0f);
-    ui->chart->add_point(0, ((uint64_t)1663667999-(8*60*60)+3*60*60)*1000, 40.0f);
-    ui->chart->add_point(0, ((uint64_t)1663667999-(8*60*60)+4*60*60)*1000, 60.0f);
-    ui->chart->add_point(0, ((uint64_t)1663667999-(8*60*60)+5*60*60)*1000, 70.0f);
-
-    ui->chart->add_point(1, ((uint64_t)1663667999-(8*60*60))*1000, 10.0f);
-    ui->chart->add_point(1, ((uint64_t)1663667999-(8*60*60)+60*60)*1000, -10.0f);
-    ui->chart->add_point(1, ((uint64_t)1663667999-(8*60*60)+2*60*60)*1000, 30.0f);
-    ui->chart->add_point(1, ((uint64_t)1663667999-(8*60*60)+3*60*60)*1000, 10.0f);
-    ui->chart->add_point(1, ((uint64_t)1663667999-(8*60*60)+4*60*60)*1000, -30.0f);
-    ui->chart->add_point(1, ((uint64_t)1663667999-(8*60*60)+5*60*60)*1000, 10.0f);
-    ui->chart->add_point(1, ((uint64_t)1663667999-(8*60*60)+7*60*60)*1000, 40.0f);
-    ui->chart->add_point(1, ((uint64_t)1663667999-(8*60*60)+9*60*60)*1000, 80.0f);
-    ui->chart->add_point(1, ((uint64_t)1663667999-(8*60*60)+10*60*60)*1000, 20.0f);
-    ui->chart->add_point(1, ((uint64_t)1663667999-(8*60*60)+11*60*60)*1000, 10.0f);
-    ui->chart->add_point(1, ((uint64_t)1663667999-(8*60*60)+12*60*60)*1000, -30.0f);
-
     ui->chart->set_axis_visible(1);
     ui->chart->set_selection_width(40);
     ui->chart->set_selection_type(MC_SELECT_POINT);
@@ -102,17 +78,17 @@ void Tab_Observations_historyPage_Widget::on_worker()
                ui->chart->get_view_range_max_x() == ui->chart->get_custom_right_bound()) &&
                ui->chart->get_right_bounds() >= (now-2)*1000)
                 right_locked = 1;
-            else if(ui->chart->get_view_range_min_x() < last_left_bound + HISTORY_TIME*1000)
+            else if(ui->chart->get_view_range_min_x() < last_left_bound + 0.5*60*1000)
             {
-                ui->chart->set_custom_left_bound(last_left_bound - HISTORY_TIME*1000);
-                uint64_t custom_right_bound = last_left_bound - HISTORY_TIME*1000 + 3*60*1000;
+                ui->chart->set_custom_left_bound(last_left_bound - (HISTORY_TIME+3)*60*1000);
+                uint64_t custom_right_bound = last_left_bound - (HISTORY_TIME+3)*60*1000 + (HISTORY_TIME*2+5)*60*1000;
                 if(custom_right_bound > now*1000)
                     custom_right_bound = now*1000;
                 ui->chart->set_custom_right_bound(custom_right_bound);
                 char timebuf[64];
                 char timebuf1[64];
-                sprintf(timebuf, "%llu", last_left_bound/1000 - 5*60);
-                sprintf(timebuf1, "%llu", last_left_bound/1000 + HISTORY_TIME);
+                sprintf(timebuf, "%llu", last_left_bound/1000 - (HISTORY_TIME/3)*60);
+                sprintf(timebuf1, "%llu", last_left_bound/1000 + (HISTORY_TIME/60)*60);
                 std::multimap<uint64_t, QJsonArray> vals;
                 QJsonArray array;
                 int line_break_delta;
@@ -172,7 +148,7 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 }
                 uint64_t a = ui->chart->get_view_range_min_x();
                 uint64_t b = ui->chart->get_view_range_max_x();
-                ui->chart->clear_points(0);
+                //ui->chart->clear_points(0);
                 for(auto it=new_pts.begin();it!=new_pts.end();it++)
                     ui->chart->add_point(0, it->first, it->second);
                 ui->chart->set_view_range_min_x(a);
@@ -180,18 +156,24 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 last_left_bound = ui->chart->get_custom_left_bound();
                 last_right_bound = ui->chart->get_custom_right_bound();
             }
-            else if(ui->chart->get_view_range_max_x() > last_right_bound - HISTORY_TIME*1000)
+            else if(ui->chart->get_view_range_max_x() > last_right_bound - 0.5*60*1000)
             {
-                uint64_t new_right_bounds = last_right_bound + HISTORY_TIME*1000;
+                qDebug()<<"view_range_max_x() > last_right_bound - 30*1000";
+                qDebug()<<ui->chart->get_view_range_max_x();
+                qDebug()<<last_right_bound;
+
+                uint64_t new_right_bounds = last_right_bound + 30*1000;
                 if(new_right_bounds > now*1000)
                      new_right_bounds = now*1000;
-                ui->chart->set_custom_left_bound(new_right_bounds - (HISTORY_TIME+3)*1000);
+                ui->chart->set_custom_left_bound(new_right_bounds - (HISTORY_TIME)*60*1000);
                 ui->chart->set_custom_right_bound(new_right_bounds);
-
+                std::multimap<uint64_t, float> new_pts;
+                //收集資料及畫圖
+                {
                 char timebuf[64];
                 char timebuf1[64];
-                sprintf(timebuf, "%llu", last_left_bound/1000 -HISTORY_TIME*0.3);
-                sprintf(timebuf1, "%llu", last_left_bound/1000  + HISTORY_TIME*1.5);
+                sprintf(timebuf, "%llu", last_left_bound/1000 - (HISTORY_TIME/3)*60);
+                sprintf(timebuf1, "%llu", last_left_bound/1000 + (HISTORY_TIME/60)*60);
                 std::multimap<uint64_t, QJsonArray> vals;
                 QJsonArray array;
                 int line_break_delta;
@@ -230,7 +212,6 @@ void Tab_Observations_historyPage_Widget::on_worker()
                         values = value["values"].toArray();
                     vals.emplace(key, values);
                 }
-                std::multimap<uint64_t, float> new_pts;
                 for(auto it=vals.begin();it!=vals.end();it++)
                 {
                     if(it->second.count() == 0)
@@ -250,9 +231,10 @@ void Tab_Observations_historyPage_Widget::on_worker()
                         }
                     }
                 }
+                }
                 uint64_t a = ui->chart->get_view_range_min_x();
                 uint64_t b = ui->chart->get_view_range_max_x();
-                ui->chart->clear_points(0);
+                //ui->chart->clear_points(0);
                 for(auto it=new_pts.begin();it!=new_pts.end();it++)
                     ui->chart->add_point(0, it->first, it->second);
                 ui->chart->set_view_range_min_x(a);
@@ -280,22 +262,21 @@ void Tab_Observations_historyPage_Widget::on_worker()
                     line_break_delta=3000;
                     ui->chart->set_line_break_delta(3000);
                     }
-                ui->chart->set_custom_left_bound(last_left_bound - 30*1000);
-                uint64_t custom_right_bound = last_left_bound - 30*1000 + 180*1000;
+                ui->chart->set_custom_left_bound(last_left_bound - 33*60*1000);
+                uint64_t custom_right_bound = last_left_bound - 33*60*1000 + (65)*60*1000;
                 if(custom_right_bound > now*1000)
                     custom_right_bound = now*1000;
                 ui->chart->set_custom_right_bound(custom_right_bound);
+                char timebuf[64];
+                char timebuf1[64];
+                sprintf(timebuf, "%llu", last_left_bound/1000 - 0.5*60);
+                sprintf(timebuf1, "%llu", last_left_bound/1000 - 0.5*60 + 3*60);
                 std::string dummy;
                 std::string sql = "SELECT source_timestamp.sec,source_timestamp.nanosec,values,value,description FROM _ WHERE data_source='";
                 sql.append(common->history_datasource);
                 sql.append("' AND source_timestamp.sec>=");
-
-                char timebuf[64];
-                sprintf(timebuf, "%llu", last_left_bound/1000 - 30);
                 sql.append(timebuf);
-                char timebuf1[64];
                 sql.append(" AND source_timestamp.sec<=");
-                sprintf(timebuf1, "%llu", last_left_bound/1000 - 30 + 180);
                 sql.append(timebuf1);
                 if(common->history_mdccode=="MATECARES_RSI"||common->history_mdccode=="MATECARES_MV")
                 {
@@ -573,16 +554,16 @@ void Tab_Observations_historyPage_Widget::update_triggered()
     Common* common = Common::instance();
     if(right_locked)
     {
-        if(common->is_server)
+        if(common->is_server)//NS
         {
             uint64_t now = time(NULL);
             ui->chart->set_custom_right_bound(now*1000);
-            ui->chart->set_custom_left_bound((now-180)*1000);
+            ui->chart->set_custom_left_bound((now-HISTORY_TIME*60)*1000);
             now -=180;
             char timebuf[64];
             char timebuf1[64];
-            sprintf(timebuf, "%llu", now-HISTORY_TIME);
-            sprintf(timebuf1, "%llu", now+180);
+            sprintf(timebuf, "%llu", now-HISTORY_TIME*60);
+            sprintf(timebuf1, "%llu", now+3*60);
             std::multimap<uint64_t, QJsonArray> vals;
             QJsonArray array;
             int line_break_delta;
@@ -652,7 +633,7 @@ void Tab_Observations_historyPage_Widget::update_triggered()
             //last_left_bound = ui->chart->get_right_bounds()-180*1000;
 
         }
-        else
+        else//BS
         {
 
             uint64_t now = time(NULL);

@@ -613,6 +613,8 @@ void mc_chart::handle_move(float x, float y)
             if(new_min_x < custom_left_bound)
             {
                 qDebug()<<"new_min_x < custom_left_bound";
+                qDebug()<<custom_left_bound;
+                qDebug()<<new_min_x;
 
                 new_min_x = custom_left_bound;
                 new_max_x = view_range_max_x + (new_min_x - view_range_min_x);
