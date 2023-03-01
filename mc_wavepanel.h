@@ -97,7 +97,6 @@ private:
     void render_controls_btn();
     void push_add_item();
     std::vector<dbDisplayItems> CheckNurseDB();
-    void InitPanelLayout();
 private slots:
     void controls_clicked();
     void UpdateWave();
