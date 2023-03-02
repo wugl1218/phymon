@@ -46,9 +46,7 @@ public:
     QList<QWidget*> RTO_option_list;
     QList<QLabel*> RTO_minus_list;
     QList<QLabel*> RTO_name_list;
-    void on_series_pressed(std::string name, std::string model, std::string mdccode,
-                           std::string y_min, std::string y_max, std::string unit, std::string datasource);
-
+    void mapping_UI_reset();
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
