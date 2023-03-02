@@ -4,6 +4,7 @@
 #include "Tab_Observations_mainPage_Widget.h"
 #include "ui_Tab_Observations_mainPage_Widget.h"
 #include "mc_btn_Clickable.h"
+#include <stdlib.h>
 
 #define LOWER_MAX       30
 #define WAVE_TIMER      50     //no matter the value is, we can only read 25 data from topic
@@ -136,9 +137,21 @@ void mc_wavepanel::mc_del_clicked(int index)
 }
 void mc_wavepanel::mc_enlarge_clicked(int index)
 {
-
+    Common* common = Common::instance();
+    char buf[10];
+    std::string min;
+    std::string max;
+    min = QString::number(m_nurse_items[index].y_min).toStdString();
+    max = QString::number(m_nurse_items[index].y_max).toStdString();
+    qDebug()<<"====mc_enlarge_clicked index="<<index;
+    common->observation_main_page->on_series_pressed(m_nurse_items[index].display_desc,
+                      m_nurse_items[index].model,
+                      m_nurse_items[index].mdc_code,
+                      min,
+                      max,
+                      "",
+                      "RTObservation");
 }
-
 void mc_wavepanel::push_add_item()
 {
     bool loops = false;
@@ -167,7 +180,6 @@ void mc_wavepanel::push_add_item()
         m_RTO_chart_list[i]->hide();
         m_RTO_option_list[i]->hide();
         m_RTO_minus_list[i]->hide();
-        m_RTO_enlarge_list[i]->hide();
         m_RTO_name_list[i]->hide();
     }
     for (int i = 0; i < m_nurse_items.size();i++)
@@ -178,7 +190,6 @@ void mc_wavepanel::push_add_item()
         m_RTO_chart_list[i]->show();
         m_RTO_option_list[i]->show();
         m_RTO_minus_list[i]->show();
-        m_RTO_enlarge_list[i]->show();
         m_RTO_name_list[i]->show();
     }
     for (int i = m_nurse_items.size(); i < m_nurse_items.size() && i < MAX_WAVE;i++)
@@ -186,7 +197,6 @@ void mc_wavepanel::push_add_item()
         m_RTO_chart_list[i]->hide();
         m_RTO_option_list[i]->hide();
         m_RTO_minus_list[i]->hide();
-        m_RTO_enlarge_list[i]->hide();
         m_RTO_name_list[i]->hide();
     }
     if (loops)

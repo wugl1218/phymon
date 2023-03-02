@@ -3,6 +3,7 @@
 #include <QPointF>
 #include <QDateTime>
 #include "MainDialog.h"
+#include "Tab_Observations_historyPage_Widget.h"
 #include "Tab_Observations_mainPage_Widget.h"
 #include "ui_Tab_Observations_mainPage_Widget.h"
 #include "Common.h"
@@ -153,6 +154,10 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
 
                    <<QColor(190,90,110);
 
+    SetWavePanelSlots();
+}
+void Tab_Observations_mainPage_Widget::SetWavePanelSlots()
+{
     RTO_wave_list<<ui->wave_1
                  <<ui->wave_2
                  <<ui->wave_3
@@ -181,13 +186,6 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
                  <<ui->minus_5
                  <<ui->minus_6;
     ui->wavePanel->set_minus_ui(RTO_minus_list);
-    RTO_enlarge_list<<ui->enlarge_1
-                   <<ui->enlarge_2
-                   <<ui->enlarge_3
-                   <<ui->enlarge_4
-                   <<ui->enlarge_5
-                   <<ui->enlarge_6;
-    ui->wavePanel->set_enlarge_ui(RTO_enlarge_list);
     RTO_name_list<<ui->wave_name_1
                 <<ui->wave_name_2
                 <<ui->wave_name_3
@@ -195,20 +193,6 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
                 <<ui->wave_name_5
                 <<ui->wave_name_6;
     ui->wavePanel->set_name_ui(RTO_name_list);
-    qDebug()<<"===== count="<<ui->item->count()<<"\n";
-    //ui->item->setStretch(0,1);
-    //for (int i = 1; i < ui->item->count() - 2;i++)
-    //    ui->item->setStretch(i,0);
-    //ui->item->setStretch(i,0);
-    //ui->loop_frame->setHidden(1);
-    //ui->item->setStretch(ui->item->count() - 1,1);
-    //ui->add_frame->setHidden(0);
-   //ui->label_2->hide();
-    //ui->label_3->hide();
-    SetWavePanelSlots();
-}
-void Tab_Observations_mainPage_Widget::SetWavePanelSlots()
-{
     RTO_chart_list<<ui->chart_1
                  <<ui->chart_2
                  <<ui->chart_3
@@ -230,13 +214,6 @@ void Tab_Observations_mainPage_Widget::SetWavePanelSlots()
                  <<ui->minus_5
                  <<ui->minus_6;
     ui->wavePanel->set_minus_ui(RTO_minus_list);
-    RTO_enlarge_list<<ui->enlarge_1
-                   <<ui->enlarge_2
-                   <<ui->enlarge_3
-                   <<ui->enlarge_4
-                   <<ui->enlarge_5
-                   <<ui->enlarge_6;
-    ui->wavePanel->set_enlarge_ui(RTO_enlarge_list);
     RTO_name_list<<ui->wave_name_1
                 <<ui->wave_name_2
                 <<ui->wave_name_3
@@ -262,18 +239,18 @@ void Tab_Observations_mainPage_Widget::SetWavePanelSlots()
     ui->loop_minus_2->setProperty("index", 6);
     connect(ui->loop_minus_2, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
 
-    ui->enlarge_1->setProperty("index", 0);
-    connect(ui->enlarge_1, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked));
-    ui->enlarge_2->setProperty("index", 1);
-    connect(ui->enlarge_2, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked));
-    ui->enlarge_3->setProperty("index", 2);
-    connect(ui->enlarge_3, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked));
-    ui->enlarge_4->setProperty("index", 3);
-    connect(ui->enlarge_4, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked));
-    ui->enlarge_5->setProperty("index", 4);
-    connect(ui->enlarge_5, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked));
-    ui->enlarge_6->setProperty("index", 5);
-    connect(ui->enlarge_6, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked));
+    ui->chart_1->setProperty("index", 0);
+    connect(ui->chart_1, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked()));
+    ui->chart_2->setProperty("index", 1);
+    connect(ui->chart_2, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked()));
+    ui->chart_3->setProperty("index", 2);
+    connect(ui->chart_3, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked()));
+    ui->chart_4->setProperty("index", 3);
+    connect(ui->chart_4, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked()));
+    ui->chart_5->setProperty("index", 4);
+    connect(ui->chart_5, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked()));
+    ui->chart_6->setProperty("index", 5);
+    connect(ui->chart_6, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked()));
 }
 void Tab_Observations_mainPage_Widget::on_add_btn_clicked()
 {
@@ -533,33 +510,41 @@ void Tab_Observations_mainPage_Widget::clear_points()
 
 }
 
-void Tab_Observations_mainPage_Widget::on_series_pressed(int series_index)
+void Tab_Observations_mainPage_Widget::on_series_pressed(std::string name,std::string model, std::string mdccode,
+                                                         std::string y_min,std::string y_max,std::string unit,
+                                                         std::string datasource)
 {
     Common* common = Common::instance();
-    std::string model;
-    auto fit = common->md->dm.devices.find("Savina");
-    if(fit == common->md->dm.devices.end())
+    auto fit = common->md->dm.devices.find(model);
+    if(fit == common->md->dm.devices.end())return;
+    if(mdccode=="")return;
+
+    common->history_page->set_title_text(mdccode,
+                                         model,
+                                         name,
+                                         y_min,
+                                         y_max,
+                                         unit,
+                                         datasource);
+    emit changeToHistoryPage();
+    //    for(int i=0;i<(int)legends.size();i++)
+    //        if( legends[i] == sender() )
+    //        {
+    //            common->history_datasource = "Observation";
+    //        }
+/*    if(sender() == ui->legend)
     {
-        fit = common->md->dm.devices.find("Savina 300");
-        if(fit == common->md->dm.devices.end())
-            return;
-    }
-    CapturedIssues_channel_id=fit->second.channel_id;
-    model = fit->first;
-    common->history_model = model;
-    if(sender() == ui->legend)
-    {
-        if(series_index == 0)
+        if(model == 0)
         {
             common->history_mdccode = "MDC_PRESS_AWAY";
             emit changeToHistoryPage();
         }
-        else if(series_index == 1)
+        else if(model == 1)
         {
             common->history_mdccode = "MDC_FLOW_AWAY";
             emit changeToHistoryPage();
         }
-        else if(series_index == 2)
+        else if(model == 2)
         {
             common->history_mdccode = "FOYA_MEASURED_VolumeInspirationBegan";
             emit changeToHistoryPage();
@@ -567,12 +552,12 @@ void Tab_Observations_mainPage_Widget::on_series_pressed(int series_index)
     }
     else if(sender() == ui->rt_chart1)
     {
-        if(series_index == 0)
+        if(model == 0)
         {
             common->history_mdccode = "MDC_PRESS_AWAY";
             emit changeToHistoryPage();
         }
-        else if(series_index == 1)
+        else if(model == 1)
         {
             common->history_mdccode = "MDC_FLOW_AWAY";
             emit changeToHistoryPage();
@@ -580,12 +565,12 @@ void Tab_Observations_mainPage_Widget::on_series_pressed(int series_index)
     }
     else if(sender() == ui->rt_chart2)
     {
-        if(series_index == 0)
+        if(model == 0)
         {
             common->history_mdccode = "FOYA_MEASURED_VolumeInspirationBegan";
             emit changeToHistoryPage();
         }
-    }
+    }*/
 }
 
 Tab_Observations_mainPage_Widget::~Tab_Observations_mainPage_Widget()

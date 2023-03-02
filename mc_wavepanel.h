@@ -54,7 +54,6 @@ public:
     QList<mc_chart*> m_RTO_chart_list;
     QList<QWidget*> m_RTO_option_list;
     QList<QLabel*> m_RTO_minus_list;
-    QList<QLabel*> m_RTO_enlarge_list;
     QList<QLabel*> m_RTO_name_list;
     std::vector<dbDisplayItems> m_nurse_items;
     QList<std::vector<float>> m_rtchart_wave_list[MAX_WAVE];
@@ -69,7 +68,6 @@ public:
     void set_chart_ui(QList<mc_chart*> chart_list) {m_RTO_chart_list = chart_list;};
     void set_option_ui(QList<QWidget*> option_list) {m_RTO_option_list = option_list;};
     void set_minus_ui(QList<QLabel*> minus_list) {m_RTO_minus_list = minus_list;};
-    void set_enlarge_ui(QList<QLabel*> enlarge_list) {m_RTO_enlarge_list = enlarge_list;};
     void set_name_ui(QList<QLabel*> name_list) {m_RTO_name_list = name_list;};
     void set_frame_ui(QVBoxLayout *item, QFrame *loop_frame, QFrame *add_frame)
     {

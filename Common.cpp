@@ -757,6 +757,7 @@ QJsonArray Common::Restful_API(char queryStartTime[64] ,char queryEndTime[64],st
 { //使用於 Tab_Observations_historyPage中 NS端資料庫搜尋
     Common* common = Common::instance();
     // URL
+
     QString restfulUrl = "http://";
     restfulUrl.append(QString::fromStdString(common->restful_API_url));
     restfulUrl.append("/Common/VmdSync/getRTObservationData");
@@ -786,17 +787,21 @@ QJsonArray Common::Restful_API(char queryStartTime[64] ,char queryEndTime[64],st
     qDebug()<<"dataSource="<<QString::fromStdString(dataSource); */
     QNetworkReply *pReplay = manager->post(request,post_index);
     // 開啟一個局部的事件循環，等待響應結束，退出
+
+
     QEventLoop eventLoop;
     QObject::connect(manager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
     eventLoop.exec();
     // 獲取響應信息
+
+
     QByteArray bytes = pReplay->readAll();
     QJsonParseError jsonParseError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes, &jsonParseError);
     qDebug() << jsonParseError.errorString();
     QJsonObject jsonobject = jsonDoc.object();
     QJsonArray array =jsonobject["row"].toArray();
-   // qDebug()<<array;
+    //qDebug()<<array;
     pReplay->deleteLater();
     delete manager;
     manager = nullptr;

@@ -441,7 +441,7 @@ void Tab_Observations_historyPage_Widget::update_triggered()
                     continue;
                 auto next = it;
                 next++;
-                if(next==vals.end() || next->first - it->first > LINE_BREAK_DELTA)
+                if(next==vals.end() || next->first - it->first > 3000)
                 {
                     new_pts.emplace(it->first, it->second[0].toDouble());
                 }
@@ -899,17 +899,11 @@ void Tab_Observations_historyPage_Widget::showEvent(QShowEvent *event)
             ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
         }
     }
-    ui->label->setText(common->history_model.c_str());
     ui->chart->clear_points(0);
     ui->chart->clear_selection();
     pts.clear();
     right_locked = 1;
-    uint64_t now = time(NULL);
-    now*=1000;
-    ui->chart->set_view_range_max_x(now);
-    ui->chart->set_view_range_min_x(now-60*1000);
-    ui->chart->set_custom_right_bound(now);
-    ui->chart->set_custom_left_bound(now-180*1000);
+
 }
 
 void Tab_Observations_historyPage_Widget::hideEvent(QHideEvent *event)
@@ -1519,4 +1513,46 @@ void Tab_Observations_historyPage_Widget::on_day_dropdown_currentIndexChanged(in
 {
     check_and_modify_jumper_time();
 }
+void Tab_Observations_historyPage_Widget::set_title_text(std::string mdccode,
+                                                         std::string model,
+                                                         std::string name,
+                                                         std::string y_min,
+                                                         std::string y_max,
+                                                         std::string unit,
+                                                         std::string datasource)
+{
+    Common* common = Common::instance();
+    common->history_mdccode    = mdccode;
+    common->history_model      = model;
+    common->history_name       = name;
+    ui->chart->set_view_range_min_y(QString::fromStdString(y_min).toInt());
+    ui->chart->set_view_range_max_y(QString::fromStdString(y_max).toInt());
+    common->history_unit       = unit;
+    common->history_datasource = datasource;
 
+    QString qstr = QString::fromStdString(model)
+            +"("+QString::fromStdString(name);
+    if(common->history_unit.size()>0)
+            qstr += "("+QString::fromStdString(unit)+")";
+    if(datasource=="RTObservation")
+        qstr += ",Wave";
+    qstr += ")";
+    uint64_t now = time(NULL);
+    now*=1000;
+
+    if(datasource=="RTObservation")
+    {
+        ui->chart->set_line_break_delta(3000);
+        ui->chart->set_view_range_max_x(now);
+        ui->chart->set_view_range_min_x(now-1*60*1000);
+    }
+    else
+    {
+        ui->chart->set_view_range_max_x(now);
+        ui->chart->set_view_range_min_x(now-30*60*1000);
+    }
+    qDebug()<<qstr;
+
+    ui->label->setText(qstr);
+    ui->label->update();
+}

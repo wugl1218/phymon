@@ -43,8 +43,9 @@ public:
     QList<mc_chart*> RTO_chart_list;
     QList<QWidget*> RTO_option_list;
     QList<QLabel*> RTO_minus_list;
-    QList<QLabel*> RTO_enlarge_list;
     QList<QLabel*> RTO_name_list;
+    void on_series_pressed(std::string name, std::string model, std::string mdccode,
+                           std::string y_min, std::string y_max, std::string unit, std::string datasource);
 
 protected:
     void showEvent(QShowEvent *event) override;
@@ -117,7 +118,6 @@ private slots:
     void on_enlarge_btn_clicked();
     void update_triggered();
     void chart_update_triggered();
-    void on_series_pressed(int);
 /*
     void on_device1_tableWidget_cellClicked(int row, int column);
 

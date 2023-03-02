@@ -147,6 +147,9 @@ public:
     std::string history_model;
     std::string history_mdccode;
     std::string history_datasource;
+    std::string history_name;
+    std::string history_unit;
+
     std::map<std::string, std::vector<std::string>> special_items;
     bool is_server=1;
     QByteArray ReadAsciiFile(const QString &filename);
