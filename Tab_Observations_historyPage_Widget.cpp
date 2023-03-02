@@ -1751,30 +1751,3 @@ void Tab_Observations_historyPage_Widget::mapping_UI_reset()
     ui->Fold_btn->setStyleSheet("QPushButton {color: rgb(255, 255, 255);font-style:\"Arial\";background-color: rgb(11, 42, 78);border-style: solid;border-width:1px;border-radius:20px;border-color:  rgb(11, 42, 78);border:2px groove gray;padding:10px 26px;border: none;}QPushButton:checked{background-color: rgb(11, 42, 78);};");
     is_fold=1;
 }
-
-    QString qstr = QString::fromStdString(model)
-            +"("+QString::fromStdString(name);
-    if(common->history_unit.size()>0)
-            qstr += "("+QString::fromStdString(unit)+")";
-    if(datasource=="RTObservation")
-        qstr += ",Wave";
-    qstr += ")";
-    uint64_t now = time(NULL);
-    now*=1000;
-
-    if(datasource=="RTObservation")
-    {
-        ui->chart->set_line_break_delta(3000);
-        ui->chart->set_view_range_max_x(now);
-        ui->chart->set_view_range_min_x(now-1*60*1000);
-    }
-    else
-    {
-        ui->chart->set_view_range_max_x(now);
-        ui->chart->set_view_range_min_x(now-30*60*1000);
-    }
-    qDebug()<<qstr;
-
-    ui->label->setText(qstr);
-    ui->label->update();
-}
