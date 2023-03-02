@@ -50,7 +50,7 @@ public:
     int m_RtLowerCount;
     int m_ObLowerCount;
     mc_wavepanel_add *m_WaveItem[MAX_WAVE];
-    QList<QHBoxLayout*> m_RTO_wave_list;
+    QList<QWidget*> m_RTO_wave_list;
     QList<mc_chart*> m_RTO_chart_list;
     QList<QWidget*> m_RTO_option_list;
     QList<QLabel*> m_RTO_minus_list;
@@ -64,7 +64,7 @@ public:
                                mc_chart *chart,
                                QList<std::vector<float>> &wave_list,
                                QList<uint64_t> &time_list);
-    void set_wave_ui(QList<QHBoxLayout*> wave_list) {m_RTO_wave_list = wave_list;};
+    void set_wave_ui(QList<QWidget*> wave_list) {m_RTO_wave_list = wave_list;};
     void set_chart_ui(QList<mc_chart*> chart_list) {m_RTO_chart_list = chart_list;};
     void set_option_ui(QList<QWidget*> option_list) {m_RTO_option_list = option_list;};
     void set_minus_ui(QList<QLabel*> minus_list) {m_RTO_minus_list = minus_list;};

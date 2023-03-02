@@ -104,8 +104,18 @@ void mc_wavepanel::add_clicked()
         return;
     WriteNurseDB(unselect_items[menu.m_selected_index]);
     push_add_item();
+    Common* common = Common::instance();
+    if(m_nurse_items.size()%2==1)
+    {
+        common->observation_main_page->ui->loop_frame->setStyleSheet("background-color: rgb(7, 22, 40);");
+        common->observation_main_page->ui->option_loop->setStyleSheet("background-color: rgb(3, 41, 86);");
+    }
+    else
+    {
+        common->observation_main_page->ui->loop_frame->setStyleSheet("background-color: rgb(11, 42, 78);");
+        common->observation_main_page->ui->option_loop->setStyleSheet("background-color: rgb(9, 58, 115);");
+    }
 }
-
 void mc_wavepanel::mc_add_clicked(mc_wavepanel* wp)
 {
     wp->add_clicked();
@@ -134,6 +144,18 @@ void mc_wavepanel::mc_del_clicked(int index)
     }
     WriteNurseDB(item, true);
     push_add_item();
+    Common* common = Common::instance();
+
+    if(m_nurse_items.size()%2==1)
+    {
+        common->observation_main_page->ui->loop_frame->setStyleSheet("background-color: rgb(7, 22, 40);");
+        common->observation_main_page->ui->option_loop->setStyleSheet("background-color: rgb(3, 41, 86);");
+    }
+    else
+    {
+        common->observation_main_page->ui->loop_frame->setStyleSheet("background-color: rgb(11, 42, 78);");
+        common->observation_main_page->ui->option_loop->setStyleSheet("background-color: rgb(9, 58, 115);");
+    }
 }
 void mc_wavepanel::mc_enlarge_clicked(int index)
 {
@@ -144,13 +166,13 @@ void mc_wavepanel::mc_enlarge_clicked(int index)
     min = QString::number(m_nurse_items[index].y_min).toStdString();
     max = QString::number(m_nurse_items[index].y_max).toStdString();
     qDebug()<<"====mc_enlarge_clicked index="<<index;
-    common->observation_main_page->on_series_pressed(m_nurse_items[index].display_desc,
+  /*  common->observation_main_page->on_series_pressed(m_nurse_items[index].display_desc,
                       m_nurse_items[index].model,
                       m_nurse_items[index].mdc_code,
                       min,
                       max,
                       "",
-                      "RTObservation");
+                      "RTObservation");*/
 }
 void mc_wavepanel::push_add_item()
 {
@@ -191,6 +213,7 @@ void mc_wavepanel::push_add_item()
         m_RTO_option_list[i]->show();
         m_RTO_minus_list[i]->show();
         m_RTO_name_list[i]->show();
+
     }
     for (int i = m_nurse_items.size(); i < m_nurse_items.size() && i < MAX_WAVE;i++)
     {
@@ -198,6 +221,7 @@ void mc_wavepanel::push_add_item()
         m_RTO_option_list[i]->hide();
         m_RTO_minus_list[i]->hide();
         m_RTO_name_list[i]->hide();
+
     }
     if (loops)
         m_loop_frame->setHidden(0);
@@ -258,7 +282,12 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
     sql.append(common->patient_id);
     sql.append("'");
     cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-
+//    std::string sql1 = "SELECT meta().id FROM _ WHERE data_source='RTO'";
+//    cbl::ResultSet results3 = common->cbl->queryDocuments(common->display_items_db, sql1,dummy);
+//    for(auto& result: results3)
+//    {
+//        common->cbl->purgeDocument(common->display_items_db,result.valueAtIndex(0).asstring(),dummy);
+//    }
     int error=0;
     while (dummy!="IP200"&&error<5)
     {
@@ -266,6 +295,7 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
         fflog_out(common->log,dummy.c_str());error++;
     }
     m_nurse_items.clear();
+    int i =0;
     for(auto& result: results2)
     {
         item.display_desc = result.valueAtIndex(0).asstring();
@@ -280,6 +310,7 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
         item.mdc_code = result.valueAtIndex(7).asstring();
         item.record_id = result.valueAtIndex(8).asstring();
         m_nurse_items.push_back(item);
+        ++i;
     }
     return m_nurse_items;
 }
@@ -483,7 +514,6 @@ bool mc_wavepanel::QueryDisplayItems(void)
         std::vector<stDisplayItems> *items = new std::vector<stDisplayItems>;//Agooda20230224:stack is not enough, will cause exception, need heap
         Common* common = Common::instance();
         dds::sub::cond::ReadCondition *item_cond;
-
         if (common->domain_id == -1)
             return false;
         dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples2;
@@ -494,6 +524,8 @@ bool mc_wavepanel::QueryDisplayItems(void)
                     dds::sub::status::ViewState::any(),
                     dds::sub::status::InstanceState::alive()));
         samples2 = common->m_DisplayItem_reader.select().condition(*item_cond).read();
+        printf("*** QueryDisplayItems length()=%d\n", samples2.length());
+
         if(samples2.length() == 0)
             return false;
         for(auto& sample : samples2)

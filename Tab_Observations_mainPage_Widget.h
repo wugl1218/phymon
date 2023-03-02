@@ -41,15 +41,14 @@ public:
     std::string CapturedIssues_channel_id;
     Dialog_loopselection lsd;
     Dialog_visualization_config vsd;
-    QList<QHBoxLayout*> RTO_wave_list;
+    QList<QWidget*> RTO_wave_list;
     QList<mc_chart*> RTO_chart_list;
     QList<QWidget*> RTO_option_list;
     QList<QLabel*> RTO_minus_list;
     QList<QLabel*> RTO_name_list;
     void mapping_UI_reset();
     std::vector<mc_legend*> legends;
-    void on_series_pressed(std::string name, std::string model, std::string mdccode,
-                           std::string y_min, std::string y_max, std::string unit, std::string datasource);
+
 
 protected:
     void showEvent(QShowEvent *event) override;
@@ -153,6 +152,8 @@ private slots:
     void on_visualization_new_clicked();
 
     void on_Obs_clicked();
+    void on_series_pressed(std::string name, std::string model, std::string mdccode,
+                           std::string y_min, std::string y_max, std::string unit, std::string datasource);
 signals:
     void changeToMetricItemsDisplayConfigPage();
     void changeToHistoryPage();
