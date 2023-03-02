@@ -486,7 +486,6 @@ bool mc_wavepanel::QueryDisplayItems(void)
 
         if (common->domain_id == -1)
             return false;
-        //printf("*** QueryDisplayItems");
         dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples2;
         item_cond = new dds::sub::cond::ReadCondition(
                     common->m_DisplayItem_reader,
@@ -495,7 +494,6 @@ bool mc_wavepanel::QueryDisplayItems(void)
                     dds::sub::status::ViewState::any(),
                     dds::sub::status::InstanceState::alive()));
         samples2 = common->m_DisplayItem_reader.select().condition(*item_cond).read();
-        printf("*** QueryDisplayItems length()=%d\n", samples2.length());
         if(samples2.length() == 0)
             return false;
         for(auto& sample : samples2)
@@ -522,7 +520,6 @@ bool mc_wavepanel::QueryDisplayItems(void)
     }
     catch(...)
     {
-        printf("mc_wavepanel::QueryDisplayItems exception\n");
     }
 }
 
