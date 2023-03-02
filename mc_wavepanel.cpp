@@ -6,7 +6,7 @@
 #include "mc_btn_Clickable.h"
 
 #define LOWER_MAX       30
-#define WAVE_TIMER      250
+#define WAVE_TIMER      50     //no matter the value is, we can only read 25 data from topic
 #define ADD_BTN_POS     MAX_WAVE + 1
 #define LOOPS_NAME      "loops"
 
@@ -234,7 +234,7 @@ void mc_wavepanel::push_add_item()
         pChart->set_series_color(0, QColor(255,255,255));
 
         std::vector<float> vals;
-        uint64_t time;
+        uint64_t time = 0.0;
         m_rtchart_wave_list[i]<<vals;
         m_rtchart_time_list[i]<<time;
     }
@@ -575,7 +575,7 @@ void mc_wavepanel::add_wave_to_chart_RTO(int series_index, std::string model, st
                 dds::sub::status::SampleState::any(),
                 dds::sub::status::ViewState::any(),
                 dds::sub::status::InstanceState::alive()));
-    dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples2 = reader.select().condition(qcond).read();
+    dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples2 = reader.select().condition(qcond).take();
 
     if(samples2.length() == 0)
         return;
@@ -597,15 +597,15 @@ void mc_wavepanel::add_wave_to_chart_RTO(int series_index, std::string model, st
             auto left_over_rtchart_vals =wave_list[series_index];
             auto last_rtchart_time =time_list[series_index];
             data.get_values("values", vals);
+            if (last_rtchart_time && t < last_rtchart_time)
+                continue;
             if(left_over_rtchart_vals.size() > 0)
             {
-                if(t-last_rtchart_time < line_break_delta)
+                if(t - last_rtchart_time < line_break_delta)
                 {
                     double delta = (t-last_rtchart_time)/((double)left_over_rtchart_vals.size()+1);
                     for(int i=0;i<(int)left_over_rtchart_vals.size();i++)
-                    {
                         chart->add_point(series_index, last_rtchart_time+delta*(i+1), left_over_rtchart_vals[i]);
-                    }
                 }
                 left_over_rtchart_vals.clear();
             }
