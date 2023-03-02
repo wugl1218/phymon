@@ -533,28 +533,16 @@ void Tab_Mapping_Widget::force_return()
 }
 void Tab_Mapping_Widget::mapping_UI_reset()
 {
-Common* common = Common::instance();
+    Common* common = Common::instance();
 
-common->observation_main_page->clear_points();
-common->alarm_page->ui->queryResult_tableWidget->clearContents();
-common->alarm_page_2->ui->queryResult_tableWidget->clearContents();
-common->alarm_page_3->ui->queryResult_tableWidget->clearContents();
-common->alarm_page->ui->queryResult_tableWidget->setRowCount(0);
-common->alarm_page_2->ui->queryResult_tableWidget->setRowCount(0);
-/*
-common->alarm_page_3->ui->queryResult_tableWidget->setRowCount(0);
-common->observation_main_page->ui->device1_tableWidget->clearContents();
-common->observation_main_page->ui->device2_tableWidget->clearContents();
-common->observation_main_page->ui->device3_tableWidget->clearContents();
-common->observation_main_page->ui->device4_tableWidget->clearContents();*/
-common->exporter_page->ui->log_textBrowser->setText("");
-common->exporter_page->ui->fileName_label->setText("");
-common->exporter_page->ui->send_pushButton->setEnabled(false);
-common->exporter_page->ui->send_pushButton->setStyleSheet(common->css.Enabled_ButtonStyle);
-common->history_page->clear_selection();
-common->history_page->reset_time_jumper();
-common->devices_page->ui->history_table->clearContents();
-common->devices_page->ui->history_table->setRowCount(0);
+    common->observation_main_page->mapping_UI_reset();
+    common->alarm_page->mapping_UI_reset();
+    common->alarm_page_2->mapping_UI_reset();
+//    common->alarm_page_3->mapping_UI_reset();
+    common->exporter_page->mapping_UI_reset();
+    common->history_page->mapping_UI_reset();
+    common->devices_page->mapping_UI_reset();
+
 }
 void Tab_Mapping_Widget::hide_windows()
 {
@@ -565,5 +553,6 @@ if(!common->rd.isHidden())
     common->rd.hide();
 if(!common->observation_main_page->lsd.isHidden())
     common->observation_main_page->lsd.hide();
-
+if(!common->select_menu.isHidden())
+    common->select_menu.hide();
 }

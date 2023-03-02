@@ -23,6 +23,7 @@ public:
     explicit Tab_Devices_Widget(QWidget *parent = nullptr);
     ~Tab_Devices_Widget();
     void update_devices(std::map<std::string, Device>* btns);
+    void mapping_UI_reset();
 
 private slots:
     void btn_clicked();

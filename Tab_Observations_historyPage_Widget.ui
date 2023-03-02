@@ -1108,30 +1108,84 @@ color:rgb(255, 255, 255);</string>
       </layout>
      </item>
      <item>
-      <widget class="QLabel" name="label">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>50</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>22</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
+      <widget class="QWidget" name="horizontalWidget" native="true">
        <property name="styleSheet">
         <string notr="true">background:rgb(7, 22, 40);
 color:rgb(255, 255, 255);</string>
        </property>
-       <property name="text">
-        <string>Title</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::RichText</enum>
-       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,0">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>22</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background:rgb(7, 22, 40);
+color:rgb(255, 255, 255);</string>
+          </property>
+          <property name="text">
+           <string>Title</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::RichText</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="Fold_btn">
+          <property name="font">
+           <font>
+            <family>Ubuntu</family>
+            <pointsize>22</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+        color: rgb(255, 255, 255);
+font-style:&quot;Arial&quot;;
+background-color: rgb(11, 42, 78);
+ border-style: solid;
+ border-width:1px;
+ border-radius:20px;
+ border-color:  rgb(11, 42, 78);
+border:2px groove gray;
+padding:10px 26px;
+ border: none;}
+QPushButton:checked{
+ background-color: rgb(11, 42, 78);
+ };</string>
+          </property>
+          <property name="text">
+           <string>Fold</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>
@@ -1942,14 +1996,14 @@ QScrollBar::sub-line:vertical{
  </widget>
  <customwidgets>
   <customwidget>
-   <class>mc_btn_Clickable</class>
-   <extends>QLabel</extends>
-   <header>mc_btn_Clickable.h</header>
-  </customwidget>
-  <customwidget>
    <class>mc_chart</class>
    <extends>QWidget</extends>
    <header>mc_chart.h</header>
+  </customwidget>
+  <customwidget>
+   <class>mc_btn_Clickable</class>
+   <extends>QLabel</extends>
+   <header>mc_btn_Clickable.h</header>
   </customwidget>
  </customwidgets>
  <resources>

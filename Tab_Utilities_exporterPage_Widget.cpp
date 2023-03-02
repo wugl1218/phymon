@@ -146,3 +146,12 @@ void Tab_Utilities_exporterPage_Widget::mousePressEvent(QMouseEvent *event)
 
 }
 
+void Tab_Utilities_exporterPage_Widget::mapping_UI_reset()
+{
+    Common* common = Common::instance();
+
+    ui->log_textBrowser->setText("");
+    ui->fileName_label->setText("");
+    ui->send_pushButton->setEnabled(false);
+    ui->send_pushButton->setStyleSheet(common->css.Enabled_ButtonStyle);
+}

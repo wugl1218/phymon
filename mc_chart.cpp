@@ -613,8 +613,8 @@ void mc_chart::handle_move(float x, float y)
             if(new_min_x < custom_left_bound)
             {
                 qDebug()<<"new_min_x < custom_left_bound";
-                qDebug()<<custom_left_bound;
                 qDebug()<<new_min_x;
+                qDebug()<<custom_left_bound;
 
                 new_min_x = custom_left_bound;
                 new_max_x = view_range_max_x + (new_min_x - view_range_min_x);
@@ -676,11 +676,19 @@ void mc_chart::mousePressEvent(QMouseEvent *event)
 {
     handle_press(event->pos().x(), event->pos().y());
     emit clicked();
+    qDebug()<<"=======================================================";
+    qDebug()<<"================mousePressEvent==========================";
+    qDebug()<<"=======================================================";
+
 }
 
 void mc_chart::mouseReleaseEvent(QMouseEvent *event)
 {
     handle_release(event->pos().x(), event->pos().y());
+    qDebug()<<"=======================================================";
+    qDebug()<<"===============mouseReleaseEvent=======================";
+    qDebug()<<"=======================================================";
+
 }
 
 bool mc_chart::event(QEvent* event)

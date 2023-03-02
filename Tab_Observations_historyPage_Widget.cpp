@@ -6,7 +6,7 @@
 #include "Common.h"
 #include <QButtonGroup>
 #include "fleece/slice.hh"
-#define HISTORY_TIME 30
+#define HISTORY_TIME 125  //單位分鐘 目前最大時間120 set規則比最大時間多5％使用上感官較好
 
 
 Tab_Observations_historyPage_Widget::Tab_Observations_historyPage_Widget(QWidget *parent) :
@@ -80,6 +80,10 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 right_locked = 1;
             else if(ui->chart->get_view_range_min_x() < last_left_bound + 0.5*60*1000)
             {
+                qDebug()<<"get_view_range_min_x() > last_left_bound + 30*1000";
+                qDebug()<<ui->chart->get_view_range_min_x();
+                qDebug()<<"last_right_bound="<<last_left_bound;
+
                 ui->chart->set_custom_left_bound(last_left_bound - (HISTORY_TIME)*60*1000);
                 uint64_t custom_right_bound = last_left_bound - (HISTORY_TIME)*60*1000 + (HISTORY_TIME*2+1)*60*1000;
                 if(custom_right_bound > now*1000)
@@ -157,7 +161,7 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 last_right_bound = ui->chart->get_custom_right_bound();
             }
             else if(ui->chart->get_view_range_max_x() > last_right_bound - 0.5*60*1000)
-            {
+            {                
                 qDebug()<<"view_range_max_x() > last_right_bound - 30*1000";
                 qDebug()<<ui->chart->get_view_range_max_x();
                 qDebug()<<"last_right_bound="<<last_right_bound;
@@ -559,9 +563,11 @@ void Tab_Observations_historyPage_Widget::update_triggered()
     {
         if(common->is_server)//NS
         {
+            qDebug()<<"right_locked";
             uint64_t now = time(NULL);
             ui->chart->set_custom_right_bound(now*1000);
-            ui->chart->set_custom_left_bound((now-HISTORY_TIME*0.4*60)*1000);
+            ui->chart->set_custom_left_bound((now-HISTORY_TIME*60)*1000);
+            qDebug()<<ui->chart->get_custom_left_bound();
             now -=HISTORY_TIME*60;
             char timebuf[64];
             char timebuf1[64];
@@ -641,7 +647,7 @@ void Tab_Observations_historyPage_Widget::update_triggered()
 
             uint64_t now = time(NULL);
             ui->chart->set_custom_right_bound(now*1000);
-            ui->chart->set_custom_left_bound((now-HISTORY_TIME*0.4*60)*1000);
+            ui->chart->set_custom_left_bound((now-HISTORY_TIME*60)*1000);
             now -=HISTORY_TIME*60;
             char timebuf[64];
             sprintf(timebuf, "%llu", now);
@@ -846,9 +852,15 @@ observation:
                 str.append(e.desc);
                 auto it2 = common->item_checkstate.find(str);
                 if(it2==common->item_checkstate.end())
+                    {
                     entries.emplace(9999, e);
+                    }
                 else if(it2->second.checked)
+                    {
                     entries.emplace(it2->second.order, e);
+                    }
+                else if(is_fold)
+                    entries.emplace(common->item_checkstate.size()+1, e);
                 else
                     left_over.emplace(e.desc, e);
                 //if(it==common->item_checkstate.end() || it->second.checked)
@@ -1119,23 +1131,78 @@ void Tab_Observations_historyPage_Widget::on_RangeButton_clicked()
     Common* common = Common::instance();
     std::vector<btn> btn;
 //    for(auto it=common->observation_main_page->legends.begin();it!=common->observation_main_page->legends.end();++it)
-        for(int i=0;i<common->observation_main_page->legends.size();++i)
     {
         class btn b;
-        b.name=common->observation_main_page->legends[i]->get_series_text();
-        b.index=i;
-        if(common->observation_main_page->legends[i]->get_mdccode()==common->history_mdccode)
-            b.is_select=1;
-        else
-            b.is_select=0;
+        b.name="10 secs";
+        b.index=0;
+        b.is_select=0;
+        btn.push_back(b);
+        b.name="30 secs";
+        b.index=1;
+        btn.push_back(b);
+        b.name="1 min";
+        b.index=2;
+        btn.push_back(b);
+        b.name="10 mins";
+        b.index=3;
+        btn.push_back(b);
+        b.name="30 mins";
+        b.index=4;
+        btn.push_back(b);
+        b.name="1 hour";
+        b.index=5;
+        btn.push_back(b);
+        b.name="2 hours";
+        b.index=6;
         btn.push_back(b);
     }
     common->select_menu.make_btn(btn);
     common->select_menu.exec();
     int i = common->select_menu.get_btn();
-    auto it=common->observation_main_page->legends[i];
+    uint64_t max_x =ui->chart->get_view_range_max_x();
+    if(i==0)
+    {
+        ui->chart->set_view_range_max_x(max_x);
+        ui->chart->set_view_range_min_x(max_x-10*1000);
+    }
+    else if(i==1)
+    {
+        ui->chart->set_view_range_max_x(max_x);
+        ui->chart->set_view_range_min_x(max_x-30*1000);
 
+    }
+    else if(i==2)
+    {
+        ui->chart->set_view_range_max_x(max_x);
+        ui->chart->set_view_range_min_x(max_x-1*60*1000);
 
+    }
+    else if(i==3)
+    {
+        ui->chart->set_view_range_max_x(max_x);
+        ui->chart->set_view_range_min_x(max_x-10*60*1000);
+
+    }
+    else if(i==4)
+    {
+        ui->chart->set_view_range_max_x(max_x);
+        ui->chart->set_view_range_min_x(max_x-30*60*1000);
+
+    }
+    else if(i==5)
+    {
+        ui->chart->set_view_range_max_x(max_x);
+        ui->chart->set_view_range_min_x(max_x-1*60*60*1000);
+
+    }
+    else if(i==6)
+    {
+        ui->chart->set_view_range_max_x(max_x);
+        ui->chart->set_view_range_min_x(max_x-2*60*60*1000);
+
+    }
+    ui->chart->update();
+    //ui->chart->repaint();
 }
 void Tab_Observations_historyPage_Widget::on_MenuButton_clicked()
 {
@@ -1655,21 +1722,39 @@ void Tab_Observations_historyPage_Widget::set_title_text(std::string mdccode,
 
     if(datasource=="RTObservation")
     {
+        ui->chart->set_line_break_delta(3000);
         ui->chart->set_view_range_max_x(now);
         ui->chart->set_view_range_min_x(now-1*60*1000);
-        ui->chart->set_custom_right_bound(now);
-        ui->chart->set_custom_left_bound(now-3*60*1000);
     }
     else
     {
+        ui->chart->set_line_break_delta(50000);
         ui->chart->set_view_range_max_x(now);
         ui->chart->set_view_range_min_x(now-30*60*1000);
-        ui->chart->set_custom_right_bound(now);
-        ui->chart->set_custom_left_bound(now-32*60*1000);
     }
     ui->label->setText(qstr);
     ui->label->update();
 }
 
 
+void Tab_Observations_historyPage_Widget::on_Fold_btn_clicked()
+{
+    if(is_fold)
+    {
+        ui->Fold_btn->setStyleSheet("QPushButton {color: rgb(255, 255, 255);font-style:\"Arial\";background-color: rgb(8, 98, 202);border-style: solid;border-width:1px;border-radius:20px;border-color:  rgb(11, 42, 78);border:2px groove gray;padding:10px 26px;border: none;}QPushButton:checked{background-color: rgb(11, 42, 78);};");
+        is_fold=0;
+    }
+    else
+    {
+        ui->Fold_btn->setStyleSheet("QPushButton {color: rgb(255, 255, 255);font-style:\"Arial\";background-color: rgb(11, 42, 78);border-style: solid;border-width:1px;border-radius:20px;border-color:  rgb(11, 42, 78);border:2px groove gray;padding:10px 26px;border: none;}QPushButton:checked{background-color: rgb(11, 42, 78);};");
+        is_fold=1;
+    }
+}
+void Tab_Observations_historyPage_Widget::mapping_UI_reset()
+{
+    clear_selection();
+    reset_time_jumper();
+    ui->Fold_btn->setStyleSheet("QPushButton {color: rgb(255, 255, 255);font-style:\"Arial\";background-color: rgb(11, 42, 78);border-style: solid;border-width:1px;border-radius:20px;border-color:  rgb(11, 42, 78);border:2px groove gray;padding:10px 26px;border: none;}QPushButton:checked{background-color: rgb(11, 42, 78);};");
+    is_fold=1;
+}
 

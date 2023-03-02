@@ -40,6 +40,8 @@ public:
                         std::string y_max,
                         std::string unit,
                         std::string datasource);
+    void mapping_UI_reset();
+
 
 protected:
     void showEvent(QShowEvent *event);
@@ -60,6 +62,7 @@ private:
     int jumper_state;
     uint32_t jumper_last_trigger_time;
     uint32_t jumper_state_switch_time;
+    bool is_fold = 1 ;
 
     void render_jumper_min();
     void render_jumper_hour();
@@ -93,6 +96,7 @@ private slots:
     void on_day_dropdown_currentIndexChanged(int index);
 
     void on_RangeButton_clicked();
+    void on_Fold_btn_clicked();
 };
 
 #endif // TAB_OBSERVATIONS_HISTORYPAGE_WIDGET_H

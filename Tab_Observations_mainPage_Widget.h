@@ -40,6 +40,7 @@ public:
     Dialog_loopselection lsd;
     Dialog_visualization_config vsd;
     std::vector<mc_legend*> legends;
+    void mapping_UI_reset();
 
 protected:
     void showEvent(QShowEvent *event) override;

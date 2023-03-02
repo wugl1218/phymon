@@ -1305,7 +1305,10 @@ void Tab_Observations_mainPage_Widget::update_triggered()
         mc_chart1_line =0;
         mc_chart2_line =0;
         for(int i=0;i<(int)legends.size();i++)
+            {
+
             delete legends[i];
+            }
         legends.clear();
         bool has_matecare_time =0;
         struct timespec matecare_time;
@@ -1703,4 +1706,8 @@ void Tab_Observations_mainPage_Widget::add_wave_to_chart_RTO(int series_index, s
             }
         }
     }
+}
+void Tab_Observations_mainPage_Widget::mapping_UI_reset()
+{
+    clear_points();
 }

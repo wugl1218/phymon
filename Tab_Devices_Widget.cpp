@@ -440,3 +440,8 @@ Tab_Devices_Widget::~Tab_Devices_Widget()
 {
     delete ui;
 }
+void Tab_Devices_Widget::mapping_UI_reset()
+{
+    ui->history_table->clearContents();
+    ui->history_table->setRowCount(0);
+}

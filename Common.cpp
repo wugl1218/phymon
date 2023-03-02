@@ -138,7 +138,7 @@ Common::Common(MainDialog* m)
     }
     log = fflog_create(log_path.c_str(),5,100*1024*1024);
     fflog_out(log,"start");
-    //新增Obs置頂欄位
+    //新增Obs置頂欄位 要置頂非人工資料 須先清空資料庫 或先將已有的資料從左側未選取移置右側
     std::vector<std::string> savina_special;
     savina_special.push_back("Tidal volume in mL");
     savina_special.push_back("MV");

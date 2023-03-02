@@ -23,6 +23,7 @@ public:
     void log(const char* line);
     void clear_log();
     Dialog_jsontext jt;
+    void mapping_UI_reset();
 
 protected:
     void showEvent(QShowEvent *event);

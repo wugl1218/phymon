@@ -436,3 +436,9 @@ void Tab_Utilities_alarmHistoryPage_Widget::on_orderType_comboBox_currentIndexCh
 {
     order = index;
 }
+
+void Tab_Utilities_alarmHistoryPage_Widget::mapping_UI_reset()
+{
+    ui->queryResult_tableWidget->clearContents();
+    ui->queryResult_tableWidget->setRowCount(0);
+}

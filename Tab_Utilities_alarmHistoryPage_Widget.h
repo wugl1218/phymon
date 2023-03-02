@@ -25,6 +25,7 @@ public:
     explicit Tab_Utilities_alarmHistoryPage_Widget(QWidget *parent = nullptr);
     ~Tab_Utilities_alarmHistoryPage_Widget();
     void update_devices(std::map<std::string, Device>* btns);
+    void mapping_UI_reset();
 
 
 private:

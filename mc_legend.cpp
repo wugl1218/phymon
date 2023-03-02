@@ -124,9 +124,11 @@ void mc_legend::paintEvent(QPaintEvent *event)
     painter.setPen(nopen);
     painter.drawRect(0,0,width(),height());
     QFont font ;
+    QFont font_bold ;
     font.setPixelSize(22);
     painter.setFont(font);
-
+    font_bold.setBold(1);
+    font_bold.setPixelSize(22);
     painter.setRenderHint(QPainter::Antialiasing, true);
     QPen pen(text_color);
 //    QColor blackColor =QColor(04,05,07);
@@ -146,15 +148,18 @@ void mc_legend::paintEvent(QPaintEvent *event)
             name.append(entries.model);
             name.append(")");
             painter.setPen(pen);
+            QString qstr=QString::number(entries.val)+QString::fromStdString(entries.unit);
+            Common::draw_text(painter, 10,
+                              0 + 40,
+                              Qt::AlignLeft | Qt::AlignVCenter, qstr);
+
+            painter.setFont(font_bold);
             Common::draw_text(painter, 10,
                               0 + 15,
                               Qt::AlignLeft | Qt::AlignVCenter, name.c_str());
-            Common::draw_text(painter, 10,
+/*            Common::draw_text(painter, 115,
                               0 + 40,
-                              Qt::AlignLeft | Qt::AlignVCenter, QString::number(entries.val));
-            Common::draw_text(painter, 115,
-                              0 + 40,
-                              Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(entries.unit));
+                              Qt::AlignLeft | Qt::AlignVCenter, QString::fromStdString(entries.unit));*/
 
         }
     update();
