@@ -68,7 +68,6 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     ui->pChart->set_num_labels_y(5);
     ui->pChart->set_series_color(0, QColor(255,255,255));
 */
-    ui->legend->set_top_margin(10);
 //    ui->legend->set_text_color(QColor(255,255,255,255));
 //    ui->legend->set_text_color(QColor(0,0,0,255));
 //    ui->legend->set_vertical_spacing(80);
@@ -822,9 +821,6 @@ void Tab_Observations_mainPage_Widget::chart_update_triggered()
 
         }
     }
-    ui->rt_chart1->trim_left();
-    ui->rt_chart2->trim_left();
-    ui->legend->update();
 
     if(captured)
         return;
