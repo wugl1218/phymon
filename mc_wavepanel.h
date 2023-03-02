@@ -15,19 +15,6 @@
 
 #define MAX_WAVE 6
 
-struct dbDisplayItems
-{
-    std::string model;
-    std::string display_desc;
-    std::string mdc_code;
-    std::string record_id;
-    int y_max;
-    int y_min;
-    int y_step;
-    int display_index;
-    int visibility;
-};
-
 class mc_wavepanel : public QWidget
 {
     Q_OBJECT

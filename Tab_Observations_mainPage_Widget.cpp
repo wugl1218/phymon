@@ -268,7 +268,20 @@ void Tab_Observations_mainPage_Widget::on_enlarge_btn_clicked()
 {
     mc_btn_Clickable* b = (mc_btn_Clickable*)sender();
     int index = b->property("index").value<int>();
-    ui->wavePanel->mc_enlarge_clicked(index);
+    if (index > MAX_WAVE)
+        return;
+    dbDisplayItems item = ui->wavePanel->m_nurse_items[index];
+    std::string min;
+    std::string max;
+    min = QString::number(item.y_min).toStdString();
+    max = QString::number(item.y_max).toStdString();
+    on_series_pressed(item.display_desc,
+                      item.model,
+                      item.mdc_code,
+                      min,
+                      max,
+                      "",
+                      "RTObservation");
 }
 void Tab_Observations_mainPage_Widget::visualizetion_clicked()
 {

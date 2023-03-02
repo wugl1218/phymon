@@ -54,6 +54,19 @@ struct stDisplayItems
     std::string record_id;
 };
 
+struct dbDisplayItems
+{
+    std::string model;
+    std::string display_desc;
+    std::string mdc_code;
+    std::string record_id;
+    int y_max;
+    int y_min;
+    int y_step;
+    int display_index;
+    int visibility;
+};
+
 class mc_entry
 {
 public:

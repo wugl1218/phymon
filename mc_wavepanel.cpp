@@ -68,7 +68,7 @@ void mc_wavepanel::add_clicked()
         bool existed = false;
         for (auto picked: m_nurse_items)
         {
-            if (m_DeviceName == picked.model && picked.display_desc == "loops")
+            if (m_DeviceName == picked.model && picked.display_desc == LOOPS_NAME)
             {
                 loops = (picked.visibility) ? 0:1;
                 loop_item.record_id = picked.record_id;
@@ -159,20 +159,7 @@ void mc_wavepanel::mc_del_clicked(int index)
 }
 void mc_wavepanel::mc_enlarge_clicked(int index)
 {
-    Common* common = Common::instance();
-    char buf[10];
-    std::string min;
-    std::string max;
-    min = QString::number(m_nurse_items[index].y_min).toStdString();
-    max = QString::number(m_nurse_items[index].y_max).toStdString();
-    qDebug()<<"====mc_enlarge_clicked index="<<index;
-  /*  common->observation_main_page->on_series_pressed(m_nurse_items[index].display_desc,
-                      m_nurse_items[index].model,
-                      m_nurse_items[index].mdc_code,
-                      min,
-                      max,
-                      "",
-                      "RTObservation");*/
+
 }
 void mc_wavepanel::push_add_item()
 {
@@ -278,16 +265,18 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
     Common* common = Common::instance();
     dbDisplayItems item;
     std::string dummy;//ppee
+
+/*  std::string sql1 = "SELECT meta().id FROM _ WHERE data_source='RTO'";
+    cbl::ResultSet results3 = common->cbl->queryDocuments(common->display_items_db, sql1,dummy);
+    for(auto& result: results3)
+    {
+        common->cbl->purgeDocument(common->display_items_db,result.valueAtIndex(0).asstring(),dummy);
+    }
+*/
     std::string sql = "SELECT display_desc, y_max, y_min, model, y_step, display_index, visibility, mdc_code, meta().id FROM _ WHERE data_source='RTO' AND patient_id='";
     sql.append(common->patient_id);
     sql.append("'");
     cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-//    std::string sql1 = "SELECT meta().id FROM _ WHERE data_source='RTO'";
-//    cbl::ResultSet results3 = common->cbl->queryDocuments(common->display_items_db, sql1,dummy);
-//    for(auto& result: results3)
-//    {
-//        common->cbl->purgeDocument(common->display_items_db,result.valueAtIndex(0).asstring(),dummy);
-//    }
     int error=0;
     while (dummy!="IP200"&&error<5)
     {
