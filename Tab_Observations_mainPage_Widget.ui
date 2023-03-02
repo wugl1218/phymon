@@ -594,7 +594,19 @@ color:rgb(255, 255, 255);</string>
       <widget class="mc_wavepanel" name="wavePanel" native="true">
        <layout class="QVBoxLayout" name="main">
         <property name="spacing">
-         <number>4</number>
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
         </property>
         <item>
          <layout class="QHBoxLayout" name="header">
@@ -785,6 +797,9 @@ color:rgb(255, 255, 255);</string>
                 <pointsize>7</pointsize>
                 <italic>false</italic>
                </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(10, 42, 78);</string>
               </property>
              </widget>
             </item>
@@ -1486,6 +1501,9 @@ QPushButton:checked{
                  <width>16777215</width>
                  <height>60</height>
                 </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(9, 58, 115);</string>
                </property>
                <property name="text">
                 <string/>
