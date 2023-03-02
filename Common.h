@@ -42,6 +42,18 @@ class Tab_Observations_mainPage_Widget;
 class Tab_Observations_historyPage_Widget;
 class TOPAlarm;
 
+struct stDisplayItems
+{
+    std::string model;
+    std::string display_desc;
+    std::string wave_type;
+    std::string mdc_code;
+    std::string y_max;
+    std::string y_min;
+    std::string y_step;
+    std::string record_id;
+};
+
 class mc_entry
 {
 public:
@@ -202,6 +214,7 @@ public:
     dds::sub::DataReader<dds::core::xtypes::DynamicData> visualizetion_observation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> observation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> observation_reader_2 = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> observation_wave_reader = nullptr;
     dds::core::xtypes::DynamicType observation_type;
 
     dds::topic::Topic<dds::core::xtypes::DynamicData> chansettings_topic = nullptr;
@@ -215,6 +228,7 @@ public:
     dds::topic::Topic<dds::core::xtypes::DynamicData> rtobservation_topic = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader = nullptr;
     dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_reader_2 = nullptr;
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> rtobservation_wave_reader = nullptr;
 
     dds::core::xtypes::DynamicType rtobservation_type;
 

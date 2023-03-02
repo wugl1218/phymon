@@ -22,13 +22,14 @@ void Dialog_wave_selection::clear_tabs()
         ui->tabWidget->removeTab(i);
 }
 
-void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<std::string>* items, uint8_t has_loop)
+void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<stDisplayItems>* items, uint8_t has_loop)
 {
     if (!items)
         return;
     QWidget* w = new QWidget();
     w->setStyleSheet("background-color: rgb(0,73,159);");
     ui->tabWidget->addTab(w, tab_name);
+    //ui->tabWidget->addTab(w, "MP40");
     QVBoxLayout* main_layout = new QVBoxLayout(w);
     main_layout->setContentsMargins(24,24,24,24);
     main_layout->setSpacing(11);
@@ -36,19 +37,20 @@ void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<std::strin
     g->setContentsMargins(0,0,0,0);
     g->setSpacing(0);
     main_layout->addLayout(g, 1);
+    m_selected_index = -1;
     int i=0;
     int r=0;
     int c=0;
     std::string even_style = "background-color: rgb(0,93,206); color: rgb(255,255,255);";
     std::string odd_style = "background-color: rgb(0,83,183); color: rgb(255,255,255);";
-    for(;i<(int)items->size();i++)
+    for(;i<(int)items->size() - has_loop;i++)
     {
         if(i>=30)
             break;
         mc_btn_Clickable* b = new mc_btn_Clickable();
         g->addWidget(b, r, c);
         b->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        b->setText((*items)[i].c_str());
+        b->setText((*items)[i].display_desc.c_str());
         b->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         QFont f = b->font();
         f.setPixelSize(19);
@@ -57,6 +59,7 @@ void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<std::strin
             b->setStyleSheet(even_style.c_str());
         else
             b->setStyleSheet(odd_style.c_str());
+        b->setProperty("index", i);
         connect(b, SIGNAL(clicked()), this, SLOT(clicked()));
         c++;
         if(c>=3)
@@ -93,6 +96,7 @@ void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<std::strin
         f.setPixelSize(19);
         b->setFont(f);
         b->setStyleSheet(odd_style.c_str());
+        b->setProperty("index", (int)items->size() - 1);
         connect(b, SIGNAL(clicked()), this, SLOT(clicked()));
     }
     if (items->size() > 30)
@@ -132,6 +136,7 @@ void Dialog_wave_selection::clicked()
     mc_btn_Clickable* b = (mc_btn_Clickable*)sender();
     selected_item = b->text().toStdString();
     selected_tab_name = ui->tabWidget->tabText(ui->tabWidget->currentIndex()).toStdString();
+    m_selected_index = b->property("index").value<int>();
     close();
 }
 

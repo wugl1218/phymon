@@ -211,6 +211,7 @@ void Common::init_dds(int domain_id)
     visualizetion_observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
     observation_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
     observation_reader_2 = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
+    observation_wave_reader = dds->getReader(observation_topic, "VMD_Library::profile::drObservation");
 
     chansettings_type = dds->getTypeObject("dds_collector::ChannelSettings");
     chansettings_topic = dds->getTopic("TP_ChannelSettings", chansettings_type, "");
@@ -224,6 +225,7 @@ void Common::init_dds(int domain_id)
     rtobservation_topic = dds->getTopic("TP_RTObservation", rtobservation_type, "");
     rtobservation_reader = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
     rtobservation_reader_2 = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
+    rtobservation_wave_reader = dds->getReader(rtobservation_topic, "VMD_Library::profile::drPatientAlert");
 
     m_DisplayItem_type = dds->getTypeObject("MonitoringStation::DisplayItems");
     m_DisplayItem_topic = dds->getTopic("TP_DisplayItems", m_DisplayItem_type, "");
@@ -759,6 +761,7 @@ QJsonArray Common::Restful_API(char queryStartTime[64] ,char queryEndTime[64],st
 { //使用於 Tab_Observations_historyPage中 NS端資料庫搜尋
     Common* common = Common::instance();
     // URL
+
     QString restfulUrl = "http://";
     restfulUrl.append(QString::fromStdString(common->restful_API_url));
     restfulUrl.append("/Common/VmdSync/getRTObservationData");
@@ -784,17 +787,21 @@ QJsonArray Common::Restful_API(char queryStartTime[64] ,char queryEndTime[64],st
 
     QNetworkReply *pReplay = manager->post(request,post_index);
     // 開啟一個局部的事件循環，等待響應結束，退出
+
+
     QEventLoop eventLoop;
     QObject::connect(manager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
     eventLoop.exec();
     // 獲取響應信息
+
+
     QByteArray bytes = pReplay->readAll();
     QJsonParseError jsonParseError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes, &jsonParseError);
     //qDebug() << jsonParseError.errorString();
     QJsonObject jsonobject = jsonDoc.object();
     QJsonArray array =jsonobject["row"].toArray();
-   // qDebug()<<array;
+    //qDebug()<<array;
     pReplay->deleteLater();
     delete manager;
     manager = nullptr;

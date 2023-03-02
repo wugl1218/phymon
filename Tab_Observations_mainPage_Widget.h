@@ -5,6 +5,7 @@
 #include "dds/sub/TDataReader.hpp"
 #include "mc_chart.h"
 #include "mc_loop.h"
+#include "qboxlayout.h"
 #include "qgroupbox.h"
 #include "qtablewidget.h"
 #include "qtimer.h"
@@ -15,6 +16,7 @@
 #include "Dialog_visualization_config.h"
 #include "mc_legend.h"
 
+#include <QLabel>
 class mc_loop_entry
 {
 public:
@@ -39,8 +41,13 @@ public:
     std::string CapturedIssues_channel_id;
     Dialog_loopselection lsd;
     Dialog_visualization_config vsd;
-    std::vector<mc_legend*> legends;
-    void mapping_UI_reset();
+    QList<QHBoxLayout*> RTO_wave_list;
+    QList<mc_chart*> RTO_chart_list;
+    QList<QWidget*> RTO_option_list;
+    QList<QLabel*> RTO_minus_list;
+    QList<QLabel*> RTO_name_list;
+    void on_series_pressed(std::string name, std::string model, std::string mdccode,
+                           std::string y_min, std::string y_max, std::string unit, std::string datasource);
 
 protected:
     void showEvent(QShowEvent *event) override;
@@ -112,7 +119,11 @@ private:
                                mc_chart *chart,
                                QList<std::vector<float>> &wave_list,
                                QList<uint64_t> &time_list);
+    void SetWavePanelSlots();
 private slots:
+    void on_add_btn_clicked();
+    void on_del_btn_clicked();
+    void on_enlarge_btn_clicked();
     void update_triggered();
     void chart_update_triggered();
     void on_series_pressed(std::string name, std::string model, std::string mdccode,

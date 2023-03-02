@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <stdint.h>
+#include "Common.h"
 
 namespace Ui {
 class Dialog_wave_selection;
@@ -18,11 +19,11 @@ public:
     explicit Dialog_wave_selection(QWidget *parent = nullptr);
     ~Dialog_wave_selection();
     void clear_tabs();
-    void add_tab(const char* tab_name, std::vector<std::string>* items, uint8_t has_loop);
+    void add_tab(const char* tab_name, std::vector<stDisplayItems>* items, uint8_t has_loop);
 
     std::string selected_tab_name;
     std::string selected_item;
-
+    int m_selected_index;
 private slots:
     void clicked();
 

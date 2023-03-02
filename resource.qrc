@@ -34,6 +34,7 @@
         <file>controls_btn0.png</file>
         <file>minus_icon.png</file>
         <file>add_icon.png</file>
+        <file>Enlarge.png</file>
     </qresource>
     <qresource prefix="/">
         <file>wav/warning.wav</file>

@@ -1,5 +1,6 @@
 #ifndef MC_WAVEPANEL_ADD_H
 #define MC_WAVEPANEL_ADD_H
+#include "mc_chart.h"
 
 #include <QWidget>
 

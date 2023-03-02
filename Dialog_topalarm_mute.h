@@ -28,6 +28,9 @@ private slots:
 
 private:
     Ui::Dialog_topalarm_mute *ui;
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+
 };
 
 #endif // DIALOG_TOPALARM_MUTE_H

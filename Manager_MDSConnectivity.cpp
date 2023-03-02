@@ -26,7 +26,7 @@ void Manager_MDSConnectivity::step()
     if(Common::get_elapsed_time(current_time1, last_query_time1) > 60000)
     {
         last_query_time1 = current_time1;
-        qDebug()<<"running time ="<<time_running<<"m=======================================================";
+        //qDebug()<<"running time ="<<time_running<<"m=======================================================";
         ++time_running;
     }
     if(!common->is_server)
