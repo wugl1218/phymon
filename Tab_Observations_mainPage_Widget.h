@@ -47,7 +47,7 @@ public:
     QList<QLabel*> RTO_minus_list;
     QList<QLabel*> RTO_name_list;
     void mapping_UI_reset();
-    std::vector<mc_legend> legends;
+    std::vector<mc_legend*> legends;
     void on_series_pressed(std::string name, std::string model, std::string mdccode,
                            std::string y_min, std::string y_max, std::string unit, std::string datasource);
 

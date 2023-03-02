@@ -1218,7 +1218,7 @@ void Tab_Observations_historyPage_Widget::on_MenuButton_clicked()
     common->select_menu.exec();
     int i = common->select_menu.get_btn();
     auto it=common->observation_main_page->legends[i];
-    set_title_text(it.get_mdccode(),
+    set_title_text(it->get_mdccode(),
                    it->get_model(),
                    it->get_name(),
                    it->get_y_min(),
