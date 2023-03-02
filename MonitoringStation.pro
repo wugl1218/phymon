@@ -161,9 +161,9 @@ INCLUDEPATH += $$PWD/rapidjson \
     $$PWD/../miot/UtilsPlugin
 
 
-LIBS += -L/rti_connext_dds-6.1.0/lib/x64Linux4gcc7.3.0 -lnddscpp2 -lnddsc -lnddscore -ldl -lm -lpthread \
+LIBS += -L/opt/rti_connext_dds-6.1.0/lib/x64Linux4gcc7.3.0 -lnddscpp2 -lnddsc -lnddscore -ldl -lm -lpthread \
         -L/opt/dds_collector/lib -lpluginmanager \
-        -L/couchbase-lite-C/build/output/lib/x86_64-linux-gnu -lcblite
+        -L/opt/couchbase-lite-C/build/output/lib/x86_64-linux-gnu -lcblite
 
 RESOURCES += \
     resource.qrc
