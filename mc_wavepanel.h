@@ -13,21 +13,6 @@
 #include "dds/sub/TDataReader.hpp"
 #include <QLabel>
 
-#define MAX_WAVE 6
-
-struct dbDisplayItems
-{
-    std::string model;
-    std::string display_desc;
-    std::string mdc_code;
-    std::string record_id;
-    int y_max;
-    int y_min;
-    int y_step;
-    int display_index;
-    int visibility;
-};
-
 class mc_wavepanel : public QWidget
 {
     Q_OBJECT
@@ -77,7 +62,6 @@ public:
     };
     void mc_add_clicked(mc_wavepanel* wp);
     void mc_del_clicked(int index);
-    void mc_enlarge_clicked(int inxex);
 
 signals:
 
@@ -94,7 +78,8 @@ private:
     bool m_bDrawlayout;
     void render_controls_btn();
     void push_add_item();
-    std::vector<dbDisplayItems> CheckNurseDB();
+    std::vector<dbDisplayItems> CheckNurseDB(bool bListAll = false);
+    bool IsRepeat(dbDisplayItems item);
 private slots:
     void controls_clicked();
     void UpdateWave();

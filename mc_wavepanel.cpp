@@ -27,6 +27,7 @@ mc_wavepanel::mc_wavepanel(QWidget *parent)
 }
 void mc_wavepanel::WriteNurseDB(stDisplayItems item, bool bDel)
 {
+    int visibility = bDel ? 0:1;
     Common* common = Common::instance();
     rapidjson::Document d;
     d.SetObject();
@@ -38,19 +39,18 @@ void mc_wavepanel::WriteNurseDB(stDisplayItems item, bool bDel)
     d.AddMember("y_max", rapidjson::Value().SetString(item.y_max.c_str(), d.GetAllocator()), d.GetAllocator());
     d.AddMember("y_min", rapidjson::Value().SetString(item.y_min.c_str(), d.GetAllocator()), d.GetAllocator());
     d.AddMember("y_step", rapidjson::Value().SetString(item.y_step.c_str(), d.GetAllocator()), d.GetAllocator());
-    d.AddMember("visibility", 1, d.GetAllocator());
+    d.AddMember("visibility", visibility, d.GetAllocator());
     rapidjson::StringBuffer buffer;
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
     d.Accept(writer);
-    std::string dummy, dummy2;
-    if (item.record_id.length())
-        dummy2 = item.record_id;
-    common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), dummy2, dummy);
+    std::string dummy;
+    common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), item.record_id, dummy);
     //qDebug()<<"*** WriteNurseDB saveMutableDocument error="<< dummy.c_str()<< " desc="<<item.display_desc.c_str()<<" record_id="<<item.record_id.c_str();
     if (bDel && item.record_id.length())
     {
         int64_t now = time(NULL);
-        common->cbl->setDocExpiration(common->display_items_db, item.record_id, now*1000, dummy);
+        common->cbl->setDocExpiration(common->display_items_db, item.record_id, now * 1000, dummy);
+        qDebug()<<"====dummy="<<dummy.c_str();
     }
 }
 void mc_wavepanel::add_clicked()
@@ -70,7 +70,7 @@ void mc_wavepanel::add_clicked()
         bool existed = false;
         for (auto picked: m_nurse_items)
         {
-            if (m_DeviceName == picked.model && picked.display_desc == "loops")
+            if (m_DeviceName == picked.model && picked.display_desc == LOOPS_NAME)
             {
                 loops = (picked.visibility) ? 0:1;
                 loop_item.record_id = picked.record_id;
@@ -104,7 +104,18 @@ void mc_wavepanel::add_clicked()
     printf("selected item=%s, index=%d\n", menu.selected_item.c_str(), menu.m_selected_index);
     if (menu.m_selected_index < 0 || menu.m_selected_index > (int)items.size())
         return;
-    WriteNurseDB(unselect_items[menu.m_selected_index]);
+
+    int repeat = 0;
+    for (int i = 0; i < (int) m_nurse_items.size(); i++)
+    {
+       if (unselect_items[menu.m_selected_index].display_desc == m_nurse_items[i].display_desc)
+           repeat++;
+    }
+    if (repeat < 2)
+        WriteNurseDB(unselect_items[menu.m_selected_index]);
+    else
+        qDebug()<<"====repeat:"<< unselect_items[menu.m_selected_index].display_desc.c_str();
+
     push_add_item();
     Common* common = Common::instance();
     if(m_nurse_items.size()%2==1)
@@ -159,23 +170,6 @@ void mc_wavepanel::mc_del_clicked(int index)
         common->observation_main_page->ui->option_loop->setStyleSheet("background-color: rgb(9, 58, 115);");
     }
 }
-void mc_wavepanel::mc_enlarge_clicked(int index)
-{
-    Common* common = Common::instance();
-    char buf[10];
-    std::string min;
-    std::string max;
-    min = QString::number(m_nurse_items[index].y_min).toStdString();
-    max = QString::number(m_nurse_items[index].y_max).toStdString();
-    qDebug()<<"====mc_enlarge_clicked index="<<index;
-  /*  common->observation_main_page->on_series_pressed(m_nurse_items[index].display_desc,
-                      m_nurse_items[index].model,
-                      m_nurse_items[index].mdc_code,
-                      min,
-                      max,
-                      "",
-                      "RTObservation");*/
-}
 void mc_wavepanel::push_add_item()
 {
     bool loops = false;
@@ -183,7 +177,7 @@ void mc_wavepanel::push_add_item()
     for (auto item: m_nurse_items)
         if (item.display_desc == LOOPS_NAME)
             loops = true;
-    qDebug()<<"=====m_nurse_items.size="<< m_nurse_items.size()<<" loops="<<loops;
+    qDebug()<<"=====m_nurse_items.size="<< m_nurse_items.size()<<" loops="<<loops<< " m_WaveRtItems="<<m_WaveRtItems.size();
 /*    int total = m_nurse_items.size();
     dbDisplayItems virtural_item;
     for (int i = 0; i < total;i++)
@@ -229,8 +223,17 @@ void mc_wavepanel::push_add_item()
         m_loop_frame->setHidden(0);
     else
         m_loop_frame->setHidden(1);
-
-    if (m_nurse_items.size() >=  MAX_WAVE || (m_nurse_items.size() == 4 && loops))
+   if (m_nurse_items.size() > m_WaveRtItems.size())
+    {
+        if (m_DeviceName == "Savina" || m_DeviceName == "Savina 300")
+        {
+            if (loops)
+                m_add_frame->setHidden(1);
+            else
+                m_add_frame->setHidden(0);
+        }
+    }
+    else if (m_nurse_items.size() >=  MAX_WAVE || (m_nurse_items.size() == MAX_WAVE - 2 && loops))
         m_add_frame->setHidden(1);
     else
         m_add_frame->setHidden(0);
@@ -275,28 +278,29 @@ void mc_wavepanel::push_add_item()
         m_rtchart_time_list[i]<<time;
     }
 }
-std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
+bool mc_wavepanel::IsRepeat(dbDisplayItems item)
+{
+    for (auto picked:m_nurse_items)
+        if (item.display_desc == picked.display_desc)
+            return true;
+    return false;
+}
+std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB(bool bListAll)
 {
     Common* common = Common::instance();
-    dbDisplayItems item;
+    dbDisplayItems item, loops_item;
     std::string dummy;//ppee
-    std::string sql1 = "SELECT meta().id,visibility FROM _ WHERE data_source='RTO'";
+
+/*  std::string sql1 = "SELECT meta().id FROM _ WHERE data_source='RTO'";
     cbl::ResultSet results3 = common->cbl->queryDocuments(common->display_items_db, sql1,dummy);
     for(auto& result: results3)
     {
-        rapidjson::Document d;
-        d.SetObject();
-        d.AddMember("visibility", 0, d.GetAllocator());
-        rapidjson::StringBuffer buffer;
-        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-        d.Accept(writer);
-        std::string dummy, dummy2;
-        dummy2=result.valueAtIndex(0).asstring();
-        common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(),dummy2, dummy);
+        common->cbl->purgeDocument(common->display_items_db,result.valueAtIndex(0).asstring(),dummy);
     }
+*/
     std::string sql = "SELECT display_desc, y_max, y_min, model, y_step, display_index, visibility, mdc_code, meta().id FROM _ WHERE data_source='RTO' AND patient_id='";
     sql.append(common->patient_id);
-    sql.append("'");
+    sql.append("' AND visibility = 1 AND meta().expiration IS NOT VALUED");
     cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
 
     int error=0;
@@ -306,7 +310,19 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
         fflog_out(common->log,dummy.c_str());error++;
     }
     m_nurse_items.clear();
-    int i =0;
+    bool loops = false;
+
+    if (bListAll)
+    {
+        int i = 0;
+        for(auto& result: results2)
+        {
+            qDebug()<<"=====["<<i<<"] desc="<<result.valueAtIndex(0).asstring().c_str();
+            i++;
+        }
+        qDebug()<<"========Check Timer total="<<i;
+        return m_nurse_items;
+    }
     for(auto& result: results2)
     {
         item.display_desc = result.valueAtIndex(0).asstring();
@@ -320,9 +336,30 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
         item.visibility = result.valueAtIndex(6).asInt();
         item.mdc_code = result.valueAtIndex(7).asstring();
         item.record_id = result.valueAtIndex(8).asstring();
-        m_nurse_items.push_back(item);
-        ++i;
+        if (item.display_desc == LOOPS_NAME)
+        {
+            loops_item = item;
+            loops = true;
+            continue;
+        }
+        if (loops)
+        {
+            if (m_nurse_items.size() < MAX_WAVE - 2)
+                if (!IsRepeat(item))
+                    m_nurse_items.push_back(item);
+        }
+        else if (m_nurse_items.size() < MAX_WAVE)
+            if (!IsRepeat(item))
+                m_nurse_items.push_back(item);
+        if (loops && m_nurse_items.size() == MAX_WAVE - 2)
+            break;
+        if (!loops && m_nurse_items.size() == MAX_WAVE)
+            break;
     }
+    if (loops && m_nurse_items.size() <= MAX_WAVE - 2)
+        m_nurse_items.push_back(loops_item);
+    for(int i = 0; i < (int)m_nurse_items.size();i++)
+        qDebug()<<"====CheckNurseDB i="<<i<<" "<<m_nurse_items[i].display_desc.c_str();
     return m_nurse_items;
 }
 void mc_wavepanel::controls_clicked()
@@ -347,7 +384,6 @@ void mc_wavepanel::UpdateWave()
     if (!m_DisplayItems.size())
         QueryDisplayItems();
     Common* common = Common::instance();
-
     if (!m_bDrawlayout && common->patient_id.size())
     {
         push_add_item();
@@ -357,6 +393,8 @@ void mc_wavepanel::UpdateWave()
     {
         for (int i = 0; i < (int) m_nurse_items.size() && i < MAX_WAVE;i++)
         {
+            if (m_nurse_items[i].display_desc == LOOPS_NAME)
+                continue;
             add_wave_to_chart_RTO(0,
                         m_DeviceName, m_nurse_items[i].mdc_code,
                         common->rtobservation_wave_reader,

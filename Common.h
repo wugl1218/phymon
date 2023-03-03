@@ -33,6 +33,8 @@
 #define VELOCITY_MULTIPLIER 0.1
 #define DEFAULT_FRICTION 0.35
 #define LINE_BREAK_DELTA 3000
+#define MAX_WAVE 6
+#define LOOPS_NAME      "loops"
 
 class MainDialog;
 class Tab_Devices_Widget;
@@ -52,6 +54,19 @@ struct stDisplayItems
     std::string y_min;
     std::string y_step;
     std::string record_id;
+};
+
+struct dbDisplayItems
+{
+    std::string model;
+    std::string display_desc;
+    std::string mdc_code;
+    std::string record_id;
+    int y_max;
+    int y_min;
+    int y_step;
+    int display_index;
+    int visibility;
 };
 
 class mc_entry

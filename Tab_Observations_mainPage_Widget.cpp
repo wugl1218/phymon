@@ -255,6 +255,41 @@ void Tab_Observations_mainPage_Widget::SetWavePanelSlots()
     connect(ui->chart_5, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked()));
     ui->chart_6->setProperty("index", 5);
     connect(ui->chart_6, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked()));
+    connect(ui->setup_btn, SIGNAL(clicked()), this, SLOT(on_setup_btn_clicked()));
+    m_setup = false;
+}
+void Tab_Observations_mainPage_Widget::on_setup_btn_clicked()
+{
+    std::vector<dbDisplayItems> item = ui->wavePanel->m_nurse_items;
+    int j = 0;
+    for (int i = 0; i < (int)item.size();i++)
+    {
+
+        if (m_setup)
+        {
+            if (item[i].display_desc == LOOPS_NAME)
+            {
+                ui->loop_minus_2->hide();
+                continue;
+            }
+            RTO_minus_list[j]->hide();
+            ui->add_btn->hide();
+            qDebug()<<"===============Disable";
+        }
+        else
+        {
+            if (item[i].display_desc == LOOPS_NAME)
+            {
+                ui->loop_minus_2->show();
+                continue;
+            }
+            RTO_minus_list[j]->show();
+            ui->add_btn->show();
+            qDebug()<<"=================Enable";
+        }
+        j++;
+    }
+    m_setup = m_setup ? false:true;
 }
 void Tab_Observations_mainPage_Widget::on_add_btn_clicked()
 {
@@ -272,7 +307,20 @@ void Tab_Observations_mainPage_Widget::on_enlarge_btn_clicked()
 {
     mc_btn_Clickable* b = (mc_btn_Clickable*)sender();
     int index = b->property("index").value<int>();
-    ui->wavePanel->mc_enlarge_clicked(index);
+    if (index > MAX_WAVE)
+        return;
+    dbDisplayItems item = ui->wavePanel->m_nurse_items[index];
+    std::string min;
+    std::string max;
+    min = QString::number(item.y_min).toStdString();
+    max = QString::number(item.y_max).toStdString();
+    on_series_pressed(item.display_desc,
+                      item.model,
+                      item.mdc_code,
+                      min,
+                      max,
+                      "",
+                      "RTObservation");
 }
 void Tab_Observations_mainPage_Widget::visualizetion_clicked()
 {
