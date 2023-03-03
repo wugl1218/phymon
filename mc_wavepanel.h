@@ -45,6 +45,7 @@ public:
     QList<uint64_t> m_rtchart_time_list[MAX_WAVE];
     bool m_setup;
     mc_btn_Clickable *m_loop_minus;
+    mc_btn_Clickable *m_add_btn;
 
 
     void add_wave_to_chart_RTO(int series_index, std::string model, std::string mdc_code,
@@ -65,8 +66,12 @@ public:
     };
     void mc_add_clicked(mc_wavepanel* wp);
     void mc_del_clicked(int index);
-    void add_btn_control();
-    void set_loop_minus(mc_btn_Clickable *loop_minus){m_loop_minus = loop_minus;};
+    void add_frame_control();
+    void set_loop_minus(mc_btn_Clickable *loop_minus, mc_btn_Clickable *add_btn)
+    {
+        m_loop_minus = loop_minus;
+        m_add_btn = add_btn;
+    };
 signals:
 
 private:

@@ -170,7 +170,7 @@ void mc_wavepanel::mc_del_clicked(int index)
         common->observation_main_page->ui->option_loop->setStyleSheet("background-color: rgb(9, 58, 115);");
     }
 }
-void mc_wavepanel::add_btn_control()
+void mc_wavepanel::add_frame_control()
 {
     bool loops = false;
     //CheckNurseDB();
@@ -246,10 +246,13 @@ void mc_wavepanel::push_add_item()
         m_loop_frame->setHidden(1);
     m_loop_minus->setHidden(1);
 
-    if (m_nurse_items.size())
-        m_add_frame->setHidden(1);
-    else
+    if (m_nurse_items.size() && loops)
+    {
         m_add_frame->setHidden(0);
+        m_add_btn->hide();//setHidden(1);
+    }
+    else
+        m_add_frame->show();//setHidden(0);
 
     for (int i = 0; i < m_main_item->count();i++)       //clear all stretch
         m_main_item->setStretch(i,0);

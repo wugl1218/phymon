@@ -242,7 +242,7 @@ void Tab_Observations_mainPage_Widget::SetWavePanelSlots()
     connect(ui->minus_6, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
     ui->loop_minus_2->setProperty("index", 6);
     connect(ui->loop_minus_2, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
-    ui->wavePanel->set_loop_minus(ui->loop_minus_2);
+    ui->wavePanel->set_loop_minus(ui->loop_minus_2, ui->add_btn);
 
     ui->chart_1->setProperty("index", 0);
     connect(ui->chart_1, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked()));
@@ -262,7 +262,7 @@ void Tab_Observations_mainPage_Widget::on_setup_btn_clicked()
 {
     std::vector<dbDisplayItems> item = ui->wavePanel->m_nurse_items;
     int j = 0;
-    ui->wavePanel->add_btn_control();
+    ui->wavePanel->add_frame_control();
     for (int i = 0; i < (int)item.size();i++)
     {
         if (ui->wavePanel->m_setup)
@@ -270,6 +270,7 @@ void Tab_Observations_mainPage_Widget::on_setup_btn_clicked()
             if (item[i].display_desc == LOOPS_NAME)
             {
                 ui->loop_minus_2->hide();
+                ui->add_btn->hide();
                 continue;
             }
             RTO_minus_list[j]->hide();
@@ -280,6 +281,7 @@ void Tab_Observations_mainPage_Widget::on_setup_btn_clicked()
             if (item[i].display_desc == LOOPS_NAME)
             {
                 ui->loop_minus_2->show();
+                ui->add_btn->show();
                 continue;
             }
             RTO_minus_list[j]->show();
