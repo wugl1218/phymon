@@ -149,10 +149,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 INCLUDEPATH += $$PWD/rapidjson \
-    /home/agooda/rti_connext_dds-6.1.0/include \
-    /home/agooda/rti_connext_dds-6.1.0/include/ndds \
-    /home/agooda/rti_connext_dds-6.1.0/include/ndds/hpp \
-    /home/agooda/couchbase-lite-C/build/output/include \
+    /opt/rti_connext_dds-6.1.0/include \
+    /opt/rti_connext_dds-6.1.0/include/ndds \
+    /opt/rti_connext_dds-6.1.0/include/ndds/hpp \
+    /opt/couchbase-lite-C/build/output/include \
     $$PWD/../miot/CBLPlugin \
     $$PWD/../miot/DDSPlugin \
     $$PWD/../miot/FHIRPlugin \
@@ -161,9 +161,9 @@ INCLUDEPATH += $$PWD/rapidjson \
     $$PWD/../miot/UtilsPlugin
 
 
-LIBS += -L/home/agooda/rti_connext_dds-6.1.0/lib/x64Linux4gcc7.3.0 -lnddscpp2 -lnddsc -lnddscore -ldl -lm -lpthread \
-        -L/home/agooda/opt/dds_collector/lib -lpluginmanager \
-        -L/home/agooda/couchbase-lite-C/build/output/lib/x86_64-linux-gnu -lcblite
+LIBS += -L/opt/rti_connext_dds-6.1.0/lib/x64Linux4gcc7.3.0 -lnddscpp2 -lnddsc -lnddscore -ldl -lm -lpthread \
+        -L/opt/dds_collector/lib -lpluginmanager \
+        -L/opt/couchbase-lite-C/build/output/lib/x86_64-linux-gnu -lcblite
 
 RESOURCES += \
     resource.qrc

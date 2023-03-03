@@ -686,6 +686,11 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
         d.AddMember("checked", checked, d.GetAllocator());
         d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
         d.AddMember("expired", 0, d.GetAllocator());
+
+
+
+        d.AddMember("color", 0, d.GetAllocator());
+
         rapidjson::Value v;
         v.SetObject();
         v.AddMember("sec", ts.tv_sec, d.GetAllocator());
@@ -715,6 +720,8 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
             d.AddMember("display_index", cs.order, d.GetAllocator());
             d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("expired", 0, d.GetAllocator());
+            d.AddMember("color", 0, d.GetAllocator());
+
             rapidjson::Value v;
             v.SetObject();
             v.AddMember("sec", ts.tv_sec, d.GetAllocator());
