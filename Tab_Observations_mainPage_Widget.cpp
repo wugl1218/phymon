@@ -267,25 +267,23 @@ void Tab_Observations_mainPage_Widget::on_setup_btn_clicked()
     {
         if (ui->wavePanel->m_setup)
         {
+            ui->add_btn->hide();
             if (item[i].display_desc == LOOPS_NAME)
             {
                 ui->loop_minus_2->hide();
-                ui->add_btn->hide();
                 continue;
             }
             RTO_minus_list[j]->hide();
-            ui->add_btn->hide();
         }
         else
         {
+            ui->add_btn->show();
             if (item[i].display_desc == LOOPS_NAME)
             {
                 ui->loop_minus_2->show();
-                ui->add_btn->show();
                 continue;
             }
             RTO_minus_list[j]->show();
-            ui->add_btn->show();
         }
         j++;
     }

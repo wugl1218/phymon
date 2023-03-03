@@ -249,10 +249,10 @@ void mc_wavepanel::push_add_item()
     if (m_nurse_items.size() && loops)
     {
         m_add_frame->setHidden(0);
-        m_add_btn->hide();//setHidden(1);
+        m_add_btn->hide();
     }
     else
-        m_add_frame->show();//setHidden(0);
+        m_add_frame->show();
 
     for (int i = 0; i < m_main_item->count();i++)       //clear all stretch
         m_main_item->setStretch(i,0);
