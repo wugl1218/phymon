@@ -10,6 +10,8 @@
 #define WAVE_TIMER      50     //no matter the value is, we can only read 25 data from topic
 #define ADD_BTN_POS     MAX_WAVE + 1
 #define LOOPS_NAME      "loops"
+#define MC_CHART_INTERVAL 10.5*1000      //單位千分之一秒
+
 
 mc_wavepanel::mc_wavepanel(QWidget *parent)
     : QWidget{parent},
@@ -250,9 +252,9 @@ void mc_wavepanel::push_add_item()
         if (m_nurse_items[i].display_desc == LOOPS_NAME)
             continue;
 
-        std::string temp = m_nurse_items[i].display_desc + "(" + m_nurse_items[i].model + ")";
+        std::string temp = m_nurse_items[i].display_desc + "\n(" + m_nurse_items[i].model + ")";
         m_RTO_name_list[i]->setText(temp.c_str());
-
+        m_RTO_name_list[i]->setStyleSheet("color:rgb(255,255,255);font-size:16pt");
         mc_chart *pChart = m_RTO_chart_list[i];
         pChart->clear_points(0);
         pChart->set_axis_visible(1);
@@ -278,12 +280,12 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
     Common* common = Common::instance();
     dbDisplayItems item;
     std::string dummy;//ppee
-    std::string sql1 = "SELECT meta().id FROM _ WHERE data_source='RTO'";
-    cbl::ResultSet results3 = common->cbl->queryDocuments(common->display_items_db, sql1,dummy);
-    for(auto& result: results3)
-    {
-        common->cbl->purgeDocument(common->display_items_db,result.valueAtIndex(0).asstring(),dummy);
-    }
+//    std::string sql1 = "SELECT meta().id FROM _ WHERE data_source='RTO'";
+//    cbl::ResultSet results3 = common->cbl->queryDocuments(common->display_items_db, sql1,dummy);
+//    for(auto& result: results3)
+//    {
+//        common->cbl->purgeDocument(common->display_items_db,result.valueAtIndex(0).asstring(),dummy);
+//    }
     std::string sql = "SELECT display_desc, y_max, y_min, model, y_step, display_index, visibility, mdc_code, meta().id FROM _ WHERE data_source='RTO' AND patient_id='";
     sql.append(common->patient_id);
     sql.append("'");
@@ -652,7 +654,7 @@ void mc_wavepanel::add_wave_to_chart_RTO(int series_index, std::string model, st
             if(t > chart->get_view_range_max_x())
             {
                 chart->set_view_range_max_x(t);
-                chart->set_view_range_min_x(t-0.25*60*1000);
+                chart->set_view_range_min_x(t-MC_CHART_INTERVAL);
             }
             if(vals.size() > 0)
             {

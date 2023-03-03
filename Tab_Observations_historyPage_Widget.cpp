@@ -1106,48 +1106,48 @@ void Tab_Observations_historyPage_Widget::showEvent(QShowEvent *event)
     reposition = 1;
     //common->history_model = "Savina";
     //common->history_mdccode = "MDC_PRESS_AWAY";
-    if(common->history_model.compare("Savina") == 0)
-    {
-        if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(60.0f);
-            ui->chart->set_view_range_min_y(0.0f);
-            ui->chart->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
-        }
-        else if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(100.0f);
-            ui->chart->set_view_range_min_y(-100.0f);
-            ui->chart->set_series_color(0, QColor(0x5c, 0xe5, 0x5f));
-        }
-        else if(common->history_mdccode.compare("FOYA_MEASURED_VolumeInspirationBegan") == 0)
-        {
-            ui->chart->set_view_range_max_y(1000);
-            ui->chart->set_view_range_min_y(0);
-            ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
-        }
-    }
-    else if(common->history_model.compare("Savina 300") == 0)
-    {
-        if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(60.0f);
-            ui->chart->set_view_range_min_y(-5.0f);
-            ui->chart->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
-        }
-        else if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(100.0f);
-            ui->chart->set_view_range_min_y(-100.0f);
-            ui->chart->set_series_color(0, QColor(0x5c, 0xe5, 0x5f));
-        }
-        else if(common->history_mdccode.compare("FOYA_MEASURED_VolumeInspirationBegan") == 0)
-        {
-            ui->chart->set_view_range_max_y(1000);
-            ui->chart->set_view_range_min_y(0);
-            ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
-        }
-    }
+//    if(common->history_model.compare("Savina") == 0)
+//    {
+//        if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
+//        {
+//            ui->chart->set_view_range_max_y(60.0f);
+//            ui->chart->set_view_range_min_y(0.0f);
+//            ui->chart->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
+//        }
+//        else if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
+//        {
+//            ui->chart->set_view_range_max_y(100.0f);
+//            ui->chart->set_view_range_min_y(-100.0f);
+//            ui->chart->set_series_color(0, QColor(0x5c, 0xe5, 0x5f));
+//        }
+//        else if(common->history_mdccode.compare("FOYA_MEASURED_VolumeInspirationBegan") == 0)
+//        {
+//            ui->chart->set_view_range_max_y(1000);
+//            ui->chart->set_view_range_min_y(0);
+//            ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
+//        }
+//    }
+//    else if(common->history_model.compare("Savina 300") == 0)
+//    {
+//        if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
+//        {
+//            ui->chart->set_view_range_max_y(60.0f);
+//            ui->chart->set_view_range_min_y(-5.0f);
+//            ui->chart->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
+//        }
+//        else if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
+//        {
+//            ui->chart->set_view_range_max_y(100.0f);
+//            ui->chart->set_view_range_min_y(-100.0f);
+//            ui->chart->set_series_color(0, QColor(0x5c, 0xe5, 0x5f));
+//        }
+//        else if(common->history_mdccode.compare("FOYA_MEASURED_VolumeInspirationBegan") == 0)
+//        {
+//            ui->chart->set_view_range_max_y(1000);
+//            ui->chart->set_view_range_min_y(0);
+//            ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
+//        }
+//    }
     ui->chart->clear_points(0);
     ui->chart->clear_selection();
     pts.clear();
@@ -1270,68 +1270,6 @@ void Tab_Observations_historyPage_Widget::on_MenuButton_clicked()
                    it->get_unit(),
                    it->get_datasource());
     ui->chart->clear_points(0);
-
-
-/*    if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
-        return;
-    common->history_mdccode = "MDC_FLOW_AWAY";
-    common->history_datasource="RTObservation";
-
-    //update_timer.start(1000);
-    reposition = 1;
-    if(common->history_model.compare("Savina") == 0)
-    {
-        if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(60.0f);
-            ui->chart->set_view_range_min_y(0.0f);
-            ui->chart->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
-        }
-        else if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(100.0f);
-            ui->chart->set_view_range_min_y(-100.0f);
-            ui->chart->set_series_color(0, QColor(0x5c, 0xe5, 0x5f));
-        }
-        else if(common->history_mdccode.compare("FOYA_MEASURED_VolumeInspirationBegan") == 0)
-        {
-            ui->chart->set_view_range_max_y(1000);
-            ui->chart->set_view_range_min_y(0);
-            ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
-        }
-    }
-    else if(common->history_model.compare("Savina 300") == 0)
-    {
-        if(common->history_mdccode.compare("MDC_PRESS_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(60.0f);
-            ui->chart->set_view_range_min_y(-5.0f);
-            ui->chart->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
-        }
-        else if(common->history_mdccode.compare("MDC_FLOW_AWAY") == 0)
-        {
-            ui->chart->set_view_range_max_y(100.0f);
-            ui->chart->set_view_range_min_y(-100.0f);
-            ui->chart->set_series_color(0, QColor(0x5c, 0xe5, 0x5f));
-        }
-        else if(common->history_mdccode.compare("FOYA_MEASURED_VolumeInspirationBegan") == 0)
-        {
-            ui->chart->set_view_range_max_y(1000);
-            ui->chart->set_view_range_min_y(0);
-            ui->chart->set_series_color(0, QColor(0xce, 0x5c, 0x00));
-        }
-    }
-    ui->label->setText(common->history_model.c_str());
-    ui->chart->clear_points(0);
-    ui->chart->clear_selection();
-    pts.clear();
-    right_locked = 1;
-    uint64_t now = time(NULL);
-    now*=1000;
-    ui->chart->set_view_range_max_x(now);
-    ui->chart->set_view_range_min_x(now-60*1000);
-    ui->chart->set_custom_right_bound(now);
-    ui->chart->set_custom_left_bound(now-180*1000);*/
 }
 
 
