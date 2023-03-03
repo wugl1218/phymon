@@ -17,7 +17,6 @@ mc_wavepanel::mc_wavepanel(QWidget *parent)
     m_DeviceName = "Savina";
     controls_on = 1;
     m_Timer.setInterval(WAVE_TIMER);
-    m_DBTimer = 0;
     connect(&m_Timer, SIGNAL(timeout()), this, SLOT(UpdateWave()));
     m_Timer.start();
     m_RtLowerCount = m_ObLowerCount = 0;
@@ -47,7 +46,8 @@ void mc_wavepanel::WriteNurseDB(stDisplayItems item, bool bDel)
     if (bDel && item.record_id.length())
     {
         int64_t now = time(NULL);
-        common->cbl->setDocExpiration(common->display_items_db, item.record_id, now, dummy);
+        common->cbl->setDocExpiration(common->display_items_db, item.record_id, now * 1000, dummy);
+        qDebug()<<"====dummy="<<dummy.c_str();
     }
 }
 void mc_wavepanel::add_clicked()
@@ -220,8 +220,17 @@ void mc_wavepanel::push_add_item()
         m_loop_frame->setHidden(0);
     else
         m_loop_frame->setHidden(1);
-    if (m_nurse_items.size() >=  MAX_WAVE || m_nurse_items.size() >= m_WaveRtItems.size() ||
-            (m_nurse_items.size() == MAX_WAVE - 2 && loops))
+   if (m_nurse_items.size() > m_WaveRtItems.size())
+    {
+        if (m_DeviceName == "Savina" || m_DeviceName == "Savina 300")
+        {
+            if (loops)
+                m_add_frame->setHidden(1);
+            else
+                m_add_frame->setHidden(0);
+        }
+    }
+    else if (m_nurse_items.size() >=  MAX_WAVE || (m_nurse_items.size() == MAX_WAVE - 2 && loops))
         m_add_frame->setHidden(1);
     else
         m_add_frame->setHidden(0);
@@ -371,13 +380,7 @@ void mc_wavepanel::UpdateWave()
     if (!m_DisplayItems.size())
         QueryDisplayItems();
     Common* common = Common::instance();
-/*  if (common->patient_id.size() && m_DBTimer % 20 == 0)
-    {
-        CheckNurseDB(true);
-        m_DBTimer = 0;
-    }
-    m_DBTimer++;
-*/  if (!m_bDrawlayout && common->patient_id.size())
+    if (!m_bDrawlayout && common->patient_id.size())
     {
         push_add_item();
         m_bDrawlayout = true;
