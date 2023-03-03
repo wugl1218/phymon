@@ -1479,18 +1479,18 @@ void Tab_Observations_mainPage_Widget::on_ref_btn_toggled(bool checked)
     if(checked)
     {
         set_next_loop_as_ref = 1;
-        //set_checked(ui->ref_btn, 1);
-        //ui->ref_btn->setStyleSheet(common->css.Checked_ButtonStyle);
+        set_checked(ui->ref_btn, 1);
+        ui->ref_btn->setStyleSheet(common->css.Checked_ButtonStyle);
         is_ref =1;
 
     }
     else
     {
-        //set_checked(ui->ref_btn, 0);
+        set_checked(ui->ref_btn, 0);
         set_next_loop_as_ref = 0;
         ui->loop1->clear_ref_points();
         ui->loop2->clear_ref_points();
-        //ui->ref_btn->setStyleSheet(common->css.unChecked_ButtonStyle);
+        ui->ref_btn->setStyleSheet(common->css.unChecked_ButtonStyle);
         is_ref =0;
         ref_loop_snapshot.clear();
     }
@@ -1504,12 +1504,12 @@ void Tab_Observations_mainPage_Widget::on_cap_btn_toggled(bool checked)
     {
 
         set_next_loop_as_cap = 1;
-        //set_checked(ui->cap_btn, 1);
-        //ui->ref_btn->setEnabled(false);
-        //if(is_ref)
-        //    ui->ref_btn->setStyleSheet(common->css.Enabled_Checked_ButtonStyle);
-        //else
-        //    ui->ref_btn->setStyleSheet(common->css.Enabled_unChecked_ButtonStyle);
+        set_checked(ui->cap_btn, 1);
+        ui->ref_btn->setEnabled(false);
+        if(is_ref)
+            ui->ref_btn->setStyleSheet(common->css.Enabled_Checked_ButtonStyle);
+        else
+            ui->ref_btn->setStyleSheet(common->css.Enabled_unChecked_ButtonStyle);
         is_cap =1;
 
 
@@ -1543,16 +1543,16 @@ void Tab_Observations_mainPage_Widget::on_cap_btn_toggled(bool checked)
     }
     else
     {
-        //ui->ref_btn->setEnabled(true);
-        //set_checked(ui->cap_btn, 0);
+        ui->ref_btn->setEnabled(true);
+        set_checked(ui->cap_btn, 0);
         set_next_loop_as_cap = 0;
         captured = 0;
         ui->loop1->clear_points();
         ui->loop2->clear_points();
-        //if(is_ref)
-        //    ui->ref_btn->setStyleSheet(common->css.Checked_ButtonStyle);
-        //else
-        //    ui->ref_btn->setStyleSheet(common->css.unChecked_ButtonStyle);
+        if(is_ref)
+            ui->ref_btn->setStyleSheet(common->css.Checked_ButtonStyle);
+        else
+            ui->ref_btn->setStyleSheet(common->css.unChecked_ButtonStyle);
         is_cap =0;
         cap_loop_snapshot.clear();
     }
