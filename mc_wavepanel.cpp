@@ -50,7 +50,7 @@ void mc_wavepanel::WriteNurseDB(stDisplayItems item, bool bDel)
     if (bDel && item.record_id.length())
     {
         int64_t now = time(NULL);
-        common->cbl->setDocExpiration(common->display_items_db, item.record_id, now, dummy);
+        common->cbl->setDocExpiration(common->display_items_db, item.record_id, now*1000, dummy);
     }
 }
 void mc_wavepanel::add_clicked()
@@ -280,12 +280,20 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
     Common* common = Common::instance();
     dbDisplayItems item;
     std::string dummy;//ppee
-//    std::string sql1 = "SELECT meta().id FROM _ WHERE data_source='RTO'";
-//    cbl::ResultSet results3 = common->cbl->queryDocuments(common->display_items_db, sql1,dummy);
-//    for(auto& result: results3)
-//    {
-//        common->cbl->purgeDocument(common->display_items_db,result.valueAtIndex(0).asstring(),dummy);
-//    }
+    std::string sql1 = "SELECT meta().id,visibility FROM _ WHERE data_source='RTO'";
+    cbl::ResultSet results3 = common->cbl->queryDocuments(common->display_items_db, sql1,dummy);
+    for(auto& result: results3)
+    {
+        rapidjson::Document d;
+        d.SetObject();
+        d.AddMember("visibility", 0, d.GetAllocator());
+        rapidjson::StringBuffer buffer;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+        d.Accept(writer);
+        std::string dummy, dummy2;
+        dummy2=result.valueAtIndex(0).asstring();
+        common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(),dummy2, dummy);
+    }
     std::string sql = "SELECT display_desc, y_max, y_min, model, y_step, display_index, visibility, mdc_code, meta().id FROM _ WHERE data_source='RTO' AND patient_id='";
     sql.append(common->patient_id);
     sql.append("'");
