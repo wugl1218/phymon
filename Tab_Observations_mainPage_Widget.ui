@@ -664,7 +664,7 @@ color:rgb(255, 255, 255);</string>
               </spacer>
              </item>
              <item>
-              <widget class="QLabel" name="label_2">
+              <widget class="mc_btn_Clickable" name="setup_btn">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>

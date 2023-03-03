@@ -104,6 +104,7 @@ private:
     std::vector<mc_loop_entry> loop_snapshot;
     std::vector<mc_loop_entry> ref_loop_snapshot;
     std::vector<mc_loop_entry> cap_loop_snapshot;
+    bool m_setup;
 
     void set_loop1_type(int type);
     void set_loop2_type(int type);
@@ -128,6 +129,7 @@ private slots:
     void on_enlarge_btn_clicked();
     void update_triggered();
     void chart_update_triggered();
+    void on_setup_btn_clicked();
 /*
     void on_device1_tableWidget_cellClicked(int row, int column);
 

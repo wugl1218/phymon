@@ -9,7 +9,6 @@
 #define LOWER_MAX       30
 #define WAVE_TIMER      50     //no matter the value is, we can only read 25 data from topic
 #define ADD_BTN_POS     MAX_WAVE + 1
-#define LOOPS_NAME      "loops"
 
 mc_wavepanel::mc_wavepanel(QWidget *parent)
     : QWidget{parent},
@@ -102,7 +101,18 @@ void mc_wavepanel::add_clicked()
     printf("selected item=%s, index=%d\n", menu.selected_item.c_str(), menu.m_selected_index);
     if (menu.m_selected_index < 0 || menu.m_selected_index > (int)items.size())
         return;
-    WriteNurseDB(unselect_items[menu.m_selected_index]);
+
+    int repeat = 0;
+    for (int i = 0; i < (int) m_nurse_items.size(); i++)
+    {
+       if (unselect_items[menu.m_selected_index].display_desc == m_nurse_items[i].display_desc)
+           repeat++;
+    }
+    if (repeat < 2)
+        WriteNurseDB(unselect_items[menu.m_selected_index]);
+    else
+        qDebug()<<"====repeat:"<< unselect_items[menu.m_selected_index].display_desc.c_str();
+
     push_add_item();
     Common* common = Common::instance();
     if(m_nurse_items.size()%2==1)
@@ -157,10 +167,6 @@ void mc_wavepanel::mc_del_clicked(int index)
         common->observation_main_page->ui->option_loop->setStyleSheet("background-color: rgb(9, 58, 115);");
     }
 }
-void mc_wavepanel::mc_enlarge_clicked(int index)
-{
-
-}
 void mc_wavepanel::push_add_item()
 {
     bool loops = false;
@@ -168,7 +174,7 @@ void mc_wavepanel::push_add_item()
     for (auto item: m_nurse_items)
         if (item.display_desc == LOOPS_NAME)
             loops = true;
-    qDebug()<<"=====m_nurse_items.size="<< m_nurse_items.size()<<" loops="<<loops;
+    qDebug()<<"=====m_nurse_items.size="<< m_nurse_items.size()<<" loops="<<loops<< " m_WaveRtItems="<<m_WaveRtItems.size();
 /*    int total = m_nurse_items.size();
     dbDisplayItems virtural_item;
     for (int i = 0; i < total;i++)
@@ -214,8 +220,8 @@ void mc_wavepanel::push_add_item()
         m_loop_frame->setHidden(0);
     else
         m_loop_frame->setHidden(1);
-
-    if (m_nurse_items.size() >=  MAX_WAVE || (m_nurse_items.size() == 4 && loops))
+    if (m_nurse_items.size() >=  MAX_WAVE || m_nurse_items.size() >= m_WaveRtItems.size() ||
+            (m_nurse_items.size() == MAX_WAVE - 2 && loops))
         m_add_frame->setHidden(1);
     else
         m_add_frame->setHidden(0);
@@ -260,10 +266,17 @@ void mc_wavepanel::push_add_item()
         m_rtchart_time_list[i]<<time;
     }
 }
+bool mc_wavepanel::IsRepeat(dbDisplayItems item)
+{
+    for (auto picked:m_nurse_items)
+        if (item.display_desc == picked.display_desc)
+            return true;
+    return false;
+}
 std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
 {
     Common* common = Common::instance();
-    dbDisplayItems item;
+    dbDisplayItems item, loops_item;
     std::string dummy;//ppee
 
 /*  std::string sql1 = "SELECT meta().id FROM _ WHERE data_source='RTO'";
@@ -275,7 +288,7 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
 */
     std::string sql = "SELECT display_desc, y_max, y_min, model, y_step, display_index, visibility, mdc_code, meta().id FROM _ WHERE data_source='RTO' AND patient_id='";
     sql.append(common->patient_id);
-    sql.append("'");
+    sql.append("' AND meta().expiration IS NOT VALUED");
     cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
     int error=0;
     while (dummy!="IP200"&&error<5)
@@ -284,7 +297,8 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
         fflog_out(common->log,dummy.c_str());error++;
     }
     m_nurse_items.clear();
-    int i =0;
+    bool loops = false;
+
     for(auto& result: results2)
     {
         item.display_desc = result.valueAtIndex(0).asstring();
@@ -298,9 +312,30 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
         item.visibility = result.valueAtIndex(6).asInt();
         item.mdc_code = result.valueAtIndex(7).asstring();
         item.record_id = result.valueAtIndex(8).asstring();
-        m_nurse_items.push_back(item);
-        ++i;
+        if (item.display_desc == LOOPS_NAME)
+        {
+            loops_item = item;
+            loops = true;
+            continue;
+        }
+        if (loops)
+        {
+            if (m_nurse_items.size() < MAX_WAVE - 2)
+                if (!IsRepeat(item))
+                    m_nurse_items.push_back(item);
+        }
+        else if (m_nurse_items.size() < MAX_WAVE)
+            if (!IsRepeat(item))
+                m_nurse_items.push_back(item);
+        if (loops && m_nurse_items.size() == MAX_WAVE - 2)
+            break;
+        if (!loops && m_nurse_items.size() == MAX_WAVE)
+            break;
     }
+    if (loops && m_nurse_items.size() <= MAX_WAVE - 2)
+        m_nurse_items.push_back(loops_item);
+    for(int i = 0; i < (int)m_nurse_items.size();i++)
+        qDebug()<<"====CheckNurseDB i="<<i<<" "<<m_nurse_items[i].display_desc.c_str();
     return m_nurse_items;
 }
 void mc_wavepanel::controls_clicked()
@@ -335,6 +370,8 @@ void mc_wavepanel::UpdateWave()
     {
         for (int i = 0; i < (int) m_nurse_items.size() && i < MAX_WAVE;i++)
         {
+            if (m_nurse_items[i].display_desc == LOOPS_NAME)
+                continue;
             add_wave_to_chart_RTO(0,
                         m_DeviceName, m_nurse_items[i].mdc_code,
                         common->rtobservation_wave_reader,

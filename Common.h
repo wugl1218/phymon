@@ -33,6 +33,8 @@
 #define VELOCITY_MULTIPLIER 0.1
 #define DEFAULT_FRICTION 0.35
 #define LINE_BREAK_DELTA 3000
+#define MAX_WAVE 6
+#define LOOPS_NAME      "loops"
 
 class MainDialog;
 class Tab_Devices_Widget;

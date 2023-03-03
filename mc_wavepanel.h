@@ -13,8 +13,6 @@
 #include "dds/sub/TDataReader.hpp"
 #include <QLabel>
 
-#define MAX_WAVE 6
-
 class mc_wavepanel : public QWidget
 {
     Q_OBJECT
@@ -64,7 +62,6 @@ public:
     };
     void mc_add_clicked(mc_wavepanel* wp);
     void mc_del_clicked(int index);
-    void mc_enlarge_clicked(int inxex);
 
 signals:
 
@@ -82,6 +79,7 @@ private:
     void render_controls_btn();
     void push_add_item();
     std::vector<dbDisplayItems> CheckNurseDB();
+    bool IsRepeat(dbDisplayItems item);
 private slots:
     void controls_clicked();
     void UpdateWave();
