@@ -242,6 +242,7 @@ void Tab_Observations_mainPage_Widget::SetWavePanelSlots()
     connect(ui->minus_6, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
     ui->loop_minus_2->setProperty("index", 6);
     connect(ui->loop_minus_2, SIGNAL(clicked()), this, SLOT(on_del_btn_clicked()));
+    ui->wavePanel->set_loop_minus(ui->loop_minus_2);
 
     ui->chart_1->setProperty("index", 0);
     connect(ui->chart_1, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked()));
@@ -255,17 +256,16 @@ void Tab_Observations_mainPage_Widget::SetWavePanelSlots()
     connect(ui->chart_5, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked()));
     ui->chart_6->setProperty("index", 5);
     connect(ui->chart_6, SIGNAL(clicked()), this, SLOT(on_enlarge_btn_clicked()));
-    connect(ui->setup_btn, SIGNAL(clicked()), this, SLOT(on_setup_btn_clicked()));
-    m_setup = false;
+  //  connect(ui->setup_btn, SIGNAL(clicked()), this, SLOT(on_setup_btn_clicked()));
 }
 void Tab_Observations_mainPage_Widget::on_setup_btn_clicked()
 {
     std::vector<dbDisplayItems> item = ui->wavePanel->m_nurse_items;
     int j = 0;
+    ui->wavePanel->add_btn_control();
     for (int i = 0; i < (int)item.size();i++)
     {
-
-        if (m_setup)
+        if (ui->wavePanel->m_setup)
         {
             if (item[i].display_desc == LOOPS_NAME)
             {
@@ -274,7 +274,6 @@ void Tab_Observations_mainPage_Widget::on_setup_btn_clicked()
             }
             RTO_minus_list[j]->hide();
             ui->add_btn->hide();
-            qDebug()<<"===============Disable";
         }
         else
         {
@@ -285,11 +284,10 @@ void Tab_Observations_mainPage_Widget::on_setup_btn_clicked()
             }
             RTO_minus_list[j]->show();
             ui->add_btn->show();
-            qDebug()<<"=================Enable";
         }
         j++;
     }
-    m_setup = m_setup ? false:true;
+    ui->wavePanel->m_setup = ui->wavePanel->m_setup ? false:true;
 }
 void Tab_Observations_mainPage_Widget::on_add_btn_clicked()
 {
@@ -305,6 +303,7 @@ void Tab_Observations_mainPage_Widget::on_del_btn_clicked()
 }
 void Tab_Observations_mainPage_Widget::on_enlarge_btn_clicked()
 {
+
     mc_btn_Clickable* b = (mc_btn_Clickable*)sender();
     int index = b->property("index").value<int>();
     if (index > MAX_WAVE)

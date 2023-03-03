@@ -170,6 +170,28 @@ void mc_wavepanel::mc_del_clicked(int index)
         common->observation_main_page->ui->option_loop->setStyleSheet("background-color: rgb(9, 58, 115);");
     }
 }
+void mc_wavepanel::add_btn_control()
+{
+    bool loops = false;
+    //CheckNurseDB();
+    for (auto item: m_nurse_items)
+        if (item.display_desc == LOOPS_NAME)
+            loops = true;
+    if (m_nurse_items.size() > m_WaveRtItems.size())
+    {
+        if (m_DeviceName == "Savina" || m_DeviceName == "Savina 300")
+        {
+            if (loops)
+                m_add_frame->setHidden(1);
+            else
+                m_add_frame->setHidden(0);
+        }
+    }
+    else if (m_nurse_items.size() >=  MAX_WAVE || (m_nurse_items.size() == MAX_WAVE - 2 && loops))
+        m_add_frame->setHidden(1);
+    else
+        m_add_frame->setHidden(0);
+}
 void mc_wavepanel::push_add_item()
 {
     bool loops = false;
@@ -207,7 +229,7 @@ void mc_wavepanel::push_add_item()
             continue;
         m_RTO_chart_list[i]->show();
         m_RTO_option_list[i]->show();
-        m_RTO_minus_list[i]->show();
+        //m_RTO_minus_list[i]->show();
         m_RTO_name_list[i]->show();
 
     }
@@ -215,25 +237,16 @@ void mc_wavepanel::push_add_item()
     {
         m_RTO_chart_list[i]->hide();
         m_RTO_option_list[i]->hide();
-        m_RTO_minus_list[i]->hide();
+       // m_RTO_minus_list[i]->hide();
         m_RTO_name_list[i]->hide();
-
     }
     if (loops)
         m_loop_frame->setHidden(0);
     else
         m_loop_frame->setHidden(1);
-   if (m_nurse_items.size() > m_WaveRtItems.size())
-    {
-        if (m_DeviceName == "Savina" || m_DeviceName == "Savina 300")
-        {
-            if (loops)
-                m_add_frame->setHidden(1);
-            else
-                m_add_frame->setHidden(0);
-        }
-    }
-    else if (m_nurse_items.size() >=  MAX_WAVE || (m_nurse_items.size() == MAX_WAVE - 2 && loops))
+    m_loop_minus->setHidden(1);
+
+    if (m_nurse_items.size())
         m_add_frame->setHidden(1);
     else
         m_add_frame->setHidden(0);
@@ -243,7 +256,7 @@ void mc_wavepanel::push_add_item()
     if (!m_nurse_items.size())                          // add_item only
         m_main_item->setStretch(ADD_BTN_POS,1);
     else if (m_nurse_items.size() == 1 && m_nurse_items[0].display_desc == LOOPS_NAME)
-        m_main_item->setStretch(0,1);                   // loops only
+        m_main_item->setStretch(ADD_BTN_POS,1);                   // loops only
 
     for(int t = 0;t < MAX_WAVE;t++)
     {
@@ -277,6 +290,7 @@ void mc_wavepanel::push_add_item()
         m_rtchart_wave_list[i]<<vals;
         m_rtchart_time_list[i]<<time;
     }
+    m_setup = false;
 }
 bool mc_wavepanel::IsRepeat(dbDisplayItems item)
 {
