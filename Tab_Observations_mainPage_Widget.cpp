@@ -153,6 +153,10 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
                    <<QColor(170,70,90)
 
                    <<QColor(190,90,110);
+    for (int i =0;i<line_color_list.size();++i)
+    {
+        using_line_color_map.emplace(i,line_color_list[i]);
+    }
 
     SetWavePanelSlots();
 }
@@ -1471,6 +1475,7 @@ void Tab_Observations_mainPage_Widget::mouseReleaseEvent(QMouseEvent *event)
 
 void Tab_Observations_mainPage_Widget::on_Obs_clicked()
 {
+    //color
     emit changeToMetricItemsDisplayConfigPage();
 }
 void Tab_Observations_mainPage_Widget::on_ref_btn_toggled(bool checked)

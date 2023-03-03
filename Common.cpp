@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include <sys/stat.h>
 #include "MainDialog.h"
+#include "Tab_Observations_mainPage_Widget.h"
 #include "qpainter.h"
 
 Common* _common = NULL;
@@ -752,9 +753,17 @@ pclose(cmd);
 
 return PID;
 }
-void replyFinished()
-{
 
+int Common::use_line_color_map()
+{
+    Common* common = Common::instance();
+
+    int i;
+    auto it =common->observation_main_page->using_line_color_map.find(i);
+}
+int Common::unused_line_color_map()
+{
+    ;
 }
 
 QJsonArray Common::Restful_API(char queryStartTime[64] ,char queryEndTime[64],std::string dataSource)
