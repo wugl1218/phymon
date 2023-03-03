@@ -17,6 +17,7 @@ mc_wavepanel::mc_wavepanel(QWidget *parent)
     m_DeviceName = "Savina";
     controls_on = 1;
     m_Timer.setInterval(WAVE_TIMER);
+    m_DBTimer = 0;
     connect(&m_Timer, SIGNAL(timeout()), this, SLOT(UpdateWave()));
     m_Timer.start();
     m_RtLowerCount = m_ObLowerCount = 0;
@@ -24,6 +25,7 @@ mc_wavepanel::mc_wavepanel(QWidget *parent)
 }
 void mc_wavepanel::WriteNurseDB(stDisplayItems item, bool bDel)
 {
+    int visibility = bDel ? 0:1;
     Common* common = Common::instance();
     rapidjson::Document d;
     d.SetObject();
@@ -35,14 +37,12 @@ void mc_wavepanel::WriteNurseDB(stDisplayItems item, bool bDel)
     d.AddMember("y_max", rapidjson::Value().SetString(item.y_max.c_str(), d.GetAllocator()), d.GetAllocator());
     d.AddMember("y_min", rapidjson::Value().SetString(item.y_min.c_str(), d.GetAllocator()), d.GetAllocator());
     d.AddMember("y_step", rapidjson::Value().SetString(item.y_step.c_str(), d.GetAllocator()), d.GetAllocator());
-    d.AddMember("visibility", 1, d.GetAllocator());
+    d.AddMember("visibility", visibility, d.GetAllocator());
     rapidjson::StringBuffer buffer;
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
     d.Accept(writer);
-    std::string dummy, dummy2;
-    if (item.record_id.length())
-        dummy2 = item.record_id;
-    common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), dummy2, dummy);
+    std::string dummy;
+    common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), item.record_id, dummy);
     //qDebug()<<"*** WriteNurseDB saveMutableDocument error="<< dummy.c_str()<< " desc="<<item.display_desc.c_str()<<" record_id="<<item.record_id.c_str();
     if (bDel && item.record_id.length())
     {
@@ -273,7 +273,7 @@ bool mc_wavepanel::IsRepeat(dbDisplayItems item)
             return true;
     return false;
 }
-std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
+std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB(bool bListAll)
 {
     Common* common = Common::instance();
     dbDisplayItems item, loops_item;
@@ -288,7 +288,7 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
 */
     std::string sql = "SELECT display_desc, y_max, y_min, model, y_step, display_index, visibility, mdc_code, meta().id FROM _ WHERE data_source='RTO' AND patient_id='";
     sql.append(common->patient_id);
-    sql.append("' AND meta().expiration IS NOT VALUED");
+    sql.append("' AND visibility = 1 AND meta().expiration IS NOT VALUED");
     cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
     int error=0;
     while (dummy!="IP200"&&error<5)
@@ -299,6 +299,17 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
     m_nurse_items.clear();
     bool loops = false;
 
+    if (bListAll)
+    {
+        int i = 0;
+        for(auto& result: results2)
+        {
+            qDebug()<<"=====["<<i<<"] desc="<<result.valueAtIndex(0).asstring().c_str();
+            i++;
+        }
+        qDebug()<<"========Check Timer total="<<i;
+        return m_nurse_items;
+    }
     for(auto& result: results2)
     {
         item.display_desc = result.valueAtIndex(0).asstring();
@@ -360,8 +371,13 @@ void mc_wavepanel::UpdateWave()
     if (!m_DisplayItems.size())
         QueryDisplayItems();
     Common* common = Common::instance();
-
-    if (!m_bDrawlayout && common->patient_id.size())
+/*  if (common->patient_id.size() && m_DBTimer % 20 == 0)
+    {
+        CheckNurseDB(true);
+        m_DBTimer = 0;
+    }
+    m_DBTimer++;
+*/  if (!m_bDrawlayout && common->patient_id.size())
     {
         push_add_item();
         m_bDrawlayout = true;

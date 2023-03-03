@@ -34,6 +34,7 @@ public:
     std::string m_DeviceName;
     int m_RtLowerCount;
     int m_ObLowerCount;
+    int m_DBTimer;
     mc_wavepanel_add *m_WaveItem[MAX_WAVE];
     QList<QWidget*> m_RTO_wave_list;
     QList<mc_chart*> m_RTO_chart_list;
@@ -78,7 +79,7 @@ private:
     bool m_bDrawlayout;
     void render_controls_btn();
     void push_add_item();
-    std::vector<dbDisplayItems> CheckNurseDB();
+    std::vector<dbDisplayItems> CheckNurseDB(bool bListAll = false);
     bool IsRepeat(dbDisplayItems item);
 private slots:
     void controls_clicked();
