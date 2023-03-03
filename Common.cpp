@@ -833,12 +833,12 @@ QJsonArray Common::Restful_API_Orderby(char queryStartTime[64] ,char queryEndTim
     post_index.append(dataSource);
     post_index.append("&orderStr=");
     post_index.append(orderStr);
-    qDebug()<<"patient_id="<<QString::fromStdString(common->patient_id);
-    //qDebug()<<"history_mdccode="<<QString::fromStdString(common->history_mdccode);
-    qDebug()<<"model="<<QString::fromStdString(model);
-    qDebug()<<"queryStartTime="<<queryStartTime;
-    qDebug()<<"queryEndTime="<<queryEndTime;
-    qDebug()<<"dataSource="<<QString::fromStdString(dataSource);
+//    qDebug()<<"patient_id="<<QString::fromStdString(common->patient_id);
+//    qDebug()<<"history_mdccode="<<QString::fromStdString(common->history_mdccode);
+//    qDebug()<<"model="<<QString::fromStdString(model);
+//    qDebug()<<"queryStartTime="<<queryStartTime;
+//    qDebug()<<"queryEndTime="<<queryEndTime;
+//    qDebug()<<"dataSource="<<QString::fromStdString(dataSource);
     QNetworkReply *pReplay = manager->post(request,post_index);
     // 開啟一個局部的事件循環，等待響應結束，退出
     QEventLoop eventLoop;
@@ -851,7 +851,7 @@ QJsonArray Common::Restful_API_Orderby(char queryStartTime[64] ,char queryEndTim
     //qDebug() << jsonParseError.errorString();
     QJsonObject jsonobject = jsonDoc.object();
     QJsonArray array =jsonobject["row"].toArray();
-    qDebug()<<array;
+//    qDebug()<<array;
     pReplay->deleteLater();
     delete manager;
     manager = nullptr;

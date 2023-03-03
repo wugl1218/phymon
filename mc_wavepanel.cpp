@@ -278,16 +278,17 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB()
     Common* common = Common::instance();
     dbDisplayItems item;
     std::string dummy;//ppee
+    std::string sql1 = "SELECT meta().id FROM _ WHERE data_source='RTO'";
+    cbl::ResultSet results3 = common->cbl->queryDocuments(common->display_items_db, sql1,dummy);
+    for(auto& result: results3)
+    {
+        common->cbl->purgeDocument(common->display_items_db,result.valueAtIndex(0).asstring(),dummy);
+    }
     std::string sql = "SELECT display_desc, y_max, y_min, model, y_step, display_index, visibility, mdc_code, meta().id FROM _ WHERE data_source='RTO' AND patient_id='";
     sql.append(common->patient_id);
     sql.append("'");
     cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-//    std::string sql1 = "SELECT meta().id FROM _ WHERE data_source='RTO'";
-//    cbl::ResultSet results3 = common->cbl->queryDocuments(common->display_items_db, sql1,dummy);
-//    for(auto& result: results3)
-//    {
-//        common->cbl->purgeDocument(common->display_items_db,result.valueAtIndex(0).asstring(),dummy);
-//    }
+
     int error=0;
     while (dummy!="IP200"&&error<5)
     {

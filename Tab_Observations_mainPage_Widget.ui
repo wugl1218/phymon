@@ -651,6 +651,22 @@ color:rgb(255, 255, 255);</string>
               <number>0</number>
              </property>
              <item>
+              <widget class="QLabel" name="label_3">
+               <property name="font">
+                <font>
+                 <pointsize>22</pointsize>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(19, 105, 205);
+color: rgb(255, 255, 255);</string>
+               </property>
+               <property name="text">
+                <string>Wave</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <spacer name="horizontalSpacer">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>

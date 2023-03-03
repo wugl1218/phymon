@@ -927,64 +927,108 @@ void Tab_Observations_historyPage_Widget::on_series_select(int series_index)
 void Tab_Observations_historyPage_Widget::on_point_select(int series_index, uint64_t timestamp, float val, int screenspace_x, int screenspace_y)
 {
     Common* common = Common::instance();
+    qDebug()<<"=====================on_point_select===================";
+
     timestamp /= 1000;
     uint64_t start_time = timestamp-10;
     char endbuf[64];
     char startbuf[64];
     sprintf(endbuf, "%llu", timestamp+1);
     sprintf(startbuf, "%llu", start_time);
-    std::string dummy;
-    std::string sql = "SELECT description,value,unit,code FROM _ WHERE data_source='Observation' AND model='";
-    sql.append(common->history_model);
-    sql.append("' AND vmd_id='");
-    sql.append(common->vmd_id);
-    sql.append("' AND patient_id='");
-    sql.append(common->patient_id);
-    sql.append("' AND source_timestamp.sec<");
-    sql.append(endbuf);
-    sql.append(" AND source_timestamp.sec>=");
-    sql.append(startbuf);
-    sql.append(" ORDER BY source_timestamp.sec ASC");
-    cbl::ResultSet results2 = common->cbl->queryDocuments(common->db, sql, dummy);
-    int error=0;while (dummy!="IP200"&&error<5)
-        {
-        results2 = common->cbl->queryDocuments(common->db, sql, dummy);
-        qDebug()<<QString::fromStdString(dummy);
-        fflog_out(common->log,dummy.c_str());error++;
-        }
     std::multimap<int, mc_entry> vals;
     std::multimap<std::string, mc_entry> left_over;
-    for(auto& result: results2)
+    if(common->is_server)
     {
-        mc_entry e;
-        e.desc = result.valueAtIndex(0).asstring();
-        e.val = result.valueAtIndex(1).asFloat();
-        e.unit = result.valueAtIndex(2).asstring();
-        e.code = result.valueAtIndex(3).asstring();
-        std::string str = common->history_model;
-        str.append(",");
-        str.append(e.desc);
-        auto it2 = common->item_checkstate.find(str);
-        if(it2==common->item_checkstate.end())
+        QJsonArray array = common->Restful_API_Orderby(startbuf,endbuf,"Observation",common->history_model,"source_timestamp.sec ASC");
+        for (int i=0; i<array.count();++i)
         {
-            auto it3 = left_over.find(e.code);
-            if(it3 != left_over.end())
-                left_over.erase(it3);
-            left_over.emplace(e.code, e);
+            QJsonValue value = array.at(i).toObject();
+            mc_entry e;
+            e.desc = value["description"].toString().toStdString();
+            e.val = value["value"].toDouble();
+            e.unit = value["unit"].toString().toStdString();
+            e.code = value["code"].toString().toStdString();
+            std::string str = common->history_model;
+            str.append(",");
+            str.append(e.desc);
+            auto it2 = common->item_checkstate.find(str);
+            if(it2==common->item_checkstate.end())
+            {
+                auto it3 = left_over.find(e.code);
+                if(it3 != left_over.end())
+                    left_over.erase(it3);
+                left_over.emplace(e.code, e);
+            }
+            else if(it2->second.checked)
+            {
+                auto it3 = vals.find(it2->second.order);
+                if(it3 != vals.end())
+                    vals.erase(it3);
+                vals.emplace(it2->second.order, e);
+            }
+            else
+            {
+                auto it3 = left_over.find(e.code);
+                if(it3 != left_over.end())
+                    left_over.erase(it3);
+                left_over.emplace(e.code, e);
+            }
         }
-        else if(it2->second.checked)
+    }
+    else
+    {
+        std::string dummy;
+        std::string sql = "SELECT description,value,unit,code FROM _ WHERE data_source='Observation' AND model='";
+        sql.append(common->history_model);
+        sql.append("' AND vmd_id='");
+        sql.append(common->vmd_id);
+        sql.append("' AND patient_id='");
+        sql.append(common->patient_id);
+        sql.append("' AND source_timestamp.sec<");
+        sql.append(endbuf);
+        sql.append(" AND source_timestamp.sec>=");
+        sql.append(startbuf);
+        sql.append(" ORDER BY source_timestamp.sec ASC");
+        cbl::ResultSet results2 = common->cbl->queryDocuments(common->db, sql, dummy);
+        int error=0;while (dummy!="IP200"&&error<5)
+            {
+            results2 = common->cbl->queryDocuments(common->db, sql, dummy);
+            qDebug()<<QString::fromStdString(dummy);
+            fflog_out(common->log,dummy.c_str());error++;
+            }
+
+        for(auto& result: results2)
         {
-            auto it3 = vals.find(it2->second.order);
-            if(it3 != vals.end())
-                vals.erase(it3);
-            vals.emplace(it2->second.order, e);
-        }
-        else
-        {
-            auto it3 = left_over.find(e.code);
-            if(it3 != left_over.end())
-                left_over.erase(it3);
-            left_over.emplace(e.code, e);
+            mc_entry e;
+            e.desc = result.valueAtIndex(0).asstring();
+            e.val = result.valueAtIndex(1).asFloat();
+            e.unit = result.valueAtIndex(2).asstring();
+            e.code = result.valueAtIndex(3).asstring();
+            std::string str = common->history_model;
+            str.append(",");
+            str.append(e.desc);
+            auto it2 = common->item_checkstate.find(str);
+            if(it2==common->item_checkstate.end())
+            {
+                auto it3 = left_over.find(e.code);
+                if(it3 != left_over.end())
+                    left_over.erase(it3);
+                left_over.emplace(e.code, e);
+            }
+            else if(it2->second.checked)
+            {
+                auto it3 = vals.find(it2->second.order);
+                if(it3 != vals.end())
+                    vals.erase(it3);
+                vals.emplace(it2->second.order, e);
+            }
+            else
+            {
+                auto it3 = left_over.find(e.code);
+                if(it3 != left_over.end())
+                    left_over.erase(it3);
+                left_over.emplace(e.code, e);
+            }
         }
     }
     if(vals.size() == 0 && left_over.size() == 0)
