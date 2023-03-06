@@ -287,6 +287,10 @@ void mc_wavepanel::push_add_item()
         pChart->set_num_labels_x(5);
         pChart->set_num_labels_y(5);
         pChart->set_series_color(0, QColor(255,255,255));
+        if (m_nurse_items.size() == 1 && loops)
+            ;
+        else if (m_nurse_items.size())
+            ;//philo
 
         std::vector<float> vals;
         uint64_t time = 0.0;
