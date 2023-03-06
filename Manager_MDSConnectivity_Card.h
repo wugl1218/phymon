@@ -61,7 +61,7 @@ private:
     std::string MV;
     std::string VT;
     bool is_patient_alarm;
-    bool is_Equipment_alarm;
+    bool is_title_show;
     bool has_checked=0;
 
 };

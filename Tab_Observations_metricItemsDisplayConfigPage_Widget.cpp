@@ -711,7 +711,7 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
             d.AddMember("display_index", cs.order, d.GetAllocator());
             d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("expired", 0, d.GetAllocator());
-            common->unused_line_color_map(it->second.model,(mc_selection_entry*)left_lines[i][k])->get_text())
+            common->unused_line_color_map(it->second.model,((mc_selection_entry*)left_lines[i][k])->get_text().c_str());
             d.AddMember("color", "", d.GetAllocator());
 
             rapidjson::Value v;
@@ -746,10 +746,11 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
             d.AddMember("display_index", cs.order, d.GetAllocator());
             d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("expired", 0, d.GetAllocator());
-            QColor qcolor =common->use_line_color_list(it->second.model,((mc_selection_entry*)right_lines[i][k])->get_text());
-            QString colorRgb = QString::sprintf("rgb(%d, %d, %d)", qcolor.red(), qcolor.green(), qcolor.blue());
-            d.AddMember("color", colorRgb.toStdString(), d.GetAllocator());
-
+            QColor c =common->use_line_color_list(it->second.model,((mc_selection_entry*)right_lines[i][k])->get_text().c_str());
+            QRgb mRgb = qRgb(c.red(),c.green(),c.blue());
+            QString mRgbStr = QString::number(mRgb,16);
+            d.AddMember("color",rapidjson::Value().SetString(mRgbStr.toStdString().c_str(), d.GetAllocator()), d.GetAllocator());
+            qDebug()<<QString::fromStdString(((mc_selection_entry*)right_lines[i][k])->get_text());
             rapidjson::Value v;
             v.SetObject();
             v.AddMember("sec", ts.tv_sec, d.GetAllocator());

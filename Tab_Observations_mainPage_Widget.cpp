@@ -153,10 +153,7 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
                    <<QColor(170,70,90)
 
                    <<QColor(190,90,110);
-    for (int i =0;i<line_color_list.size();++i)
-    {
-        unused_line_color_map.emplace(i,line_color_list[i]);
-    }
+
 
     SetWavePanelSlots();
 }
@@ -1343,7 +1340,9 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                                 break;
                         }
                         if(i != (int)it2->second.size())
+                        {
                             entries.emplace(i, e);
+                        }
                         else
                             left_over.emplace(e.desc, e);
                     }
@@ -1364,9 +1363,15 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                         continue;
                     auto it2 = common->item_checkstate.find(str);
                     if(it2==common->item_checkstate.end())
+                    {
+                        e.color = it2->second.color;
                         entries.emplace(9999, e);
+                    }
                     else if(it2->second.checked)
+                    {
+                        e.color = it2->second.color;
                         entries.emplace(it2->second.order, e);
+                    }
                     else
                         left_over.emplace(e.desc, e);
                 }
@@ -1426,7 +1431,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             legend1->set_square_height(60);
             legend1->set_vertical_spacing(8);
             legend1->set_text_color(QColor(0,0,0,255));
-            legend1->set_series_color(line_color_list[row]);
+            legend1->set_series_color(it2->second.color);
             legend1->set_series_text(desc,
                                      it2->second.model,
                                      it2->second.unit,
@@ -1444,6 +1449,11 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             uint64_t t = ((uint64_t)it2->second.ts.tv_sec)*1000 + ((uint64_t)it2->second.ts.tv_nsec)/1000000;
             if(it2->second.y_max=="200")
             {
+//                qDebug()<<QString::fromStdString(desc);
+//                qDebug()<<it2->second.color;
+
+
+                ui->rt_chart1->set_series_color(mc_chart1_line, it2->second.color);
                 add_wave_to_chart_Obs(mc_chart1_line,
                                   t,it2->second.val,
                                   ui->rt_chart1,
@@ -1453,6 +1463,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             }
             else if (it2->second.y_max=="1000")
             {
+                ui->rt_chart2->set_series_color(mc_chart2_line, it2->second.color);
                 add_wave_to_chart_Obs(mc_chart2_line,
                                   t,it2->second.val,
                                   ui->rt_chart2,
@@ -1471,7 +1482,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             row++;
             it2++;
         }
-        for (int i =0;i<row;++i) //目前顏色尚未使用固定
+       /* for (int i =0;i<row;++i) //目前顏色尚未使用固定
         {
             if(mc_chart1_line>=i)
             {
@@ -1481,7 +1492,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             {
                 ui->rt_chart2->set_series_color(i-mc_chart1_line-1, line_color_list[i]);
             }
-        }
+        }*/
         ui->WidgetContents->update();
         ui->WidgetContents->setMinimumHeight(10+(60+8)*row);
     }
@@ -1663,8 +1674,8 @@ void Tab_Observations_mainPage_Widget::add_wave_to_chart_Obs(int series_index,
     if(common->patient_id.size() == 0)
         return;
     int line_break_delta;
-    line_break_delta=50000;
-    chart->set_line_break_delta(50000);
+    line_break_delta=6000;
+    chart->set_line_break_delta(6000);
     time_t now = time(NULL)-6;
     time_t future = time(NULL)+6;
 //    if((t < now)||t>future)

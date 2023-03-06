@@ -40,7 +40,7 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
             if(mouseEvent->button() == Qt::LeftButton)
             {
                 //這邊要寫 把藍色或紅色九宮格變回藍色 以及變更告知警告已處理
-                if(is_Equipment_alarm || !has_checked)
+                if(is_title_show || !has_checked)
                 {
                     common->msg.exec();
                     return true;
@@ -167,7 +167,7 @@ bool Manager_MDSConnectivity_Card::eventFilter(QObject *watched, QEvent *event)
         }
         else if(QEvent::Enter == event->type()) {            //鼠标进入
             if (title->isHidden()) { //已经隐藏就显示出来
-                if(!is_Equipment_alarm)return true;
+                if(!is_title_show)return true;
                 title->show();
                 QPoint point = circle->pos();
                 point.rx() = 0;
@@ -273,7 +273,7 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
         painter.setBrush(QColor(200,37,37));
         circle->setStyleSheet("background:rgb(200,37,37);color:rgb(248, 208, 4);");
         circle->show();
-        is_Equipment_alarm =1;
+        is_title_show =1;
         if(devcon_samples.length() == 1)
         {
             title->setText("Medical Equipment \nDisconnection");
@@ -301,6 +301,7 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             title->setText("Medical Equipment \nUnselected");
             common->msg.setText("Please click \nDisplay setting");
             Show_pen=0;
+            is_title_show =1;
             title->setWordWrap(true);
         }
     else if(common->md->mdsm.patient_alarm.size() >0)
@@ -318,7 +319,7 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             title->setText(QString::fromStdString(i->alarm_description));
             title->setWordWrap(true);
             is_patient_alarm = 1;
-            is_Equipment_alarm =0;
+            is_title_show =0;
             break;
         }
     else if(common->md->mdsm.technical_alarm.size() >0)
@@ -336,7 +337,7 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
             title->setText(QString::fromStdString(i->alarm_description));
             title->setWordWrap(true);
             is_patient_alarm = 0;
-            is_Equipment_alarm =0;
+            is_title_show =0;
 
             break;
         }
@@ -348,6 +349,7 @@ void Manager_MDSConnectivity_Card::paintEvent(QPaintEvent *event)
         circle->setScaledContents(true);
         circle->setPixmap(*pixmap);
         title->hide();
+        is_title_show =0;
         if(circle_time!=0)
             circle->show();
         else

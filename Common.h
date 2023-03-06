@@ -84,6 +84,7 @@ public:
     std::string display_desc;
     bool is_matecares;
     float val;
+    QColor color;
     struct timespec ts;
 };
 
@@ -104,6 +105,7 @@ class mc_checkstate
 public:
     uint8_t checked;
     int order;
+    QColor color;
 };
 
 class Common
@@ -180,6 +182,7 @@ public:
     fflog_t* log;
     QColor use_line_color_list(std::string model, std::string mdccode);//
     void unused_line_color_map(std::string model, std::string mdccode);//
+
 
     QJsonArray Restful_API(char queryStartTime[64] , char queryEndTime[64], std::string dataSource);
     QJsonArray Restful_API_Orderby(char queryStartTime[64] , char queryEndTime[64], std::string dataSource, std::string model, std::string orderStr);

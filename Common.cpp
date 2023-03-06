@@ -400,20 +400,22 @@ void Common::add_savina_items(std::string model, std::multimap<int, mc_entry>* e
         e.desc = "MV";
         e.unit = "L/min";
         e.val = (vt/1000.0)*rr;
-        e.model = "Savina";
+        e.model = model;
         e.y_max = "200";
         e.y_min = "0";
         e.mdccode ="MATECARES_MV";
         e.is_matecares =1;
+        e.color = use_line_color_list(model,"MATECARES_MV");
         entries->emplace(mv_order, e);
 
         e.code = "RSI";
         e.desc = "RSI";
         e.unit = "";
         e.val = vt/rr;
-        e.model = "Savina";
+        e.model = model;
         e.y_max = "200";
         e.y_min = "0";
+        e.color = use_line_color_list(model,"MATECARES_RSI");
         e.mdccode ="MATECARES_RSI";
         e.is_matecares =1;
 
@@ -630,7 +632,7 @@ void Common::populate_item_checkstate()
 {
     item_checkstate.clear();
     std::string dummy;
-    std::string sql = "SELECT mdc_code,visibility,display_index,model FROM _ WHERE data_source='Obs' AND patient_id='";
+    std::string sql = "SELECT mdc_code,visibility,display_index,model,color FROM _ WHERE data_source='Obs' AND patient_id='";
     sql.append(patient_id);
     sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
     cbl::ResultSet results2= cbl->queryDocuments(display_items_db, sql, dummy);
@@ -641,28 +643,33 @@ void Common::populate_item_checkstate()
         fflog_out(log,dummy.c_str());error++;
         }
 
+    mc_checkstate k;
+    k.checked = 1;
+    k.order = 1;
+    item_checkstate.emplace("Savina,MV", k);
+    item_checkstate.emplace("Savina 300,MV", k);
+ /*   k.order = 3;
+    k.color = 3;
+    item_checkstate.emplace("Savina,I:E Ratio", k);
+    item_checkstate.emplace("Savina 300,I:E Ratio", k);*/
+    k.order = 6;
+    item_checkstate.emplace("Savina,RSI", k);
+    item_checkstate.emplace("Savina 300,RSI", k);
+
     for(auto& result: results2)
     {
         std::string mdc_code = result.valueAtIndex(0).asstring();
         mc_checkstate cs;
         cs.checked = result.valueAtIndex(1).asUnsigned();
         cs.order = result.valueAtIndex(2).asInt();
+        QString qstr = QString::fromStdString(result.valueAtIndex(4).asstring());
+        cs.color = (qstr.toUInt(NULL,16));
         std::string model = result.valueAtIndex(3).asstring();
         item_checkstate.emplace(model+","+mdc_code, cs);
     }
     if(item_checkstate.size() == 0)
         return;
-    mc_checkstate k;
-    k.checked = 1;
-    k.order = 1;
-    item_checkstate.emplace("Savina,MV", k);
-    item_checkstate.emplace("Savina 300,MV", k);
-    k.order = 3;
-    item_checkstate.emplace("Savina,I:E Ratio", k);
-    item_checkstate.emplace("Savina 300,I:E Ratio", k);
-    k.order = 6;
-    item_checkstate.emplace("Savina,RSI", k);
-    item_checkstate.emplace("Savina 300,RSI", k);
+
 }
 
 void Common::populate_device_checkstate()
@@ -758,29 +765,34 @@ QColor Common::use_line_color_list(std::string model,std::string mdccode)
 {
     Common* common = Common::instance();
     std::string str =model.append(",").append(mdccode);
-    for(int i =0;i<common->observation_main_page->line_color_list.size();++i)
+    auto it =observation_main_page->using_line_color_map.find(str);
+    if(it==observation_main_page->using_line_color_map.end())
     {
-
-    QColor qcolor =common->observation_main_page->line_color_list[i];
-    common->observation_main_page->using_line_color_map.emplace(str,qcolor);
-    common->observation_main_page->line_color_list.removeAt(i);
-    return qcolor;
+        for(int i =0;i<observation_main_page->line_color_list.size();++i)
+        {
+        QColor qcolor =observation_main_page->line_color_list[i];
+        observation_main_page->using_line_color_map.emplace(str,qcolor);
+        observation_main_page->line_color_list.removeAt(i);
+        return qcolor;
+        }
     }
-    qDebug()<<"use_line_color_map error";
-    QColor qcolor =QColor(255,255,255);
-    return qcolor;
+    else
+    {
+        QColor qcolor = it->second;
+        return qcolor;
+    }
 }
 void Common::unused_line_color_map(std::string model,std::string mdccode)
 {
     Common* common = Common::instance();
     std::string str =model.append(",").append(mdccode);
 
-    auto it =common->observation_main_page->using_line_color_map.find(str);
-    if(it!=common->observation_main_page->using_line_color_map.end())
+    auto it =observation_main_page->using_line_color_map.find(str);
+    if(it!=observation_main_page->using_line_color_map.end())
     {
     QColor qcolor =it->second;
-    common->observation_main_page->line_color_list.push_back(qcolor);
-    common->observation_main_page->using_line_color_map.erase(it);
+    observation_main_page->line_color_list.push_back(qcolor);
+    observation_main_page->using_line_color_map.erase(it);
     return;
     }
     return;
@@ -792,7 +804,7 @@ QJsonArray Common::Restful_API(char queryStartTime[64] ,char queryEndTime[64],st
     // URL
 
     QString restfulUrl = "http://";
-    restfulUrl.append(QString::fromStdString(common->restful_API_url));
+    restfulUrl.append(QString::fromStdString(restful_API_url));
     restfulUrl.append("/Common/VmdSync/getRTObservationData");
     // 構造請求
     QNetworkRequest request;
@@ -801,11 +813,11 @@ QJsonArray Common::Restful_API(char queryStartTime[64] ,char queryEndTime[64],st
     QNetworkAccessManager *manager = new QNetworkAccessManager(md);
     // 發送請求
     QByteArray post_index ="patientId=";
-    post_index.append(common->patient_id);
+    post_index.append(patient_id);
     post_index.append("&mdcCode=");
-    post_index.append(common->history_mdccode);
+    post_index.append(history_mdccode);
     post_index.append("&model=");
-    post_index.append(common->history_model);
+    post_index.append(history_model);
     post_index.append("&queryStartTime=");
     post_index.append(queryStartTime);
     post_index.append("&queryEndTime=");
@@ -842,7 +854,7 @@ QJsonArray Common::Restful_API_Orderby(char queryStartTime[64] ,char queryEndTim
     Common* common = Common::instance();
     // URL
     QString restfulUrl = "http://";
-    restfulUrl.append(QString::fromStdString(common->restful_API_url));
+    restfulUrl.append(QString::fromStdString(restful_API_url));
     restfulUrl.append("/Common/VmdSync/getRTObservationData");
     // 構造請求
     QNetworkRequest request;
@@ -851,7 +863,7 @@ QJsonArray Common::Restful_API_Orderby(char queryStartTime[64] ,char queryEndTim
     QNetworkAccessManager *manager = new QNetworkAccessManager(md);
     // 發送請求
     QByteArray post_index ="patientId=";
-    post_index.append(common->patient_id);
+    post_index.append(patient_id);
     post_index.append("&model=");
     post_index.append(model);
     post_index.append("&queryStartTime=");
@@ -862,8 +874,8 @@ QJsonArray Common::Restful_API_Orderby(char queryStartTime[64] ,char queryEndTim
     post_index.append(dataSource);
     post_index.append("&orderStr=");
     post_index.append(orderStr);
-//    qDebug()<<"patient_id="<<QString::fromStdString(common->patient_id);
-//    qDebug()<<"history_mdccode="<<QString::fromStdString(common->history_mdccode);
+//    qDebug()<<"patient_id="<<QString::fromStdString(patient_id);
+//    qDebug()<<"history_mdccode="<<QString::fromStdString(history_mdccode);
 //    qDebug()<<"model="<<QString::fromStdString(model);
 //    qDebug()<<"queryStartTime="<<queryStartTime;
 //    qDebug()<<"queryEndTime="<<queryEndTime;
@@ -892,7 +904,7 @@ QJsonArray Common::Restful_API_Alarm(char queryStartTime[64] ,char queryEndTime[
     Common* common = Common::instance();
     // URL
     QString restfulUrl = "http://";
-    restfulUrl.append(QString::fromStdString(common->restful_API_url));
+    restfulUrl.append(QString::fromStdString(restful_API_url));
     restfulUrl.append("/Common/VmdSync/getAlarmHisData");
     // 構造請求
     QNetworkRequest request;
@@ -901,7 +913,7 @@ QJsonArray Common::Restful_API_Alarm(char queryStartTime[64] ,char queryEndTime[
     QNetworkAccessManager *manager = new QNetworkAccessManager(md);
     // 發送請求
     QByteArray post_index ="patientId=";
-    post_index.append(common->patient_id);
+    post_index.append(patient_id);
     post_index.append("&model=");
     post_index.append(model);
     post_index.append("&queryStartTime=");
@@ -938,7 +950,7 @@ QJsonArray Common::Restful_API_RRandVT(char queryStartTime[64] ,char queryEndTim
     Common* common = Common::instance();
     // URL
     QString restfulUrl = "http://";
-    restfulUrl.append(QString::fromStdString(common->restful_API_url));
+    restfulUrl.append(QString::fromStdString(restful_API_url));
     restfulUrl.append("/Common/VmdSync/getFree");
     // 構造請求
     QNetworkRequest request;
@@ -954,7 +966,7 @@ QJsonArray Common::Restful_API_RRandVT(char queryStartTime[64] ,char queryEndTim
                          .append(queryStartTime).append("  AND ")
                          .append(queryEndTime).append(" ")
                          .append("AND  VMDSync.patient_id= '")
-                         .append(common->patient_id).append("' ")
+                         .append(patient_id).append("' ")
                          .append("AND  VMDSync.data_source= '")
                          .append(dataSource).append("' ")
                          .append("AND  VMDSync.model= '")
