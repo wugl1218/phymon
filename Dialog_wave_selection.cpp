@@ -68,7 +68,9 @@ void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<stDisplayI
             r++;
         }
     }
-/*    for(;i<30;i++)
+    int full = (items->size() + (3 - (items->size() - has_loop) % 3)) / 3;
+    qDebug()<<"====full="<<full <<" items->size()="<< items->size();
+    for(;i<full;i++)
     {
         QWidget* b = new QWidget();
         g->addWidget(b, r, c);
@@ -84,8 +86,8 @@ void Dialog_wave_selection::add_tab(const char* tab_name, std::vector<stDisplayI
             r++;
         }
     }
-*/
-    this->resize(200,500);
+
+    this->resize(200, 200 + 200 * full / 3);
     if(has_loop)
     {
         mc_btn_Clickable* b = new mc_btn_Clickable();

@@ -86,7 +86,7 @@ private:
     Dialog_wave_selection menu;
     bool m_bDrawlayout;
     void render_controls_btn();
-    void push_add_item();
+    void push_add_item(bool bAddDel = false);
     std::vector<dbDisplayItems> CheckNurseDB(bool bListAll = false);
     bool IsRepeat(dbDisplayItems item);
 private slots:
