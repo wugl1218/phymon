@@ -113,7 +113,6 @@ private:
     std::vector<mc_loop_entry> loop_snapshot;
     std::vector<mc_loop_entry> ref_loop_snapshot;
     std::vector<mc_loop_entry> cap_loop_snapshot;
-    bool m_setup;
 
     void set_loop1_type(int type);
     void set_loop2_type(int type);
