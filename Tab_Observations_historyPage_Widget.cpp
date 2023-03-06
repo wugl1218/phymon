@@ -98,8 +98,8 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 int line_break_delta;
                 if(common->history_datasource=="Observation")
                     {
-                    line_break_delta=50000;
-                    ui->chart->set_line_break_delta(50000);
+                    line_break_delta=6000;
+                    ui->chart->set_line_break_delta(6000);
                     if(common->history_mdccode=="MATECARES_RSI")
                         array =common->Restful_API_RRandVT(timebuf,timebuf1,"Observation",common->history_model,0);
                     else if(common->history_mdccode=="MATECARES_MV")

@@ -55,23 +55,6 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     ui->rt_chart2->set_num_labels_x(4);
     ui->rt_chart2->set_num_labels_y(5);
 
-/*
-    ui->pChart->set_axis_visible(1);
-    ui->pChart->set_selection_width(40);
-    ui->pChart->set_selection_type(MC_SELECT_SERIES);
-    ui->pChart->set_series_width(0,2);
-    ui->pChart->set_scrollable(0);
-    ui->pChart->set_zoomable(0);
-    ui->pChart->set_view_range_max_y(200);
-    ui->pChart->set_view_range_min_y(0);
-    ui->pChart->set_num_labels_x(5);
-    ui->pChart->set_num_labels_y(5);
-    ui->pChart->set_series_color(0, QColor(255,255,255));
-*/
-//    ui->legend->set_text_color(QColor(255,255,255,255));
-//    ui->legend->set_text_color(QColor(0,0,0,255));
-//    ui->legend->set_vertical_spacing(80);
-//    connect(ui->legend, SIGNAL(on_series_select(std::string,std::string)), this, SLOT(on_series_pressed(std::string,std::string)));
     connect(ui->rt_chart1, SIGNAL(clicked()), this, SLOT(on_Obs_clicked()));
     connect(ui->rt_chart2, SIGNAL(clicked()), this, SLOT(on_Obs_clicked()));
     connect(ui->loop1, SIGNAL(on_press()), this, SLOT(loop_clicked()));
@@ -88,15 +71,6 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     //set_checked(ui->cap_btn, 0);
     //set_checked(ui->ref_btn, 0);
 
- /*   for(int i=0;i<20;++i)
-    {
-        std::vector<float> left_over_rtchart1_paw_vals;
-        left_over_rtchart_1_vals<<left_over_rtchart1_paw_vals;
-        left_over_rtchart_2_vals<<left_over_rtchart1_paw_vals;
-        last_rtchart_1_time<<0;
-        last_rtchart_2_time<<0;
-
-    }*/
 
 
     set_loop1_type(LOOP_PRESSURE_VOLUME);
@@ -124,10 +98,7 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
         rtchart1_time_list<<time;
         rtchart2_time_list<<time;
     }
- /*   ui->loop1->hide();
-    ui->loop2->hide();
-    ui->ref_btn->hide();
-    ui->cap_btn->hide();*/
+
     line_color_list<<QColor(100,200,30)
                    <<QColor(140,240,70)
                    <<QColor(160,255,110)
@@ -327,10 +298,12 @@ void Tab_Observations_mainPage_Widget::visualizetion_clicked()
 void Tab_Observations_mainPage_Widget::loop_clicked()
 {
     Common* common = Common::instance();
+    qDebug()<<"=============================================222";
+
     lsd.set_current_loops(loop1_type, loop2_type);
     auto hostRect = this->geometry();
     lsd.move(hostRect.center() - lsd.rect().center());
-/*    if(is_ref)
+    if(is_ref)
         ui->ref_btn->setStyleSheet(common->css.Enabled_Checked_ButtonStyle);
     else
         ui->ref_btn->setStyleSheet(common->css.Enabled_unChecked_ButtonStyle);
@@ -354,7 +327,7 @@ void Tab_Observations_mainPage_Widget::loop_clicked()
             ui->ref_btn->setStyleSheet(common->css.Checked_ButtonStyle);
         else
             ui->ref_btn->setStyleSheet(common->css.unChecked_ButtonStyle);
-    }*/
+    }
     int l1;
     int l2;
     lsd.get_current_loops(&l1, &l2);

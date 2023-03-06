@@ -10,7 +10,6 @@
 #define WAVE_TIMER      50     //no matter the value is, we can only read 25 data from topic
 #define ADD_BTN_POS     MAX_WAVE + 1
 #define LOOPS_NAME      "loops"
-#define MC_CHART_INTERVAL 10.5*1000      //單位千分之一秒
 
 
 mc_wavepanel::mc_wavepanel(QWidget *parent)
@@ -287,11 +286,56 @@ void mc_wavepanel::push_add_item()
         pChart->set_num_labels_x(5);
         pChart->set_num_labels_y(5);
         pChart->set_series_color(0, QColor(255,255,255));
-        if (m_nurse_items.size() == 1 && loops)
-            ;
-        else if (m_nurse_items.size())
-            ;//philo
-
+        if (m_nurse_items.size() == 2 && loops)
+        {
+            pChart->set_num_labels_x(3);
+            m_wave_interval=4.1*1000;
+        }
+        else if (m_nurse_items.size()== 3 && loops)
+        {
+            pChart->set_num_labels_x(5);
+            m_wave_interval=7.3*1000;
+        }
+        else if (m_nurse_items.size()== 4 && loops)
+        {
+            pChart->set_num_labels_x(5);
+            m_wave_interval=10.5*1000;
+        }
+        else if (m_nurse_items.size()== 5 && loops)
+        {
+            pChart->set_num_labels_x(5);
+            m_wave_interval=13.7*1000;
+        }
+        else if (m_nurse_items.size()== 1)
+        {
+            pChart->set_num_labels_x(3);
+            m_wave_interval=3.37*1000;
+        }
+        else if (m_nurse_items.size()== 2)
+        {
+            pChart->set_num_labels_x(3);
+            m_wave_interval=5.7*1000;
+        }
+        else if (m_nurse_items.size()== 3)
+        {
+            pChart->set_num_labels_x(5);
+            m_wave_interval=9.23*1000;
+        }
+        else if (m_nurse_items.size()== 4)
+        {
+            pChart->set_num_labels_x(5);
+            m_wave_interval=15.93*1000;
+        }
+        else if (m_nurse_items.size()== 5)
+        {
+            pChart->set_num_labels_x(5);
+            m_wave_interval=20.31*1000;
+        }
+        else if (m_nurse_items.size()== 6)
+        {
+            pChart->set_num_labels_x(5);
+            m_wave_interval=24.74*1000;
+        }
         std::vector<float> vals;
         uint64_t time = 0.0;
         m_rtchart_wave_list[i]<<vals;
@@ -721,7 +765,7 @@ void mc_wavepanel::add_wave_to_chart_RTO(int series_index, std::string model, st
             if(t > chart->get_view_range_max_x())
             {
                 chart->set_view_range_max_x(t);
-                chart->set_view_range_min_x(t-MC_CHART_INTERVAL);
+                chart->set_view_range_min_x(t-m_wave_interval);
             }
             if(vals.size() > 0)
             {

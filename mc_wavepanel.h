@@ -89,6 +89,7 @@ private:
     void push_add_item();
     std::vector<dbDisplayItems> CheckNurseDB(bool bListAll = false);
     bool IsRepeat(dbDisplayItems item);
+    uint64_t m_wave_interval=0;
 private slots:
     void controls_clicked();
     void UpdateWave();
