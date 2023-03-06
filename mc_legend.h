@@ -23,6 +23,7 @@ public:
     float val;
 
     QColor color;
+    int line_color;
 };
 
 class mc_legend : public QWidget
@@ -60,6 +61,7 @@ public:
     std::string get_y_min(){return entries.y_min;};
     std::string get_y_max(){return entries.y_max;};
     std::string get_datasource(){return entries.datasource;};
+    int get_color(){return entries.line_color;};
 
 
 protected:

@@ -24,7 +24,13 @@ public:
     float press;
     float vol;
 };
-
+class line_color
+{
+public:
+    std::string modle;
+    float press;
+    float vol;
+};
 namespace Ui {
 class Tab_Observations_mainPage_Widget;
 }
@@ -48,8 +54,8 @@ public:
     QList<QLabel*> RTO_name_list;
     void mapping_UI_reset();
     std::vector<mc_legend*> legends;
-    std::map<int,QColor> using_line_color_map;
-    std::map<int,QColor> unused_line_color_map;
+    QList<QColor> line_color_list;
+    std::map<std::string,QColor> using_line_color_map;
 
 
 
@@ -68,7 +74,6 @@ private:
     QList<std::vector<float>> rtchart2_wave_list;
     QList<uint64_t> rtchart1_time_list;
     QList<uint64_t> rtchart2_time_list;
-    QList<QColor> line_color_list;
 
     int mc_chart1_line =0;
     int mc_chart2_line =0;

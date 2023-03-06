@@ -155,7 +155,7 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
                    <<QColor(190,90,110);
     for (int i =0;i<line_color_list.size();++i)
     {
-        using_line_color_map.emplace(i,line_color_list[i]);
+        unused_line_color_map.emplace(i,line_color_list[i]);
     }
 
     SetWavePanelSlots();

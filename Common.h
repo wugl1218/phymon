@@ -178,8 +178,8 @@ public:
     QString PID;
     QString sPID;
     fflog_t* log;
-    int use_line_color_map();//
-    int unused_line_color_map();//
+    QColor use_line_color_list(std::string model, std::string mdccode);//
+    void unused_line_color_map(std::string model, std::string mdccode);//
 
     QJsonArray Restful_API(char queryStartTime[64] , char queryEndTime[64], std::string dataSource);
     QJsonArray Restful_API_Orderby(char queryStartTime[64] , char queryEndTime[64], std::string dataSource, std::string model, std::string orderStr);

@@ -404,8 +404,6 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::swap_entries(int sour
         for(int i=0;i<4;++i)
         {
             all_right_lines += right_lines[i].size();
-            qDebug()<<"right_lines[i].size()"<<i<<"==="<<right_lines[i].size();
-            qDebug()<<all_right_lines;
         }
         qDebug()<<all_right_lines;
         if(all_right_lines >= MC_ENTRY_MAX)
@@ -452,10 +450,7 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::select_all_pressed(in
         for(int i=0;i<4;++i)
         {
             all_right_lines += right_lines[i].size();
-            qDebug()<<"right_lines[i].size()"<<i<<"==="<<right_lines[i].size();
-            qDebug()<<all_right_lines;
         }
-        qDebug()<<all_right_lines;
         if(all_right_lines >= MC_ENTRY_MAX)
         {
             QString qstr="Select up to "+QString::number(MC_ENTRY_MAX);
@@ -687,10 +682,6 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
         d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
         d.AddMember("expired", 0, d.GetAllocator());
 
-
-
-        d.AddMember("color", 0, d.GetAllocator());
-
         rapidjson::Value v;
         v.SetObject();
         v.AddMember("sec", ts.tv_sec, d.GetAllocator());
@@ -720,7 +711,8 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
             d.AddMember("display_index", cs.order, d.GetAllocator());
             d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("expired", 0, d.GetAllocator());
-            d.AddMember("color", 0, d.GetAllocator());
+            common->unused_line_color_map(it->second.model,(mc_selection_entry*)left_lines[i][k])->get_text())
+            d.AddMember("color", "", d.GetAllocator());
 
             rapidjson::Value v;
             v.SetObject();
@@ -754,6 +746,10 @@ void Tab_Observations_metricItemsDisplayConfigPage_Widget::on_save_pushButton_cl
             d.AddMember("display_index", cs.order, d.GetAllocator());
             d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
             d.AddMember("expired", 0, d.GetAllocator());
+            QColor qcolor =common->use_line_color_list(it->second.model,((mc_selection_entry*)right_lines[i][k])->get_text());
+            QString colorRgb = QString::sprintf("rgb(%d, %d, %d)", qcolor.red(), qcolor.green(), qcolor.blue());
+            d.AddMember("color", colorRgb.toStdString(), d.GetAllocator());
+
             rapidjson::Value v;
             v.SetObject();
             v.AddMember("sec", ts.tv_sec, d.GetAllocator());

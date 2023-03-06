@@ -754,16 +754,36 @@ pclose(cmd);
 return PID;
 }
 
-int Common::use_line_color_map()
+QColor Common::use_line_color_list(std::string model,std::string mdccode)
 {
     Common* common = Common::instance();
+    std::string str =model.append(",").append(mdccode);
+    for(int i =0;i<common->observation_main_page->line_color_list.size();++i)
+    {
 
-    int i;
-    auto it =common->observation_main_page->using_line_color_map.find(i);
+    QColor qcolor =common->observation_main_page->line_color_list[i];
+    common->observation_main_page->using_line_color_map.emplace(str,qcolor);
+    common->observation_main_page->line_color_list.removeAt(i);
+    return qcolor;
+    }
+    qDebug()<<"use_line_color_map error";
+    QColor qcolor =QColor(255,255,255);
+    return qcolor;
 }
-int Common::unused_line_color_map()
+void Common::unused_line_color_map(std::string model,std::string mdccode)
 {
-    ;
+    Common* common = Common::instance();
+    std::string str =model.append(",").append(mdccode);
+
+    auto it =common->observation_main_page->using_line_color_map.find(str);
+    if(it!=common->observation_main_page->using_line_color_map.end())
+    {
+    QColor qcolor =it->second;
+    common->observation_main_page->line_color_list.push_back(qcolor);
+    common->observation_main_page->using_line_color_map.erase(it);
+    return;
+    }
+    return;
 }
 
 QJsonArray Common::Restful_API(char queryStartTime[64] ,char queryEndTime[64],std::string dataSource)
@@ -911,31 +931,7 @@ QJsonArray Common::Restful_API_Alarm(char queryStartTime[64] ,char queryEndTime[
     delete manager;
     manager = nullptr;
     return array;
-    /*        switch(value.type()) //測試 QJsonValue資料型態
-            {
-            case QJsonValue::Bool:
-                qDebug() << value.toBool();
-                break;
-            case QJsonValue::Double:
-                qDebug() << value.toDouble();
-                break;
-            case QJsonValue::String:
-                qDebug() << value.toString();
-                break;
-            case QJsonValue::Null:
-                qDebug() << " ";
-                break;
-            case QJsonValue::Array:
-                //转化为数组
-                qDebug() << value.toArray();
-                break;
-            case QJsonValue::Object:
-                qDebug() <<value.toObject();
-                break;
 
-            default:
-                qDebug() << "未知类型";
-            }*/
 }
 QJsonArray Common::Restful_API_RRandVT(char queryStartTime[64] ,char queryEndTime[64],std::string dataSource,std::string model,bool is_MV)
 { //使用於 Tab_Observations_historyPage中 MV與RSI計算 NS端資料庫搜尋
