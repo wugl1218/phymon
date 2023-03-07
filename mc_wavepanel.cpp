@@ -117,17 +117,7 @@ void mc_wavepanel::add_clicked()
         qDebug()<<"====repeat:"<< unselect_items[menu.m_selected_index].display_desc.c_str();
 
     push_add_item(true, m_nurse_items.size() >= items.size());
-    Common* common = Common::instance();
-    if(m_nurse_items.size()%2==1)
-    {
-        common->observation_main_page->ui->loop_frame->setStyleSheet("background-color: rgb(7, 22, 40);");
-        common->observation_main_page->ui->option_loop->setStyleSheet("background-color: rgb(3, 41, 86);");
-    }
-    else
-    {
-        common->observation_main_page->ui->loop_frame->setStyleSheet("background-color: rgb(11, 42, 78);");
-        common->observation_main_page->ui->option_loop->setStyleSheet("background-color: rgb(9, 58, 115);");
-    }
+
 }
 void mc_wavepanel::mc_add_clicked(mc_wavepanel* wp)
 {
@@ -356,6 +346,10 @@ bool mc_wavepanel::IsRepeat(dbDisplayItems item)
             return true;
     return false;
 }
+static bool mycompare(dbDisplayItems item1, dbDisplayItems item2)
+{
+    return item1.display_desc < item2.display_desc;
+}
 std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB(bool bListAll)
 {
     Common* common = Common::instance();
@@ -429,6 +423,9 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB(bool bListAll)
     }
     if (loops && m_nurse_items.size() <= MAX_WAVE - 2)
         m_nurse_items.push_back(loops_item);
+
+    if (m_nurse_items.size() > 1)
+        std::sort(m_nurse_items.begin(), m_nurse_items.end(), mycompare);
     for(int i = 0; i < (int)m_nurse_items.size();i++)
         qDebug()<<"====CheckNurseDB i="<<i<<" "<<m_nurse_items[i].display_desc.c_str();
     return m_nurse_items;
@@ -464,6 +461,16 @@ void mc_wavepanel::UpdateWave()
     {
         for (int i = 0; i < (int) m_nurse_items.size() && i < MAX_WAVE;i++)
         {
+            if(i % 2==1)
+            {
+                common->observation_main_page->ui->loop_frame->setStyleSheet("background-color: rgb(7, 22, 40);");
+                common->observation_main_page->ui->option_loop->setStyleSheet("background-color: rgb(3, 41, 86);");
+            }
+            else
+            {
+                common->observation_main_page->ui->loop_frame->setStyleSheet("background-color: rgb(11, 42, 78);");
+                common->observation_main_page->ui->option_loop->setStyleSheet("background-color: rgb(9, 58, 115);");
+            }
             if (m_nurse_items[i].display_desc == LOOPS_NAME)
                 continue;
             add_wave_to_chart_RTO(0,
