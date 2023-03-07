@@ -117,7 +117,7 @@ void mc_wavepanel::add_clicked()
     else
         qDebug()<<"====repeat:"<< unselect_items[menu.m_selected_index].display_desc.c_str();
 
-    push_add_item(true);
+    push_add_item(true, m_nurse_items.size() >= items.size());
     Common* common = Common::instance();
     if(m_nurse_items.size()%2==1)
     {
@@ -193,7 +193,7 @@ void mc_wavepanel::add_frame_control()
     else
         m_add_frame->setHidden(0);
 }
-void mc_wavepanel::push_add_item(bool bAddDel)
+void mc_wavepanel::push_add_item(bool bAddDel, bool bAllListed)
 {
     bool loops = false;
     CheckNurseDB();
@@ -240,7 +240,12 @@ void mc_wavepanel::push_add_item(bool bAddDel)
     else
     {
         if (bAddDel)
-            m_add_btn->show();
+        {
+            if (bAllListed)
+                m_add_frame->hide();
+            else
+                m_add_btn->show();
+        }
         else
         {
             m_add_frame->setHidden(0);
