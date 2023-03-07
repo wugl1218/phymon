@@ -23,6 +23,7 @@ mc_wavepanel::mc_wavepanel(QWidget *parent)
     m_Timer.start();
     m_RtLowerCount = m_ObLowerCount = 0;
     m_bDrawlayout = false;
+    m_setup = false;
 }
 void mc_wavepanel::WriteNurseDB(stDisplayItems item, bool bDel)
 {
@@ -115,7 +116,7 @@ void mc_wavepanel::add_clicked()
     else
         qDebug()<<"====repeat:"<< unselect_items[menu.m_selected_index].display_desc.c_str();
 
-    push_add_item();
+    push_add_item(true);
     Common* common = Common::instance();
     if(m_nurse_items.size()%2==1)
     {
@@ -155,7 +156,7 @@ void mc_wavepanel::mc_del_clicked(int index)
         item.model = m_nurse_items[index].model;
     }
     WriteNurseDB(item, true);
-    push_add_item();
+    push_add_item(true);
     Common* common = Common::instance();
 
     if(m_nurse_items.size()%2==1)
@@ -191,7 +192,7 @@ void mc_wavepanel::add_frame_control()
     else
         m_add_frame->setHidden(0);
 }
-void mc_wavepanel::push_add_item()
+void mc_wavepanel::push_add_item(bool bAddDel)
 {
     bool loops = false;
     CheckNurseDB();
@@ -199,21 +200,7 @@ void mc_wavepanel::push_add_item()
         if (item.display_desc == LOOPS_NAME)
             loops = true;
     qDebug()<<"=====m_nurse_items.size="<< m_nurse_items.size()<<" loops="<<loops<< " m_WaveRtItems="<<m_WaveRtItems.size();
-/*    int total = m_nurse_items.size();
-    dbDisplayItems virtural_item;
-    for (int i = 0; i < total;i++)
-    {
-        qDebug()<<"desc=" << m_nurse_items[i].display_desc.c_str() <<" model="<<m_nurse_items[i].model.c_str();
-        if (m_nurse_items[i].display_desc == "loops")
-        {
-            qDebug()<<"skip loops";
-            m_nurse_items[i] = m_nurse_items[0];
-            continue;
-        }
-        virtural_item = m_nurse_items[i];
-        m_nurse_items.push_back(virtural_item);
-    }
-*/
+
     for (int i = 0; i < ADD_BTN_POS;i++)        //Clear all buttons
     {
         m_RTO_chart_list[i]->hide();
@@ -228,7 +215,8 @@ void mc_wavepanel::push_add_item()
             continue;
         m_RTO_chart_list[i]->show();
         m_RTO_option_list[i]->show();
-        //m_RTO_minus_list[i]->show();
+        if (bAddDel)
+            m_RTO_minus_list[i]->show();
         m_RTO_name_list[i]->show();
 
     }
@@ -243,16 +231,23 @@ void mc_wavepanel::push_add_item()
         m_loop_frame->setHidden(0);
     else
         m_loop_frame->setHidden(1);
-    m_loop_minus->setHidden(1);
+    if (!bAddDel)
+        m_loop_minus->setHidden(1);
 
     if (!m_nurse_items.size())
         m_add_frame->show();
     else
     {
-        m_add_frame->setHidden(0);
-        m_add_btn->hide();
+        if (bAddDel)
+            m_add_btn->show();
+        else
+        {
+            m_add_frame->setHidden(0);
+            m_add_btn->hide();
+        }
     }
-
+    if (bAddDel)
+        m_setup = true;
     for (int i = 0; i < m_main_item->count();i++)       //clear all stretch
         m_main_item->setStretch(i,0);
     if (!m_nurse_items.size())                          // add_item only
@@ -341,7 +336,6 @@ void mc_wavepanel::push_add_item()
         m_rtchart_wave_list[i]<<vals;
         m_rtchart_time_list[i]<<time;
     }
-    m_setup = false;
 }
 bool mc_wavepanel::IsRepeat(dbDisplayItems item)
 {
