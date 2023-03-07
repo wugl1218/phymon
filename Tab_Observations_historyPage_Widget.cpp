@@ -24,6 +24,8 @@ Tab_Observations_historyPage_Widget::Tab_Observations_historyPage_Widget(QWidget
     ui->chart->set_min_zoom(30*60*1000);
     ui->chart->set_max_zoom(01*10*1000);
     ui->chart->set_axis_visible(1);
+    ui->chart->set_zoomable(0);
+    ui->RangeButton->hide();
     ui->chart->set_selection_width(40);
     ui->chart->set_selection_type(MC_SELECT_POINT);
     right_locked = 1;
@@ -98,8 +100,8 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 int line_break_delta;
                 if(common->history_datasource=="Observation")
                     {
-                    line_break_delta=6000;
-                    ui->chart->set_line_break_delta(6000);
+                    line_break_delta=common->Obs_line_break_delta;
+                    ui->chart->set_line_break_delta(common->Obs_line_break_delta);
                     if(common->history_mdccode=="MATECARES_RSI")
                         array =common->Restful_API_RRandVT(timebuf,timebuf1,"Observation",common->history_model,0);
                     else if(common->history_mdccode=="MATECARES_MV")
@@ -109,8 +111,8 @@ void Tab_Observations_historyPage_Widget::on_worker()
                     }
                 else
                     {
-                    line_break_delta=3000;
-                    ui->chart->set_line_break_delta(3000);
+                    line_break_delta=common->RTO_line_break_delta;
+                    ui->chart->set_line_break_delta(common->RTO_line_break_delta);
                     array =common->Restful_API(timebuf,timebuf1,"RTObservation");
                     }
                 for (int i=0; i<array.count();++i)
@@ -186,8 +188,8 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 int line_break_delta;
                 if(common->history_datasource=="Observation")
                     {
-                    line_break_delta=50000;
-                    ui->chart->set_line_break_delta(50000);
+                    line_break_delta=common->Obs_line_break_delta;
+                    ui->chart->set_line_break_delta(common->Obs_line_break_delta);
                     if(common->history_mdccode=="MATECARES_RSI")
                         array =common->Restful_API_RRandVT(timebuf,timebuf1,"Observation",common->history_model,0);
                     else if(common->history_mdccode=="MATECARES_MV")
@@ -197,8 +199,8 @@ void Tab_Observations_historyPage_Widget::on_worker()
                     }
                 else
                     {
-                    line_break_delta=3000;
-                    ui->chart->set_line_break_delta(3000);
+                    line_break_delta=common->RTO_line_break_delta;
+                    ui->chart->set_line_break_delta(common->RTO_line_break_delta);
                     array =common->Restful_API(timebuf,timebuf1,"RTObservation");
                     }
                 for (int i=0; i<array.count();++i)
@@ -261,13 +263,13 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 int line_break_delta;
                 if(common->history_datasource=="Observation")
                     {
-                    line_break_delta=50000;
-                    ui->chart->set_line_break_delta(50000);
+                    line_break_delta=common->Obs_line_break_delta;
+                    ui->chart->set_line_break_delta(common->Obs_line_break_delta);
                     }
                 else
                     {
-                    line_break_delta=3000;
-                    ui->chart->set_line_break_delta(3000);
+                    line_break_delta=common->RTO_line_break_delta;
+                    ui->chart->set_line_break_delta(common->RTO_line_break_delta);
                     }
                 ui->chart->set_custom_left_bound(last_left_bound - (HISTORY_TIME)*60*1000);
                 uint64_t custom_right_bound = last_left_bound - (HISTORY_TIME)*60*1000 + (HISTORY_TIME*2+1)*60*1000;
@@ -407,13 +409,13 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 int line_break_delta;
                 if(common->history_datasource=="Observation")
                     {
-                    line_break_delta=50000;
-                    ui->chart->set_line_break_delta(50000);
+                    line_break_delta=common->Obs_line_break_delta;
+                    ui->chart->set_line_break_delta(common->Obs_line_break_delta);
                     }
                 else
                     {
-                    line_break_delta=3000;
-                    ui->chart->set_line_break_delta(3000);
+                    line_break_delta=common->RTO_line_break_delta;
+                    ui->chart->set_line_break_delta(common->RTO_line_break_delta);
                     }
                 uint64_t new_right_bounds = last_right_bound + 30*1000;
                 if(new_right_bounds > now*1000)
@@ -578,8 +580,8 @@ void Tab_Observations_historyPage_Widget::update_triggered()
             int line_break_delta;
             if(common->history_datasource=="Observation")
                 {
-                line_break_delta=50000;
-                ui->chart->set_line_break_delta(50000);
+                line_break_delta=common->Obs_line_break_delta;
+                ui->chart->set_line_break_delta(common->Obs_line_break_delta);
                 if(common->history_mdccode=="MATECARES_RSI")
                     array =common->Restful_API_RRandVT(timebuf,timebuf1,"Observation",common->history_model,0);
                 else if(common->history_mdccode=="MATECARES_MV")
@@ -589,8 +591,8 @@ void Tab_Observations_historyPage_Widget::update_triggered()
                 }
             else
                 {
-                line_break_delta=3000;
-                ui->chart->set_line_break_delta(3000);
+                line_break_delta=common->RTO_line_break_delta;
+                ui->chart->set_line_break_delta(common->RTO_line_break_delta);
                 array =common->Restful_API(timebuf,timebuf1,"RTObservation");
                 }
             for (int i=0; i<array.count();++i)
@@ -617,7 +619,7 @@ void Tab_Observations_historyPage_Widget::update_triggered()
                     continue;
                 auto next = it;
                 next++;
-                if(next==vals.end() || next->first - it->first > 3000)
+                if(next==vals.end() || next->first - it->first > common->RTO_line_break_delta)
                 {
                     new_pts.emplace(it->first, it->second[0].toDouble());
                 }
@@ -1252,6 +1254,7 @@ void Tab_Observations_historyPage_Widget::on_MenuButton_clicked()
         class btn b;
         b.name=common->observation_main_page->legends[i]->get_series_text();
         b.index=i;
+
         if(common->observation_main_page->legends[i]->get_mdccode()==common->history_mdccode)
             b.is_select=1;
         else
@@ -1698,13 +1701,13 @@ void Tab_Observations_historyPage_Widget::set_title_text(std::string mdccode,
 
     if(datasource=="RTObservation")
     {
-        ui->chart->set_line_break_delta(3000);
+        ui->chart->set_line_break_delta(common->RTO_line_break_delta);
         ui->chart->set_view_range_max_x(now);
         ui->chart->set_view_range_min_x(now-1*60*1000);
     }
     else
     {
-        ui->chart->set_line_break_delta(50000);
+        ui->chart->set_line_break_delta(common->Obs_line_break_delta);
         ui->chart->set_view_range_max_x(now);
         ui->chart->set_view_range_min_x(now-30*60*1000);
     }

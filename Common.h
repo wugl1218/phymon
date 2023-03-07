@@ -151,6 +151,8 @@ public:
     std::string display_items_pwd;
     std::string vmd_url;
     std::string restful_API_url;
+    int Obs_line_break_delta;
+    int RTO_line_break_delta;
     PluginManager *pluginManager;
     DDSInterface *dds;
     CBLInterface *cbl;

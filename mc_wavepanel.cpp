@@ -252,8 +252,8 @@ void mc_wavepanel::push_add_item(bool bAddDel)
         m_main_item->setStretch(i,0);
     if (!m_nurse_items.size())                          // add_item only
         m_main_item->setStretch(ADD_BTN_POS,1);
-    else if (m_nurse_items.size() == 1 && m_nurse_items[0].display_desc == LOOPS_NAME)
-        m_main_item->setStretch(ADD_BTN_POS,1);                   // loops only
+//    else if (m_nurse_items.size() == 1 && m_nurse_items[0].display_desc == LOOPS_NAME)
+//        m_main_item->setStretch(0,1);                   // loops only
 
     for(int t = 0;t < MAX_WAVE;t++)
     {
@@ -284,12 +284,12 @@ void mc_wavepanel::push_add_item(bool bAddDel)
         if (m_nurse_items.size() == 2 && loops)
         {
             pChart->set_num_labels_x(3);
-            m_wave_interval=4.1*1000;
+            m_wave_interval=9.23*1000;
         }
         else if (m_nurse_items.size()== 3 && loops)
         {
             pChart->set_num_labels_x(5);
-            m_wave_interval=7.3*1000;
+            m_wave_interval=9.23*1000;
         }
         else if (m_nurse_items.size()== 4 && loops)
         {
@@ -304,12 +304,12 @@ void mc_wavepanel::push_add_item(bool bAddDel)
         else if (m_nurse_items.size()== 1)
         {
             pChart->set_num_labels_x(3);
-            m_wave_interval=3.37*1000;
+            m_wave_interval=9.23*1000;
         }
         else if (m_nurse_items.size()== 2)
         {
             pChart->set_num_labels_x(3);
-            m_wave_interval=5.7*1000;
+            m_wave_interval=9.23*1000;
         }
         else if (m_nurse_items.size()== 3)
         {
@@ -704,8 +704,8 @@ void mc_wavepanel::add_wave_to_chart_RTO(int series_index, std::string model, st
     if(common->patient_id.size() == 0)
         return;
     int line_break_delta;
-    line_break_delta=3000;
-    chart->set_line_break_delta(3000);
+    line_break_delta=common->RTO_line_break_delta;
+    chart->set_line_break_delta(common->RTO_line_break_delta);
     std::string querystr = "vmd_id MATCH '";
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");

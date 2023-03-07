@@ -35,6 +35,9 @@
         <file>minus_icon.png</file>
         <file>add_icon.png</file>
         <file>Enlarge.png</file>
+        <file>vis_up.png</file>
+        <file>vis_down.png</file>
+        <file>exsample.png</file>
     </qresource>
     <qresource prefix="/">
         <file>wav/warning.wav</file>

@@ -62,7 +62,8 @@ Common::Common(MainDialog* m)
     button_hold_tick_interval_fast = d["ButtonHoldTickIntervalFast"].GetUint();
     log_path = d["LogPath"].GetString();
     Ping_url =d["PingIP"].GetString();
-
+    Obs_line_break_delta=d["Obslinebreakdeltad"].GetInt();
+    RTO_line_break_delta=d["RTOlinebreakdeltad"].GetInt();
     rti::config::Verbosity verbosity = static_cast<rti::config::Verbosity::inner_enum>(0);
     // Starting RTI DDS...
     // rti::config::Verbosity verbosity(rti::config::Verbosity::WARNING);
@@ -662,9 +663,14 @@ void Common::populate_item_checkstate()
         mc_checkstate cs;
         cs.checked = result.valueAtIndex(1).asUnsigned();
         cs.order = result.valueAtIndex(2).asInt();
-        QString qstr = QString::fromStdString(result.valueAtIndex(4).asstring());
-        cs.color = (qstr.toUInt(NULL,16));
         std::string model = result.valueAtIndex(3).asstring();
+
+        QString qstr = QString::fromStdString(result.valueAtIndex(4).asstring());
+        if(qstr=="")
+            cs.color= use_line_color_list(model,mdc_code);
+        else
+            cs.color = (qstr.toUInt(NULL,16));
+
         item_checkstate.emplace(model+","+mdc_code, cs);
     }
     if(item_checkstate.size() == 0)

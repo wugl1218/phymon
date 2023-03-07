@@ -60,16 +60,20 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     connect(ui->loop1, SIGNAL(on_press()), this, SLOT(loop_clicked()));
     connect(ui->loop2, SIGNAL(on_press()), this, SLOT(loop_clicked()));
     connect(ui->visualizetion, SIGNAL(on_press()), this, SLOT(visualizetion_clicked()));
-    ui->visualization_show_btn->hide();
-    ui->visualization_label->hide();
-    //fordebug
-    ui->visualizetion->hide();
+//    ui->visualization_show_btn->hide();
+//    ui->visualization_label->hide();
+    //fordebug hidesomething
+//    ui->visualizetion->hide();
+//    ui->visualization_setting->hide();
+//    ui->visualization_config_btn->hide();
+//    ui->visualization_hide_btn->hide();
+//    ui->visualization_new->hide();
     ui->visualization_setting->hide();
-    ui->visualization_config_btn->hide();
-    ui->visualization_hide_btn->hide();
-    ui->visualization_new->hide();
-    //set_checked(ui->cap_btn, 0);
-    //set_checked(ui->ref_btn, 0);
+    ui->vis_frame->show();
+    ui->vis_header_frame->hide();
+
+    set_checked(ui->cap_btn, 0);
+    set_checked(ui->ref_btn, 0);
 
 
 
@@ -99,31 +103,31 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
         rtchart2_time_list<<time;
     }
 
-    line_color_list<<QColor(100,200,30)
-                   <<QColor(140,240,70)
-                   <<QColor(160,255,110)
-                   <<QColor(40,150,150)
-                   <<QColor(60,170,170)
+    line_color_list<<QColor(169,79,8)
+                  <<QColor(161,92,38)
+                  <<QColor(226,158,0)
+                  <<QColor(232,204,172)
+                  <<QColor(172,60,98)
 
-                   <<QColor(80,190,210)
-                   <<QColor(150,50,150)
-                   <<QColor(170,70,170)
-                   <<QColor(190,90,190)
-                   <<QColor(150,150,50)
+                  <<QColor(155,165,206)
+                  <<QColor(12,150,188)
+                  <<QColor(92,229,95)
+                  <<QColor(121,12,198)
+                  <<QColor(226,69,255)
 
-                   <<QColor(170,170,70)
-                   <<QColor(190,190,90)
-                   <<QColor(100,150,135)
-                   <<QColor(120,170,155)
-                   <<QColor(140,190,175)
+                  <<QColor(153, 50, 204)
+                  <<QColor(199, 21, 133)
+                  <<QColor(216, 112, 147)
+                  <<QColor(147, 112, 219)
+                  <<QColor(139, 69, 19)
 
-                   <<QColor(100,45,120)
-                   <<QColor(120,65,140)
-                   <<QColor(140,85,160)
-                   <<QColor(150,50,70)
-                   <<QColor(170,70,90)
+                  <<QColor(162, 105, 33)
+                  <<QColor(255, 127, 80)
+                  <<QColor(173, 213, 32)
+                  <<QColor(218, 165, 32)
+                  <<QColor(100, 149, 237)
 
-                   <<QColor(190,90,110);
+                  <<QColor(65, 105, 225);
 
 
     SetWavePanelSlots();
@@ -1454,19 +1458,18 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             row++;
             it2++;
         }
-       /* for (int i =0;i<row;++i) //目前顏色尚未使用固定
-        {
-            if(mc_chart1_line>=i)
-            {
-                ui->rt_chart1->set_series_color(i, line_color_list[i]);
-            }
-            else
-            {
-                ui->rt_chart2->set_series_color(i-mc_chart1_line-1, line_color_list[i]);
-            }
-        }*/
+
+
+        for (int i =mc_chart1_line;i<mc_chart1_max_line;++i) //清除未選取線條
+            ui->rt_chart1->clear_points(i);
+        for (int i =mc_chart2_line;i<mc_chart2_max_line;++i)
+            ui->rt_chart2->clear_points(i);
+
         ui->WidgetContents->update();
         ui->WidgetContents->setMinimumHeight(10+(60+8)*row);
+        mc_chart1_max_line =mc_chart1_line;
+        mc_chart2_max_line =mc_chart2_line;
+
     }
     ui->rt_chart1->trim_left();
     ui->rt_chart2->trim_left();
@@ -1598,26 +1601,34 @@ void Tab_Observations_mainPage_Widget::on_cap_btn_toggled(bool checked)
 
 void Tab_Observations_mainPage_Widget::on_visualization_hide_btn_clicked()
 {
-    ui->visualizetion->hide();
-    ui->visualization_setting->hide();
-    ui->visualization_config_btn->hide();
-    ui->visualization_hide_btn->hide();
-    ui->visualization_show_btn->show();
-    ui->visualization_label->show();
-    ui->visualization_new->hide();
-
+//    ui->visualizetion->hide();
+//    ui->visualization_setting->hide();
+//    ui->visualization_config_btn->hide();
+//    ui->visualization_hide_btn->hide();
+    ui->vis_frame->hide();
+    ui->vis_header_frame->show();
+//    ui->visualization_show_btn->show();
+//    ui->visualization_label->show();
+//    ui->visualization_new->hide();
+    ui->vis_blueline->hide();
+//    ui->label_4->hide();
 }
 
 
 void Tab_Observations_mainPage_Widget::on_visualization_show_btn_clicked()
 {
-    ui->visualizetion->show();
-    ui->visualization_setting->show();
-    ui->visualization_config_btn->show();
-    ui->visualization_hide_btn->show();
-    ui->visualization_show_btn->hide();
-    ui->visualization_label->hide();
-    ui->visualization_new->show();
+//    ui->visualizetion->show();
+//    ui->visualization_setting->show();
+//    ui->visualization_config_btn->show();
+//    ui->visualization_hide_btn->show();
+    ui->vis_frame->show();
+    ui->vis_header_frame->hide();
+//    ui->visualization_show_btn->hide();
+//    ui->visualization_label->hide();
+//    ui->visualization_new->show();
+    ui->vis_blueline->show();
+//    ui->label_4->show();
+
 }
 
 
@@ -1646,8 +1657,8 @@ void Tab_Observations_mainPage_Widget::add_wave_to_chart_Obs(int series_index,
     if(common->patient_id.size() == 0)
         return;
     int line_break_delta;
-    line_break_delta=6000;
-    chart->set_line_break_delta(6000);
+    line_break_delta=common->Obs_line_break_delta;
+    chart->set_line_break_delta(common->Obs_line_break_delta);
     time_t now = time(NULL)-6;
     time_t future = time(NULL)+6;
 //    if((t < now)||t>future)
@@ -1698,8 +1709,8 @@ void Tab_Observations_mainPage_Widget::add_wave_to_chart_RTO(int series_index, s
     if(common->patient_id.size() == 0)
         return;
     int line_break_delta;
-    line_break_delta=3000;
-    chart->set_line_break_delta(3000);
+    line_break_delta=common->RTO_line_break_delta;
+    chart->set_line_break_delta(common->RTO_line_break_delta);
     std::string querystr = "vmd_id MATCH '";
     querystr.append(common->vmd_id);
     querystr.append("' AND patient_id MATCH '");

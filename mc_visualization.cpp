@@ -28,8 +28,10 @@ void mc_visualization::paintEvent(QPaintEvent *event)
     if(count<3)
     {
         QPainter painter(this);
-        painter.translate(width()/2., height()/2.);
-        Common::draw_text(painter,0,0, Qt::AlignLeft | Qt::AlignVCenter, "Pleasa add at least three vital signs");
+        QPen white_pen(Qt::white);
+        painter.translate(10, height()/2.);
+        painter.setPen(white_pen);
+        Common::draw_text(painter,0,0, Qt::AlignLeft | Qt::AlignVCenter, "Pleasa add at least \nthree vital signs");
         return;
     }
     QFont data_font ;
@@ -168,7 +170,7 @@ void mc_visualization::paintEvent(QPaintEvent *event)
         }
 
        int length1,length2;
-       float proportion1 =1.4; //調整距離圓心位置
+       float proportion1 =1.6; //調整距離圓心位置
        painter.setFont(data_font);
        if((x1+(x2-x1)*0.50)<0) //讓左側文字靠左
         {

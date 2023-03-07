@@ -61,8 +61,8 @@ void mc_navigation::paintEvent(QPaintEvent *event)
         Common::draw_text(painter, -205, 21, Qt::AlignLeft | Qt::AlignVCenter, "Observations");
         if(!common->device_settings_page->has_checked)
             painter.setPen(grey_pen);
-        Common::draw_text(painter, -463, 21, Qt::AlignLeft | Qt::AlignVCenter, "Utilities");
         Common::draw_text(painter, -335, 21, Qt::AlignLeft | Qt::AlignVCenter, "Devices");
+        Common::draw_text(painter, -463, 21, Qt::AlignLeft | Qt::AlignVCenter, "Utilities");
         painter.setPen(no_pen);
         painter.setBrush(teal_brush);
         std::vector<QPoint> pts;
@@ -78,8 +78,8 @@ void mc_navigation::paintEvent(QPaintEvent *event)
         painter.setPen(yellow_pen);
         Common::draw_text(painter, -463, 21, Qt::AlignLeft | Qt::AlignVCenter, "Utilities");
         painter.setPen(white_pen);
-        Common::draw_text(painter, -335, 21, Qt::AlignLeft | Qt::AlignVCenter, "Devices");
         Common::draw_text(painter, -205, 21, Qt::AlignLeft | Qt::AlignVCenter, "Observations");
+        Common::draw_text(painter, -335, 21, Qt::AlignLeft | Qt::AlignVCenter, "Devices");
         painter.setPen(no_pen);
         painter.setBrush(teal_brush);
         std::vector<QPoint> pts;
