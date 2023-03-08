@@ -15,6 +15,7 @@
 #include "Dialog_loopselection.h"
 #include "Dialog_visualization_config.h"
 #include "mc_legend.h"
+#include "mc_wavepanel.h"
 
 #include <QLabel>
 class mc_loop_entry
@@ -47,6 +48,7 @@ public:
     std::string CapturedIssues_channel_id;
     Dialog_loopselection lsd;
     Dialog_visualization_config vsd;
+    mc_wavepanel* m_wavepanel;
     QList<QWidget*> RTO_wave_list;
     QList<mc_chart*> RTO_chart_list;
     QList<QWidget*> RTO_option_list;

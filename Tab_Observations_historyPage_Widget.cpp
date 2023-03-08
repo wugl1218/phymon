@@ -1247,29 +1247,62 @@ void Tab_Observations_historyPage_Widget::on_MenuButton_clicked()
     Common* common = Common::instance();
     std::vector<btn> btn;
 //    for(auto it=common->observation_main_page->legends.begin();it!=common->observation_main_page->legends.end();++it)
-        for(int i=0;i<common->observation_main_page->legends.size();++i)
+    if(common->history_datasource=="Observation")
     {
-        class btn b;
-        b.name=common->observation_main_page->legends[i]->get_series_text();
-        b.index=i;
-        if(common->observation_main_page->legends[i]->get_mdccode()==common->history_mdccode)
-            b.is_select=1;
-        else
-            b.is_select=0;
-        btn.push_back(b);
+        for(int i=0;i<common->observation_main_page->legends.size();++i)
+        {
+            class btn b;
+            b.name=common->observation_main_page->legends[i]->get_series_text();
+            b.index=i;
+            if(common->observation_main_page->legends[i]->get_mdccode()==common->history_mdccode)
+                b.is_select=1;
+            else
+                b.is_select=0;
+            btn.push_back(b);
+        }
+        common->select_menu.make_btn(btn);
+        common->select_menu.exec();
+        int i = common->select_menu.get_btn();
+        auto it=common->observation_main_page->legends[i];
+        set_title_text(it->get_mdccode(),
+                       it->get_model(),
+                       it->get_name(),
+                       it->get_y_min(),
+                       it->get_y_max(),
+                       it->get_unit(),
+                       it->get_datasource());
+        ui->chart->clear_points(0);
     }
-    common->select_menu.make_btn(btn);
-    common->select_menu.exec();
-    int i = common->select_menu.get_btn();
-    auto it=common->observation_main_page->legends[i];
-    set_title_text(it->get_mdccode(),
-                   it->get_model(),
-                   it->get_name(),
-                   it->get_y_min(),
-                   it->get_y_max(),
-                   it->get_unit(),
-                   it->get_datasource());
-    ui->chart->clear_points(0);
+    else
+    {
+        for(int i=0;i<common->observation_main_page->m_wavepanel->m_nurse_items.size();++i)
+        {
+            class btn b;
+            b.name=common->observation_main_page->m_wavepanel->m_nurse_items[i].display_desc;
+            if (b.name == LOOPS_NAME)
+                continue;
+            b.index=i;
+            if(common->observation_main_page->m_wavepanel->m_nurse_items[i].mdc_code
+                    == common->history_mdccode)
+                b.is_select=1;
+            else
+                b.is_select=0;
+            btn.push_back(b);
+            qDebug()<<"===="<<QString::fromStdString(b.name);
+        }
+        common->select_menu.make_btn(btn);
+        common->select_menu.exec();
+        int i = common->select_menu.get_btn();
+        auto it=common->observation_main_page->m_wavepanel->m_nurse_items[i];
+        set_title_text(it.mdc_code,
+                       it.model,
+                       it.display_desc,
+                       QString::number(it.y_min).toStdString(),
+                       QString::number(it.y_max).toStdString(),
+                       "",
+                       "RTObservation");
+        ui->chart->clear_points(0);
+    }
 }
 
 
