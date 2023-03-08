@@ -270,7 +270,9 @@ void mc_wavepanel::push_add_item(bool bAddDel, bool bAllListed)
         m_loop_frame->setHidden(0);
     else
         m_loop_frame->setHidden(1);
-    if (!bAddDel)
+    if (bAddDel)
+        m_loop_minus->setHidden(0);
+    else
         m_loop_minus->setHidden(1);
 
     if (!m_nurse_items.size())
