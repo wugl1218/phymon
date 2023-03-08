@@ -302,8 +302,6 @@ void Tab_Observations_mainPage_Widget::visualizetion_clicked()
 void Tab_Observations_mainPage_Widget::loop_clicked()
 {
     Common* common = Common::instance();
-    qDebug()<<"=============================================222";
-
     lsd.set_current_loops(loop1_type, loop2_type);
     auto hostRect = this->geometry();
     lsd.move(hostRect.center() - lsd.rect().center());
@@ -1449,6 +1447,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             }
             else
                 {
+                qDebug()<<"========================================================================";
                 qDebug()<<QString::fromStdString(it2->second.mdccode);
                 qDebug()<<QString::fromStdString(it2->second.desc);
                 qDebug()<<QString::fromStdString(it2->second.abbv);

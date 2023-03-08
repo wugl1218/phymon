@@ -82,10 +82,6 @@ void Tab_Observations_historyPage_Widget::on_worker()
                 right_locked = 1;
             else if(ui->chart->get_view_range_min_x() < last_left_bound + 0.5*60*1000)
             {
-                qDebug()<<"get_view_range_min_x() > last_left_bound + 30*1000";
-                qDebug()<<ui->chart->get_view_range_min_x();
-                qDebug()<<"last_right_bound="<<last_left_bound;
-
                 ui->chart->set_custom_left_bound(last_left_bound - (HISTORY_TIME)*60*1000);
                 uint64_t custom_right_bound = last_left_bound - (HISTORY_TIME)*60*1000 + (HISTORY_TIME*2+1)*60*1000;
                 if(custom_right_bound > now*1000)
@@ -164,15 +160,11 @@ void Tab_Observations_historyPage_Widget::on_worker()
             }
             else if(ui->chart->get_view_range_max_x() > last_right_bound - 0.5*60*1000)
             {                
-                qDebug()<<"view_range_max_x() > last_right_bound - 30*1000";
-                qDebug()<<ui->chart->get_view_range_max_x();
-                qDebug()<<"last_right_bound="<<last_right_bound;
 
                 uint64_t new_right_bounds = last_right_bound + 30*1000;
 
                 if(new_right_bounds > now*1000)
                      new_right_bounds = now*1000;
-                qDebug()<<"new_right_bounds="<<new_right_bounds;
 
                 ui->chart->set_custom_left_bound(new_right_bounds - (HISTORY_TIME)*60*1000);
                 ui->chart->set_custom_right_bound(new_right_bounds);
@@ -565,11 +557,9 @@ void Tab_Observations_historyPage_Widget::update_triggered()
     {
         if(common->is_server)//NS
         {
-            qDebug()<<"right_locked";
             uint64_t now = time(NULL);
             ui->chart->set_custom_right_bound(now*1000);
             ui->chart->set_custom_left_bound((now-HISTORY_TIME*60)*1000);
-            qDebug()<<ui->chart->get_custom_left_bound();
             now -=HISTORY_TIME*60;
             char timebuf[64];
             char timebuf1[64];
@@ -929,7 +919,6 @@ void Tab_Observations_historyPage_Widget::on_series_select(int series_index)
 void Tab_Observations_historyPage_Widget::on_point_select(int series_index, uint64_t timestamp, float val, int screenspace_x, int screenspace_y)
 {
     Common* common = Common::instance();
-    qDebug()<<"=====================on_point_select===================";
 
     timestamp /= 1000;
     uint64_t start_time = timestamp-10;
@@ -1249,6 +1238,8 @@ void Tab_Observations_historyPage_Widget::on_MenuButton_clicked()
     Common* common = Common::instance();
     std::vector<btn> btn;
 //    for(auto it=common->observation_main_page->legends.begin();it!=common->observation_main_page->legends.end();++it)
+    qDebug()<<"mdc_code===="<<QString::fromStdString(common->history_datasource);
+
     if(common->history_datasource=="Observation")
     {
         for(int i=0;i<common->observation_main_page->legends.size();++i)
@@ -1290,7 +1281,6 @@ void Tab_Observations_historyPage_Widget::on_MenuButton_clicked()
             else
                 b.is_select=0;
             btn.push_back(b);
-            qDebug()<<"===="<<QString::fromStdString(b.name);
         }
         common->select_menu.make_btn(btn);
         common->select_menu.exec();

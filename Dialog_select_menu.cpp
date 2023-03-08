@@ -40,23 +40,25 @@ void Dialog_select_menu::make_btn(std::vector<btn> btn)
             Pushbtn->setStyleSheet(common->css.unChecked_ButtonStyle);
         Pushbtn->setProperty("index", it->index);
         connect(Pushbtn, SIGNAL(clicked()), this, SLOT(btn_clicked()));
+        max_row=row;
         row++;
         if(row >= 5)
         {
             column++;
             row = 0;
-            max_row=5;
         }
         btns.push_back(Pushbtn);
     }
+    if(column>0)
+        max_row=5;
     max_column=column+1;
+
     this->resize(Btn_spacing+(Btn_width+Btn_spacing)*max_column,Btn_spacing+(Btn_height+Btn_spacing)*max_row);
 }
 void Dialog_select_menu::btn_clicked()
 {
     QPushButton* s = (QPushButton*)sender();
     select_btn = s->property("index").value<int>();
-    qDebug()<<"select_btn"<<select_btn;
     close();
 }
 void Dialog_select_menu::mousePressEvent(QMouseEvent *event)

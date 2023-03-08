@@ -413,7 +413,6 @@ void Tab_Mapping_Widget::perform_release(std::string employeeID)
         }
     for(auto i :common->md->ta.UI_name)
         {
-        qDebug()<<"============================";
         i->set_mute_sheet(0);
         i->circle->hide();
         }
