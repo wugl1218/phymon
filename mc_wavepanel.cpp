@@ -40,6 +40,7 @@ void mc_wavepanel::WriteNurseDB(stDisplayItems item, bool bDel)
     d.AddMember("y_min", rapidjson::Value().SetString(item.y_min.c_str(), d.GetAllocator()), d.GetAllocator());
     d.AddMember("y_step", rapidjson::Value().SetString(item.y_step.c_str(), d.GetAllocator()), d.GetAllocator());
     d.AddMember("visibility", visibility, d.GetAllocator());
+    d.AddMember("display_index", item.display_index, d.GetAllocator());
     rapidjson::StringBuffer buffer;
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
     d.Accept(writer);
@@ -52,6 +53,14 @@ void mc_wavepanel::WriteNurseDB(stDisplayItems item, bool bDel)
         common->cbl->setDocExpiration(common->display_items_db, item.record_id, now * 1000, dummy);
         qDebug()<<"====dummy="<<dummy.c_str();
     }
+}
+static bool dbCompare(dbDisplayItems item1, dbDisplayItems item2)
+{
+    return item1.display_index < item2.display_index;
+}
+static bool stCompare(stDisplayItems item1, stDisplayItems item2)
+{
+    return item1.display_desc < item2.display_desc;
 }
 void mc_wavepanel::add_clicked()
 {
@@ -99,6 +108,7 @@ void mc_wavepanel::add_clicked()
             unselect_items.push_back(item);
         }
     }
+    std::sort(unselect_items.begin(), unselect_items.end(), stCompare);
     menu.add_tab(m_DeviceName.c_str(), &unselect_items, loops);
     menu.exec();
     printf("selected item=%s, index=%d\n", menu.selected_item.c_str(), menu.m_selected_index);
@@ -112,12 +122,21 @@ void mc_wavepanel::add_clicked()
            repeat++;
     }
     if (repeat < 2)
-        WriteNurseDB(unselect_items[menu.m_selected_index]);
+    {
+        int j = menu.m_selected_index;
+        if (m_nurse_items.size() > 1 && m_nurse_items[m_nurse_items.size() - 1].display_desc == LOOPS_NAME)
+            unselect_items[j].display_index = m_nurse_items.size() - 1;     // insert before loops
+        else if (unselect_items[j].display_desc == LOOPS_NAME)              // append tail
+            unselect_items[j].display_index = MAX_WAVE;
+        else
+            unselect_items[j].display_index = m_nurse_items.size();
+        qDebug()<<"===== add one index="<<unselect_items[j].display_index<<" "<<item.display_desc.c_str();
+        WriteNurseDB(unselect_items[j]);
+    }
     else
         qDebug()<<"====repeat:"<< unselect_items[menu.m_selected_index].display_desc.c_str();
 
     push_add_item(true, m_nurse_items.size() >= items.size());
-
 }
 void mc_wavepanel::mc_add_clicked(mc_wavepanel* wp)
 {
@@ -126,26 +145,56 @@ void mc_wavepanel::mc_add_clicked(mc_wavepanel* wp)
 void mc_wavepanel::mc_del_clicked(int index)
 {
     stDisplayItems item;
-    if (index == MAX_WAVE)          //loops
+    size_t j = 0;
+    if (index < 0)
+        return;
+    if (m_nurse_items.size() == 1)       //only one
     {
-        for(int i = 0; i < (int) m_nurse_items.size();i++)
-            if (m_nurse_items[i].display_desc == LOOPS_NAME)
-            {
-                item.display_desc = m_nurse_items[i].display_desc;
-                item.mdc_code = m_nurse_items[i].mdc_code;
-                item.record_id = m_nurse_items[i].record_id;
-                item.model = m_nurse_items[i].model;
-                break;
-            }
+        item.display_desc = m_nurse_items[0].display_desc;
+        item.mdc_code = m_nurse_items[0].mdc_code;
+        item.record_id = m_nurse_items[0].record_id;
+        item.model = m_nurse_items[0].model;
+        qDebug()<<"===== del only one "<<item.display_desc.c_str();
+        WriteNurseDB(item, true);
     }
-    else
+    else if (index == MAX_WAVE)          //loops
+    {
+        j = m_nurse_items.size() - 1;
+        item.display_desc = m_nurse_items[j].display_desc;
+        item.mdc_code = m_nurse_items[j].mdc_code;
+        item.record_id = m_nurse_items[j].record_id;
+        item.model = m_nurse_items[j].model;
+        qDebug()<<"===== del loops "<<item.display_desc.c_str();
+        WriteNurseDB(item, true);
+    }
+    else if (index == (int) m_nurse_items.size() - 1)
     {
         item.display_desc = m_nurse_items[index].display_desc;
         item.mdc_code = m_nurse_items[index].mdc_code;
         item.record_id = m_nurse_items[index].record_id;
         item.model = m_nurse_items[index].model;
+        qDebug()<<"===== del last one "<<item.display_desc.c_str();
+        WriteNurseDB(item, true);
     }
-    WriteNurseDB(item, true);
+    else
+    {
+        j = 0;
+        for(size_t i = 0; i < m_nurse_items.size();i++)
+        {
+            if (m_nurse_items[i].display_desc == LOOPS_NAME)
+                continue;
+            item.display_index = j++;
+            item.display_desc = m_nurse_items[i].display_desc;
+            item.mdc_code = m_nurse_items[i].mdc_code;
+            item.record_id = m_nurse_items[i].record_id;
+            item.model = m_nurse_items[i].model;
+            qDebug()<<"===== del middle one i="<<i<<" j="<<j<<" index="<<index<<" desc="<<item.display_desc.c_str();
+            if (i == (size_t)index)
+                WriteNurseDB(item, true);
+            else
+                WriteNurseDB(item);
+        }
+    }
     push_add_item(true);
     Common* common = Common::instance();
 
@@ -221,7 +270,9 @@ void mc_wavepanel::push_add_item(bool bAddDel, bool bAllListed)
         m_loop_frame->setHidden(0);
     else
         m_loop_frame->setHidden(1);
-    if (!bAddDel)
+    if (bAddDel)
+        m_loop_minus->setHidden(0);
+    else
         m_loop_minus->setHidden(1);
 
     if (!m_nurse_items.size())
@@ -346,10 +397,6 @@ bool mc_wavepanel::IsRepeat(dbDisplayItems item)
             return true;
     return false;
 }
-static bool mycompare(dbDisplayItems item1, dbDisplayItems item2)
-{
-    return item1.display_desc < item2.display_desc;
-}
 std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB(bool bListAll)
 {
     Common* common = Common::instance();
@@ -425,7 +472,7 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB(bool bListAll)
         m_nurse_items.push_back(loops_item);
 
     if (m_nurse_items.size() > 1)
-        std::sort(m_nurse_items.begin(), m_nurse_items.end(), mycompare);
+        std::sort(m_nurse_items.begin(), m_nurse_items.end(), dbCompare);
     for(int i = 0; i < (int)m_nurse_items.size();i++)
         qDebug()<<"====CheckNurseDB i="<<i<<" "<<m_nurse_items[i].display_desc.c_str();
     return m_nurse_items;

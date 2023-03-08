@@ -129,7 +129,7 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
 
                   <<QColor(65, 105, 225);
 
-
+    m_wavepanel = ui->wavePanel;
     SetWavePanelSlots();
 }
 void Tab_Observations_mainPage_Widget::SetWavePanelSlots()

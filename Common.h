@@ -54,6 +54,8 @@ struct stDisplayItems
     std::string y_min;
     std::string y_step;
     std::string record_id;
+    std::string visibility;
+    int display_index;
 };
 
 struct dbDisplayItems
