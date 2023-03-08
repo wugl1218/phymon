@@ -52,17 +52,28 @@ void mc_navigation::paintEvent(QPaintEvent *event)
     QPen no_pen(Qt::NoPen);
     if(current_tab == 0)
     {
-        painter.setPen(yellow_pen);
+        painter.setPen(yellow_pen);//選中
         Common::draw_text(painter, -607, 21, Qt::AlignLeft | Qt::AlignVCenter, "Mapping");
+
+
         if(common->patient_id.size()==0||common->md->dm.devices.size()==0)
-            painter.setPen(grey_pen);
+            painter.setPen(grey_pen);//未綁定
         else
             painter.setPen(white_pen);
         Common::draw_text(painter, -205, 21, Qt::AlignLeft | Qt::AlignVCenter, "Observations");
         if(!common->device_settings_page->has_checked)
-            painter.setPen(grey_pen);
-        Common::draw_text(painter, -335, 21, Qt::AlignLeft | Qt::AlignVCenter, "Devices");
+            painter.setPen(grey_pen);//Displaysetting未選取Device
         Common::draw_text(painter, -463, 21, Qt::AlignLeft | Qt::AlignVCenter, "Utilities");
+        if(common->md->dm.devices.size()==1)
+        {
+        auto fit = common->md->dm.devices.find("MP40");
+        if(fit != common->md->dm.devices.end())
+            {
+                painter.setPen(grey_pen);//Devices只有連接MP40
+            }
+        }
+        Common::draw_text(painter, -335, 21, Qt::AlignLeft | Qt::AlignVCenter, "Devices");
+
         painter.setPen(no_pen);
         painter.setBrush(teal_brush);
         std::vector<QPoint> pts;
@@ -73,12 +84,20 @@ void mc_navigation::paintEvent(QPaintEvent *event)
     }
     else if(current_tab == 1)
     {
+        painter.setPen(yellow_pen);//選中
+        Common::draw_text(painter, -463, 21, Qt::AlignLeft | Qt::AlignVCenter, "Utilities");
+
         painter.setPen(white_pen);
         Common::draw_text(painter, -607, 21, Qt::AlignLeft | Qt::AlignVCenter, "Mapping");
-        painter.setPen(yellow_pen);
-        Common::draw_text(painter, -463, 21, Qt::AlignLeft | Qt::AlignVCenter, "Utilities");
-        painter.setPen(white_pen);
         Common::draw_text(painter, -205, 21, Qt::AlignLeft | Qt::AlignVCenter, "Observations");
+        if(common->md->dm.devices.size()==1)
+        {
+        auto fit = common->md->dm.devices.find("MP40");
+        if(fit != common->md->dm.devices.end())
+            {
+                painter.setPen(grey_pen);//Devices只有連接MP40
+            }
+        }
         Common::draw_text(painter, -335, 21, Qt::AlignLeft | Qt::AlignVCenter, "Devices");
         painter.setPen(no_pen);
         painter.setBrush(teal_brush);
@@ -90,11 +109,12 @@ void mc_navigation::paintEvent(QPaintEvent *event)
     }
     else if(current_tab == 2)
     {
+        painter.setPen(yellow_pen);//選中
+        Common::draw_text(painter, -335, 21, Qt::AlignLeft | Qt::AlignVCenter, "Devices");
+
         painter.setPen(white_pen);
         Common::draw_text(painter, -607, 21, Qt::AlignLeft | Qt::AlignVCenter, "Mapping");
         Common::draw_text(painter, -463, 21, Qt::AlignLeft | Qt::AlignVCenter, "Utilities");
-        painter.setPen(yellow_pen);
-        Common::draw_text(painter, -335, 21, Qt::AlignLeft | Qt::AlignVCenter, "Devices");
         painter.setPen(white_pen);
         Common::draw_text(painter, -205, 21, Qt::AlignLeft | Qt::AlignVCenter, "Observations");
         painter.setPen(no_pen);
@@ -107,14 +127,23 @@ void mc_navigation::paintEvent(QPaintEvent *event)
     }
     else
     {
+        painter.setPen(yellow_pen);//選中
+        Common::draw_text(painter, -205, 21, Qt::AlignLeft | Qt::AlignVCenter, "Observations");
         painter.setPen(white_pen);
         Common::draw_text(painter, -607, 21, Qt::AlignLeft | Qt::AlignVCenter, "Mapping");
         if(!common->device_settings_page->has_checked)
-            painter.setPen(grey_pen);
+            painter.setPen(grey_pen);//Displaysetting未選取Device
         Common::draw_text(painter, -463, 21, Qt::AlignLeft | Qt::AlignVCenter, "Utilities");
+        if(common->md->dm.devices.size()==1)
+        {
+        auto fit = common->md->dm.devices.find("MP40");
+        if(fit != common->md->dm.devices.end())
+            {
+                painter.setPen(grey_pen);//Devices只有連接MP40
+            }
+        }
         Common::draw_text(painter, -335, 21, Qt::AlignLeft | Qt::AlignVCenter, "Devices");
-        painter.setPen(yellow_pen);
-        Common::draw_text(painter, -205, 21, Qt::AlignLeft | Qt::AlignVCenter, "Observations");
+
         painter.setPen(no_pen);
         painter.setBrush(teal_brush);
         std::vector<QPoint> pts;
@@ -139,6 +168,16 @@ void mc_navigation::mousePressEvent(QMouseEvent *event)
     }
     else if(event->pos().y() > 220)
     {
+        if(common->md->dm.devices.size()==1)
+        {
+        auto fit = common->md->dm.devices.find("MP40");
+        if(fit != common->md->dm.devices.end())
+            {
+                common->msg.setText("MP40 have not Device setting");
+                common->msg.exec();
+                return;
+            }
+        }
         if(common->device_settings_page->has_checked)
             set_current_tab(2);
     }

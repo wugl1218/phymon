@@ -75,6 +75,8 @@ void Tab_Devices_Widget::update_devices(std::map<std::string, Device>* btns)
     int i=0;
     for(auto it=btns->begin();it!=btns->end();it++)
     {
+        if(it->second.model=="MP40")
+            continue;
         std::string label = it->second.model;
         QPushButton* btn = new QPushButton(label.c_str(), this);
         btn->setSizePolicy(ui->deviceTemplate_pushButton->sizePolicy());
