@@ -11,7 +11,6 @@
 #define ADD_BTN_POS     MAX_WAVE + 1
 #define LOOPS_NAME      "loops"
 
-
 mc_wavepanel::mc_wavepanel(QWidget *parent)
     : QWidget{parent},
       menu(parent)
@@ -26,9 +25,10 @@ mc_wavepanel::mc_wavepanel(QWidget *parent)
     m_setup = false;
 }
 void mc_wavepanel::WriteNurseDB(stDisplayItems item, bool bDel)
-{
-    int visibility = bDel ? 0:1;
+{   
     Common* common = Common::instance();
+    std::string dummy;//ppee
+    int visibility = bDel ? 0:5;
     rapidjson::Document d;
     d.SetObject();
     d.AddMember("data_source", "RTO", d.GetAllocator());
@@ -44,14 +44,14 @@ void mc_wavepanel::WriteNurseDB(stDisplayItems item, bool bDel)
     rapidjson::StringBuffer buffer;
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
     d.Accept(writer);
-    std::string dummy;
     common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), item.record_id, dummy);
-    //qDebug()<<"*** WriteNurseDB saveMutableDocument error="<< dummy.c_str()<< " desc="<<item.display_desc.c_str()<<" record_id="<<item.record_id.c_str();
+    //qDebug()<<"*** WriteNurseDB error="<< dummy.c_str()<< " desc="<<item.display_desc.c_str()<<" record_id="<<item.record_id.c_str();
     if (bDel && item.record_id.length())
     {
         int64_t now = time(NULL);
+        qDebug()<< "====write visibility="<<visibility;
         common->cbl->setDocExpiration(common->display_items_db, item.record_id, now * 1000, dummy);
-        qDebug()<<"====dummy="<<dummy.c_str();
+        //qDebug()<<"====dummy="<<dummy.c_str();
     }
 }
 static bool dbCompare(dbDisplayItems item1, dbDisplayItems item2)
@@ -154,6 +154,8 @@ void mc_wavepanel::mc_del_clicked(int index)
         item.mdc_code = m_nurse_items[0].mdc_code;
         item.record_id = m_nurse_items[0].record_id;
         item.model = m_nurse_items[0].model;
+        item.y_max = QString::number(m_nurse_items[0].y_max).toStdString();
+        item.y_min = QString::number(m_nurse_items[0].y_min).toStdString();
         qDebug()<<"===== del only one "<<item.display_desc.c_str();
         WriteNurseDB(item, true);
     }
@@ -164,6 +166,8 @@ void mc_wavepanel::mc_del_clicked(int index)
         item.mdc_code = m_nurse_items[j].mdc_code;
         item.record_id = m_nurse_items[j].record_id;
         item.model = m_nurse_items[j].model;
+        item.y_max = QString::number(m_nurse_items[j].y_max).toStdString();
+        item.y_min = QString::number(m_nurse_items[j].y_min).toStdString();
         qDebug()<<"===== del loops "<<item.display_desc.c_str();
         WriteNurseDB(item, true);
     }
@@ -173,6 +177,8 @@ void mc_wavepanel::mc_del_clicked(int index)
         item.mdc_code = m_nurse_items[index].mdc_code;
         item.record_id = m_nurse_items[index].record_id;
         item.model = m_nurse_items[index].model;
+        item.y_max = QString::number(m_nurse_items[index].y_max).toStdString();
+        item.y_min = QString::number(m_nurse_items[index].y_min).toStdString();
         qDebug()<<"===== del last one "<<item.display_desc.c_str();
         WriteNurseDB(item, true);
     }
@@ -188,6 +194,8 @@ void mc_wavepanel::mc_del_clicked(int index)
             item.mdc_code = m_nurse_items[i].mdc_code;
             item.record_id = m_nurse_items[i].record_id;
             item.model = m_nurse_items[i].model;
+            item.y_max = QString::number(m_nurse_items[i].y_max).toStdString();
+            item.y_min = QString::number(m_nurse_items[i].y_min).toStdString();
             qDebug()<<"===== del middle one i="<<i<<" j="<<j<<" index="<<index<<" desc="<<item.display_desc.c_str();
             if (i == (size_t)index)
                 WriteNurseDB(item, true);
@@ -412,7 +420,7 @@ std::vector<dbDisplayItems> mc_wavepanel::CheckNurseDB(bool bListAll)
 */
     std::string sql = "SELECT display_desc, y_max, y_min, model, y_step, display_index, visibility, mdc_code, meta().id FROM _ WHERE data_source='RTO' AND patient_id='";
     sql.append(common->patient_id);
-    sql.append("' AND visibility = 1 AND meta().expiration IS NOT VALUED");
+    sql.append("' AND visibility = 5 AND meta().expiration IS NOT VALUED");
     cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
 
     int error=0;
