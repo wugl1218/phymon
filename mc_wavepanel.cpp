@@ -27,60 +27,76 @@ mc_wavepanel::mc_wavepanel(QWidget *parent)
 void mc_wavepanel::WriteNurseDB(stDisplayItems item, bool bDel)
 {   
     Common* common = Common::instance();
-    std::string dummy, dummy2;//ppee
+    std::string dummy;//ppee
     int visibility = bDel ? 0:7;
-    if(item.record_id.empty())
+    QVector<std::string> record_id;
+    if (item.record_id.length())
     {
-        rapidjson::Document d;
-        d.SetObject();
-        d.AddMember("data_source", "RTO", d.GetAllocator());
-        d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
-        d.AddMember("model", rapidjson::Value().SetString(item.model.c_str(), d.GetAllocator()), d.GetAllocator());
-        d.AddMember("mdc_code", rapidjson::Value().SetString(item.mdc_code.c_str(), d.GetAllocator()), d.GetAllocator());
-        d.AddMember("display_desc", rapidjson::Value().SetString(item.display_desc.c_str(), d.GetAllocator()), d.GetAllocator());
-        d.AddMember("y_max", rapidjson::Value().SetString(item.y_max.c_str(), d.GetAllocator()), d.GetAllocator());
-        d.AddMember("y_min", rapidjson::Value().SetString(item.y_min.c_str(), d.GetAllocator()), d.GetAllocator());
-        d.AddMember("y_step", rapidjson::Value().SetString(item.y_step.c_str(), d.GetAllocator()), d.GetAllocator());
-        d.AddMember("visibility", visibility, d.GetAllocator());
-        d.AddMember("display_index", item.display_index, d.GetAllocator());
-        rapidjson::StringBuffer buffer;
-        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-        d.Accept(writer);
-        common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), dummy2, dummy);
-        //qDebug()<<"*** WriteNurseDB error="<< dummy.c_str()<< " desc="<<item.display_desc.c_str()<<" record_id="<<item.record_id.c_str();
-/*        if (bDel && item.record_id.length())
-        {
-            int64_t now = time(NULL);
-            qDebug()<< "====write visibility="<<visibility;
-            common->cbl->setDocExpiration(common->display_items_db, record_id, now * 1000, dummy);
-            //qDebug()<<"====dummy="<<dummy.c_str();
-        }*/
-    }
-    else
-    {
-        std::string sql = "UPDATE DisplayItems SET visibility = 0 WHERE data_source='RTO' AND patient_id='";
+        std::string sql = "SELECT meta().id FROM _ WHERE data_source='RTO' AND patient_id='";
         sql.append(common->patient_id);
         sql.append("' AND mdc_code = '");
         sql.append(item.mdc_code);
         sql.append("' AND model = '");
         sql.append(item.model);
-        sql.append("'");
-        qDebug()<<"========sql update="<<sql.c_str();
+        sql.append("' AND visibility = 7 AND meta().expiration IS NOT VALUED");
         cbl::ResultSet results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
-        qDebug()<<"=====update result="<<dummy.c_str();
+        qDebug()<<"+++++ write sql="<<sql.c_str();
+        qDebug()<<"+++++ write dummy="<<dummy.c_str();
+
         int error=0;
         while (dummy!="IP200"&&error<5)
         {
             results2 = common->cbl->queryDocuments(common->display_items_db, sql, dummy);
             fflog_out(common->log,dummy.c_str());error++;
         }
+        for(auto& result: results2)
+            record_id.push_back(result.valueAtIndex(0).asstring());
     }
-/*  std::string record_id;
-    for(auto& result: results2)
-        record_id = result.valueAtIndex(0).asstring().c_str();
-    qDebug()<<"current id="<<record_id.c_str();
-    qDebug()<<"item current id="<<item.record_id.c_str();
-*/
+
+    rapidjson::Document d;
+    d.SetObject();
+    d.AddMember("data_source", "RTO", d.GetAllocator());
+    d.AddMember("patient_id", rapidjson::Value().SetString(common->patient_id.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("model", rapidjson::Value().SetString(item.model.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("mdc_code", rapidjson::Value().SetString(item.mdc_code.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("display_desc", rapidjson::Value().SetString(item.display_desc.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("y_max", rapidjson::Value().SetString(item.y_max.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("y_min", rapidjson::Value().SetString(item.y_min.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("y_step", rapidjson::Value().SetString(item.y_step.c_str(), d.GetAllocator()), d.GetAllocator());
+    d.AddMember("visibility", visibility, d.GetAllocator());
+    d.AddMember("display_index", item.display_index, d.GetAllocator());
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    d.Accept(writer);
+    qDebug()<<"==== visibility = "<<visibility<<" buffer="<<buffer.GetString();
+    if (record_id.size())
+    {
+        for (auto record:record_id)
+        {
+            common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), record, dummy);
+            qDebug()<<"*** multi error="<< dummy.c_str()<< " desc="<<item.display_desc.c_str()<<" record_id="<<item.record_id.c_str();
+            if (bDel && item.record_id.length())
+            {
+                int64_t now = time(NULL);
+                qDebug()<< "====write visibility="<<visibility;
+                common->cbl->setDocExpiration(common->display_items_db, record, now * 1000, dummy);
+                //qDebug()<<"====dummy="<<dummy.c_str();
+            }
+        }
+    }
+    else
+    {
+        std::string record;
+        common->cbl->saveMutableDocument(common->display_items_db, buffer.GetString(), record, dummy);
+        qDebug()<<"*** single error="<< dummy.c_str()<< " desc="<<item.display_desc.c_str()<<" record_id="<<item.record_id.c_str();
+        if (bDel && item.record_id.length())
+        {
+            int64_t now = time(NULL);
+            qDebug()<< "====write visibility="<<visibility;
+            common->cbl->setDocExpiration(common->display_items_db, record, now * 1000, dummy);
+            //qDebug()<<"====dummy="<<dummy.c_str();
+        }
+    }
 }
 static bool dbCompare(dbDisplayItems item1, dbDisplayItems item2)
 {
