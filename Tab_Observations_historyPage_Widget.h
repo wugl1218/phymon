@@ -41,6 +41,8 @@ public:
                         std::string unit,
                         std::string datasource);
     void mapping_UI_reset();
+    int m_history_time=125;  //單位分鐘 目前最大時間120 set規則比最大時間多5％使用上感官較好
+    void set_history_time(int min){m_history_time=min;};
 
 
 protected:

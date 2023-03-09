@@ -53,6 +53,9 @@ public:
                                mc_chart *chart,
                                QList<std::vector<float>> &wave_list,
                                QList<uint64_t> &time_list);
+    QColor use_wave_color_list(std::string model, std::string mdccode);//
+    void unused_wave_color_map(std::string model, std::string mdccode);//
+
     void set_wave_ui(QList<QWidget*> wave_list) {m_RTO_wave_list = wave_list;};
     void set_chart_ui(QList<mc_chart*> chart_list) {m_RTO_chart_list = chart_list;};
     void set_option_ui(QList<QWidget*> option_list) {m_RTO_option_list = option_list;};

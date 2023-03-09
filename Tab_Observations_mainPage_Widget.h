@@ -58,7 +58,8 @@ public:
     std::vector<mc_legend*> legends;
     QList<QColor> line_color_list;
     std::map<std::string,QColor> using_line_color_map;
-
+    QList<QColor> wave_color_list;
+    std::map<std::string,QColor> using_wave_color_map;
 
 
 protected:
@@ -126,11 +127,6 @@ private:
     void loop_check_and_shrink(int loopnum, float x, float y);
     void add_wave_to_chart_Obs(int series_index,
                                uint64_t t,float val,
-                               mc_chart *chart,
-                               QList<std::vector<float>> &wave_list,
-                               QList<uint64_t> &time_list);
-    void add_wave_to_chart_RTO(int series_index, std::string model, std::string code,
-                               dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
                                mc_chart *chart,
                                QList<std::vector<float>> &wave_list,
                                QList<uint64_t> &time_list);

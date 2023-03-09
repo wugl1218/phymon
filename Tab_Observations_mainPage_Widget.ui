@@ -2141,14 +2141,14 @@ color: rgb(255, 255, 255);</string>
                <widget class="mc_loop" name="loop2" native="true">
                 <property name="minimumSize">
                  <size>
-                  <width>0</width>
+                  <width>205</width>
                   <height>200</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>16777215</width>
-                  <height>250</height>
+                  <width>205</width>
+                  <height>200</height>
                  </size>
                 </property>
                 <property name="font">
@@ -2163,14 +2163,14 @@ color: rgb(255, 255, 255);</string>
                <widget class="mc_loop" name="loop1" native="true">
                 <property name="minimumSize">
                  <size>
-                  <width>0</width>
+                  <width>205</width>
                   <height>200</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>16777215</width>
-                  <height>250</height>
+                  <width>205</width>
+                  <height>200</height>
                  </size>
                 </property>
                 <property name="font">

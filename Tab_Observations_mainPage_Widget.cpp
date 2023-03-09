@@ -104,30 +104,38 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
     }
 
     line_color_list<<QColor(169,79,8)
-                  <<QColor(161,92,38)
-                  <<QColor(226,158,0)
-                  <<QColor(232,204,172)
-                  <<QColor(172,60,98)
+                   <<QColor(161,92,38)
+                   <<QColor(226,158,0)
+                   <<QColor(232,204,172)
+                   <<QColor(172,60,98)
 
-                  <<QColor(155,165,206)
-                  <<QColor(12,150,188)
-                  <<QColor(92,229,95)
-                  <<QColor(121,12,198)
-                  <<QColor(226,69,255)
+                   <<QColor(155,165,206)
+                   <<QColor(12,150,188)
+                   <<QColor(92,229,95)
+                   <<QColor(121,12,198)
+                   <<QColor(226,69,255)
 
-                  <<QColor(153, 50, 204)
-                  <<QColor(199, 21, 133)
-                  <<QColor(216, 112, 147)
-                  <<QColor(147, 112, 219)
-                  <<QColor(139, 69, 19)
+                   <<QColor(153, 50, 204)
+                   <<QColor(199, 21, 133)
+                   <<QColor(216, 112, 147)
+                   <<QColor(147, 112, 219)
+                   <<QColor(139, 69, 19)
 
-                  <<QColor(162, 105, 33)
-                  <<QColor(255, 127, 80)
-                  <<QColor(173, 213, 32)
-                  <<QColor(218, 165, 32)
-                  <<QColor(100, 149, 237)
+                   <<QColor(162, 105, 33)
+                   <<QColor(255, 127, 80)
+                   <<QColor(173, 213, 32)
+                   <<QColor(218, 165, 32)
+                   <<QColor(100, 149, 237)
 
-                  <<QColor(65, 105, 225);
+                   <<QColor(65, 105, 225);
+
+    wave_color_list<<QColor(162, 105, 33)
+                   <<QColor(100, 149, 237)
+                   <<QColor(92,229,95)
+                   <<QColor(155,165,206)
+                   <<QColor(172,60,98)
+
+                   <<QColor(255, 127, 80);
 
     m_wavepanel = ui->wavePanel;
     SetWavePanelSlots();
@@ -1697,86 +1705,6 @@ void Tab_Observations_mainPage_Widget::add_wave_to_chart_Obs(int series_index,
         time_list[series_index]=last_rtchart_time ;
     }
 
-}
-void Tab_Observations_mainPage_Widget::add_wave_to_chart_RTO(int series_index, std::string model, std::string code,
-                                                             dds::sub::DataReader<dds::core::xtypes::DynamicData> reader,
-                                                             mc_chart* chart,
-                                                             QList<std::vector<float>> &wave_list,
-                                                             QList<uint64_t> &time_list)
-{
-    Common* common = Common::instance();
-    if(common->patient_id.size() == 0)
-        return;
-    int line_break_delta;
-    line_break_delta=common->RTO_line_break_delta;
-    chart->set_line_break_delta(common->RTO_line_break_delta);
-    std::string querystr = "vmd_id MATCH '";
-    querystr.append(common->vmd_id);
-    querystr.append("' AND patient_id MATCH '");
-    querystr.append(common->patient_id);
-    querystr.append("' AND model MATCH '");
-    querystr.append(model);
-    querystr.append("' AND code MATCH '");
-    querystr.append(code);
-    querystr.append("'");
-    dds::sub::cond::QueryCondition qcond(
-                dds::sub::Query(reader, querystr),
-                dds::sub::status::DataState(
-                dds::sub::status::SampleState::any(),
-                dds::sub::status::ViewState::any(),
-                dds::sub::status::InstanceState::alive()));
-    dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples2 = reader.select().condition(qcond).read();
-    if(samples2.length() == 0)
-        return;
-    for(auto& sample : samples2)
-    {
-        if(sample.info().valid())
-        {
-            dds::core::xtypes::DynamicData& data = const_cast<dds::core::xtypes::DynamicData&>(sample.data());
-            rti::core::xtypes::LoanedDynamicData loaned_member = data.loan_value("source_timestamp");
-            int32_t sec = loaned_member.get().value<int32_t>("sec");
-            uint32_t nsec = loaned_member.get().value<uint32_t>("nanosec");
-            loaned_member.return_loan();
-            time_t now = time(NULL);
-            now -= 3;
-            if(sec < now)
-                continue;
-            uint64_t t = ((uint64_t)sec)*1000 + ((uint64_t)nsec)/1000000;
-            std::vector<float> vals;
-            auto left_over_rtchart_vals =wave_list[series_index];
-            auto last_rtchart_time =time_list[series_index];
-            data.get_values("values", vals);
-            if(left_over_rtchart_vals.size() > 0)
-            {
-                if(t-last_rtchart_time < line_break_delta)
-                {
-                    double delta = (t-last_rtchart_time)/((double)left_over_rtchart_vals.size()+1);
-                    for(int i=0;i<(int)left_over_rtchart_vals.size();i++)
-                    {
-                        chart->add_point(series_index, last_rtchart_time+delta*(i+1), left_over_rtchart_vals[i]);
-                    }
-                }
-                left_over_rtchart_vals.clear();
-            }
-            if(t > chart->get_view_range_max_x())
-            {
-                chart->set_view_range_max_x(t);
-                chart->set_view_range_min_x(t-0.5*60*1000);
-            }
-            if(vals.size() > 0)
-            {
-                chart->add_point(series_index, t, vals[0]);
-                if(vals.size() > 1)
-                {
-                    vals.erase(vals.begin());
-                    left_over_rtchart_vals = vals;
-                    last_rtchart_time = t;
-                }
-                wave_list[series_index]=left_over_rtchart_vals;
-                time_list[series_index]=last_rtchart_time ;
-            }
-        }
-    }
 }
 void Tab_Observations_mainPage_Widget::mapping_UI_reset()
 {
