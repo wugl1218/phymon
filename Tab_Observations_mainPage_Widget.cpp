@@ -1445,11 +1445,11 @@ void Tab_Observations_mainPage_Widget::update_triggered()
             }
             else
                 {
-                qDebug()<<QString::fromStdString(it2->second.mdccode);
-                qDebug()<<QString::fromStdString(it2->second.desc);
-                qDebug()<<QString::fromStdString(it2->second.abbv);
-                qDebug()<<QString::fromStdString(it2->second.y_max);
-                qDebug()<<"y_max error ============================================================";
+                //qDebug()<<QString::fromStdString(it2->second.mdccode);
+                //qDebug()<<QString::fromStdString(it2->second.desc);
+                //qDebug()<<QString::fromStdString(it2->second.abbv);
+                //qDebug()<<QString::fromStdString(it2->second.y_max);
+                ////qDebug()<<"y_max error ============================================================";
                 }
             row++;
             it2++;
