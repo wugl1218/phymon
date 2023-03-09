@@ -27,6 +27,7 @@ public:
     std::vector<std::string> m_WaveRtItems;
     std::vector<std::string> m_WaveObItems;
     std::vector<stDisplayItems> m_DisplayItems;
+    std::vector<stDisplayItems> m_dbRecord;
     QVBoxLayout *m_main_item;
     QFrame *m_loop_frame;
     QFrame *m_add_frame;
