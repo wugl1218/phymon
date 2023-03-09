@@ -24,7 +24,6 @@ Tab_Observations_historyPage_Widget::Tab_Observations_historyPage_Widget(QWidget
     ui->chart->set_max_zoom(01*10*1000);
     ui->chart->set_axis_visible(1);
     ui->chart->set_zoomable(0);
-    ui->RangeButton->hide();
     ui->chart->set_selection_width(40);
     ui->chart->set_selection_type(MC_SELECT_POINT);
     right_locked = 1;
@@ -1161,28 +1160,35 @@ void Tab_Observations_historyPage_Widget::on_RangeButton_clicked()
 //    for(auto it=common->observation_main_page->legends.begin();it!=common->observation_main_page->legends.end();++it)
     {
         class btn b;
+        int i = 0;
         b.name="10 secs";
-        b.index=0;
+        b.index=i++;
         b.is_select=0;
         btn.push_back(b);
         b.name="30 secs";
-        b.index=1;
+        b.index=i++;
         btn.push_back(b);
         b.name="1 min";
-        b.index=2;
+        b.index=i++;
         btn.push_back(b);
+        b.name="3 min";
+        b.index=i++;
+        btn.push_back(b);
+        if(common->history_datasource=="Observation")
+        {
         b.name="10 mins";
-        b.index=3;
+        b.index=i++;
         btn.push_back(b);
         b.name="30 mins";
-        b.index=4;
+        b.index=i++;
         btn.push_back(b);
         b.name="1 hour";
-        b.index=5;
+        b.index=i++;
         btn.push_back(b);
         b.name="2 hours";
-        b.index=6;
+        b.index=i++;
         btn.push_back(b);
+        }
     }
     common->select_menu.make_btn(btn);
     common->select_menu.exec();
