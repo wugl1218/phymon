@@ -633,7 +633,7 @@ void Common::populate_item_checkstate()
 {
     item_checkstate.clear();
     std::string dummy;
-    std::string sql = "SELECT mdc_code,visibility,display_index,model,color FROM _ WHERE data_source='Obs' AND patient_id='";
+    std::string sql = "SELECT mdc_code,visibility,display_index,model,color,meta().id FROM _ WHERE data_source='Obs' AND patient_id='";
     sql.append(patient_id);
     sql.append("' AND meta(_).expiration IS NOT VALUED AND expired=0");
     cbl::ResultSet results2= cbl->queryDocuments(display_items_db, sql, dummy);
@@ -664,15 +664,43 @@ void Common::populate_item_checkstate()
         cs.checked = result.valueAtIndex(1).asUnsigned();
         cs.order = result.valueAtIndex(2).asInt();
         std::string model = result.valueAtIndex(3).asstring();
-
+        std::string id = result.valueAtIndex(5).asstring();
         QString qstr = QString::fromStdString(result.valueAtIndex(4).asstring());
-        if(qstr=="")
-            cs.color= use_line_color_list(model,mdc_code);
-        else
-            cs.color = (qstr.toUInt(NULL,16));
+        if(cs.checked==1)
+        {
+            if(qstr=="")
+            {
+                cs.color= use_line_color_list(model,mdc_code);
+            }
+            else
+            {
+                cs.color = (qstr.toUInt(NULL,16));
 
+                for (int i=0 ;i<observation_main_page->line_color_list.size();++i)
+                {
+                    if(observation_main_page->line_color_list[i]==cs.color)
+                    {
+                        observation_main_page->line_color_list.removeAt(i);
+                        break;
+                    }
+                }
+                std::string str =model.append(",").append(mdc_code);
+                observation_main_page->using_line_color_map.emplace(str,cs.color);
+            }
+        }
+        else
+            cs.color="";
         item_checkstate.emplace(model+","+mdc_code, cs);
+//        qDebug()<<cs.color;
+//        qDebug()<<"list="<<observation_main_page->line_color_list.size();
+//        qDebug()<<"map=="<<observation_main_page->using_line_color_map.size();
+//        for(auto it =observation_main_page->using_line_color_map.begin();it!=observation_main_page->using_line_color_map.end();it++ )
+//        {
+//            qDebug()<<"mpa="<<QString::fromStdString(it->first);
+//            qDebug()<<it->second;
+//        }
     }
+
     if(item_checkstate.size() == 0)
         return;
 
@@ -774,13 +802,9 @@ QColor Common::use_line_color_list(std::string model,std::string mdccode)
     auto it =observation_main_page->using_line_color_map.find(str);
     if(it==observation_main_page->using_line_color_map.end())
     {
-        for(int i =0;i<observation_main_page->line_color_list.size();++i)
-        {
-        QColor qcolor =observation_main_page->line_color_list[i];
+        QColor qcolor =observation_main_page->line_color_list.takeAt(0);
         observation_main_page->using_line_color_map.emplace(str,qcolor);
-        observation_main_page->line_color_list.removeAt(i);
         return qcolor;
-        }
     }
     else
     {

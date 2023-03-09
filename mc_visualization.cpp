@@ -37,12 +37,12 @@ void mc_visualization::paintEvent(QPaintEvent *event)
     QFont data_font ;
     QFont value_font ;
     bool Show_pen =1;
-    data_font.setPixelSize(22);
+    data_font.setPixelSize(16);
     data_font.setFamily("Arial [Mono]");
     value_font.setPixelSize(16);
     value_font.setFamily("Arial [Mono]");
 
-   int radius = height()/2-60;
+   int radius = height()/2-30;
 
    /*
     * data須提供 data_name,data[n],low,high,color
@@ -170,7 +170,11 @@ void mc_visualization::paintEvent(QPaintEvent *event)
         }
 
        int length1,length2;
-       float proportion1 =1.6; //調整距離圓心位置
+       float proportion1;
+       if(count!=3)
+            proportion1 =1.45; //調整距離圓心位置
+       else
+            proportion1 =1.6;
        painter.setFont(data_font);
        if((x1+(x2-x1)*0.50)<0) //讓左側文字靠左
         {
@@ -178,9 +182,9 @@ void mc_visualization::paintEvent(QPaintEvent *event)
            length2= QString::number(avg).length()*5;
 
         }
-       else if(x1+(x2-x1)*0.50<1)
+       else if(x1+(x2-x1)*0.50<1)//讓右側文字靠左
         {
-           length1= dataname.length()*5;
+           length1= dataname.length()*4;
            length2= 0;
         }
        else
@@ -238,7 +242,7 @@ void mc_visualization::paintEvent(QPaintEvent *event)
        line.lineTo((x1+(x2-x1)*0.00)*proportion1, (y1+(y2-y1)*0.00)*proportion1);
        painter.drawPath(line);
    }
-   painter.setPen(Qt::blue);
+   painter.setPen(Qt::yellow);
    alarm_line.closeSubpath();
    painter.drawPath(alarm_line);
    painter.setPen(visualizetionColor);

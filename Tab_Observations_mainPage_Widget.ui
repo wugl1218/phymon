@@ -2147,7 +2147,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>205</width>
+                  <width>16777215</width>
                   <height>200</height>
                  </size>
                 </property>
@@ -2169,7 +2169,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>205</width>
+                  <width>16777215</width>
                   <height>200</height>
                  </size>
                 </property>
@@ -2203,7 +2203,13 @@ color: rgb(255, 255, 255);</string>
                  <widget class="QPushButton" name="ref_btn">
                   <property name="minimumSize">
                    <size>
-                    <width>0</width>
+                    <width>100</width>
+                    <height>50</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>100</width>
                     <height>50</height>
                    </size>
                   </property>
@@ -2254,7 +2260,13 @@ QPushButton:checked{
                  <widget class="QPushButton" name="cap_btn">
                   <property name="minimumSize">
                    <size>
-                    <width>0</width>
+                    <width>100</width>
+                    <height>50</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>100</width>
                     <height>50</height>
                    </size>
                   </property>

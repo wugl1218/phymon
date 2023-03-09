@@ -23,6 +23,7 @@ mc_wavepanel::mc_wavepanel(QWidget *parent)
     m_RtLowerCount = m_ObLowerCount = 0;
     m_bDrawlayout = false;
     m_setup = false;
+
 }
 void mc_wavepanel::WriteNurseDB(stDisplayItems item, bool bDel)
 {   
@@ -341,7 +342,7 @@ void mc_wavepanel::push_add_item(bool bAddDel, bool bAllListed)
         pChart->set_zoomable(0);
         pChart->set_num_labels_x(5);
         pChart->set_num_labels_y(5);
-        pChart->set_series_color(0, QColor(255,255,255));
+        //pChart->set_series_color(0, QColor(255,255,255));
         if (m_nurse_items.size() == 2 && loops)
         {
             pChart->set_num_labels_x(3);

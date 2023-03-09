@@ -136,7 +136,9 @@ Tab_Observations_mainPage_Widget::Tab_Observations_mainPage_Widget(QWidget *pare
                    <<QColor(172,60,98)
 
                    <<QColor(255, 127, 80);
-
+    ui->chart_1->set_series_color(0, QColor(0xe8, 0xcc, 0xac));
+    ui->chart_2->set_series_color(0, QColor(0x5c, 0xe5, 0x5f));
+    ui->chart_3->set_series_color(0, QColor(0xce, 0x5c, 0x00));
     m_wavepanel = ui->wavePanel;
     SetWavePanelSlots();
 }
@@ -155,6 +157,7 @@ void Tab_Observations_mainPage_Widget::SetWavePanelSlots()
                  <<ui->chart_4
                  <<ui->chart_5
                  <<ui->chart_6;
+
     ui->wavePanel->set_chart_ui(RTO_chart_list);
     RTO_option_list<<ui->option_1
                  <<ui->option_2
@@ -1278,7 +1281,7 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                 e.mdccode = data.value<std::string>("mdc_code");
                 e.model = data.value<std::string>("model");
                 e.desc = data.value<std::string>("description");
-                e.unit = data.value<std::string>("unit");
+                e.unit =data.value<std::string>("unit");
                 e.val = data.value<float>("value");
                 e.abbv = data.value<std::string>("abbreviation");
                 std::string vt_desc;
@@ -1343,10 +1346,27 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                             }
                     if(is_continue)
                         continue;
+                    qDebug()<<"=======================";
+
+                    for(auto it =common->item_checkstate.begin();it!=common->item_checkstate.end();it++ )
+                    {
+                        qDebug()<<"mpa="<<QString::fromStdString(it->first);
+                        qDebug()<<it->second.color;
+                    }
+                    qDebug()<<"=======================";
+
                     auto it2 = common->item_checkstate.find(str);
                     if(it2==common->item_checkstate.end())
                     {
                         e.color = it2->second.color;
+                        qDebug()<<"e.color=="<<e.color;
+                        auto it3 =common->observation_main_page->using_line_color_map.find(str);
+                        if(it3!=common->observation_main_page->using_line_color_map.end())
+                            e.color = it3->second;
+                        else
+                            qDebug()<<"沒找到";
+                        qDebug()<<"str=="<<QString::fromStdString(str);
+                        qDebug()<<"color=="<<e.color;
                         entries.emplace(9999, e);
                     }
                     else if(it2->second.checked)
