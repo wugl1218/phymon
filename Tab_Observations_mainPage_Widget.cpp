@@ -1346,27 +1346,11 @@ void Tab_Observations_mainPage_Widget::update_triggered()
                             }
                     if(is_continue)
                         continue;
-                    qDebug()<<"=======================";
-
-                    for(auto it =common->item_checkstate.begin();it!=common->item_checkstate.end();it++ )
-                    {
-                        qDebug()<<"mpa="<<QString::fromStdString(it->first);
-                        qDebug()<<it->second.color;
-                    }
-                    qDebug()<<"=======================";
 
                     auto it2 = common->item_checkstate.find(str);
                     if(it2==common->item_checkstate.end())
                     {
                         e.color = it2->second.color;
-                        qDebug()<<"e.color=="<<e.color;
-                        auto it3 =common->observation_main_page->using_line_color_map.find(str);
-                        if(it3!=common->observation_main_page->using_line_color_map.end())
-                            e.color = it3->second;
-                        else
-                            qDebug()<<"沒找到";
-                        qDebug()<<"str=="<<QString::fromStdString(str);
-                        qDebug()<<"color=="<<e.color;
                         entries.emplace(9999, e);
                     }
                     else if(it2->second.checked)

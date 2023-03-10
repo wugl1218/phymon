@@ -684,21 +684,14 @@ void Common::populate_item_checkstate()
                         break;
                     }
                 }
-                std::string str =model.append(",").append(mdc_code);
+                std::string str =model;
+                str.append(",").append(mdc_code);
                 observation_main_page->using_line_color_map.emplace(str,cs.color);
             }
         }
         else
             cs.color="";
         item_checkstate.emplace(model+","+mdc_code, cs);
-//        qDebug()<<cs.color;
-//        qDebug()<<"list="<<observation_main_page->line_color_list.size();
-//        qDebug()<<"map=="<<observation_main_page->using_line_color_map.size();
-//        for(auto it =observation_main_page->using_line_color_map.begin();it!=observation_main_page->using_line_color_map.end();it++ )
-//        {
-//            qDebug()<<"mpa="<<QString::fromStdString(it->first);
-//            qDebug()<<it->second;
-//        }
     }
 
     if(item_checkstate.size() == 0)
